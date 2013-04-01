@@ -1,0 +1,344 @@
+\documentclass[11pt]{article}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\headheight}{0pt}
+\setlength{\topskip}{0pt}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9in}
+%\setlength{\parindent}{0pt}
+\setlength{\parskip}{1mm}
+
+\usepackage{epsf}
+
+% Magic incantation to allow proper PostScript to PDF conversion:
+  \usepackage[T1]{fontenc} % type 1 fonts
+  \usepackage{times}       % Times-Roman
+
+\sloppy
+
+\newcommand{\Fwname}{Johar}
+
+\begin{document}
+
+\begin{center} \bf \Large
+Johar ``Star'' Interface Interpreter \\
+Requirements Specification -- Behaviour
+\end{center}
+
+\section{Top-Level Behaviour}
+
+\begin{enumerate}
+\item Read the IDF.
+\item Create the Main Panel.
+\item Initialize the Text Area to empty.
+\item Create the GemSetting.
+\item Call the application engine's initialization method.
+\item Append a horizontal line (this could be just a line of minus
+  characters) to the bottom of the Text Area.  (This will separate any
+  initial message from the application engine from the messages that are
+  responses to the commands.)
+\item Call the {\it isActive} method of every command, and make each menu
+  item of each menu active or inactive (greyed out) according to the
+  result of the {\it isActive} method of the command.
+\end{enumerate}
+
+When the user selects a command from a menu:
+\begin{enumerate}
+\item If any table selection is incomplete for the command,
+  then pop up a dialog box with an ``OK'' button telling the user
+  which tables they have to select rows in in order to issue the
+  command.
+\item Otherwise, if no stage in the command has a queryable parameter
+  (i.e., there are no parameters to any of the stages of the command, or all
+  parameters in all stages of the command are
+  {\tt tableEntry} parameters):
+  \begin{enumerate}
+  \item Load the parameter values into the {\tt GemSetting}.
+  \item Call the application engine method.
+  \item Execute the Command Wrapup Procedure with parameter {\tt false}
+    (indicating command was not cancelled).
+  \end{enumerate}
+\item Otherwise (i.e., if no table selection is incomplete for
+  the command, but there are queryable parameters):
+  \begin{enumerate}
+  \item Create the Command Dialog for the command.
+    (The Command Dialog will take over the rest of the processing
+    of the command.)
+  \end{enumerate}
+\item A table selection is {\it incomplete for a given command}
+  if it contains at least one stage with a parameter of type
+  {\tt tableEntry}, such that the {\tt MinNumberOfReps} for that
+  parameter is greater than the number of rows that are selected
+  in the {\tt SourceTable} of the parameter.
+\end{enumerate}
+
+\section{Command Wrapup Procedure}
+
+The Command Wrapup Procedure is called after the user selects a
+command from the menu and some processing has been done.  It takes
+one parameter, called {\tt commandCancelled}.
+\begin{enumerate}
+\item If there is a Command Dialog, delete it.
+\item If {\tt commandCancelled} is false (i.e., the application
+  engine method corresponding to the command has been called):
+  \begin{enumerate}
+  \item Determine whether the application should quit, by checking
+    the {\tt QuitAfter} attribute and/or calling the {\tt QuitAfterIf}
+    method of the command.
+  \item If the application should quit:
+    \begin{enumerate}
+    \item If {\tt lastDisplayedText} is not the empty string, then
+      create a dialog box containing {\tt lastDisplayedText} and
+      an ``OK'' button, and display it.  Wait for the user to
+      click ``OK'', and then delete the dialog box.
+    \item Exit the application, e.g. using {\tt System.exit(0)}.
+    \end{enumerate}
+  \item Otherwise:
+    \begin{enumerate}
+    \item Append a horizontal line to the Text Display Area, in order to
+      separate the last command's output from the output of any
+      future commands.
+    \item For each table currently being displayed in the Table Area
+      that is now hidden, delete the corresponding tab.
+    \item For each table not currently being displayed in the Table
+      Area that is now non-hidden, create a tab in the Table Area.
+      (After this happens, it should be the case that the only tables
+      with tabs in the Table Area are non-hidden tables.)
+    \item For each non-hidden table which has been updated since the
+      last command execution terminated, update the data on the tab
+      to reflect the contents of the table.
+    \end{enumerate}
+  \end{enumerate}
+\item Call the {\it isActive} method of every command, and make each
+  menu item of each menu active or inactive (greyed out) according to
+  the result of the {\it isActive} method of the command.
+\end{enumerate}
+
+
+
+\section{The {\tt ShowTextHandler}}
+
+The ShowTextHandler for Star handles text according to the prominence of
+the text.
+\begin{enumerate}
+\item 0-1999:  For each line of text in the message:
+  \begin{enumerate}
+  \item Truncate the line of text, if necessary, to fit in the Status Bar.
+  \item Set the Status Bar to the text.
+  \end{enumerate}
+  [Note: This will cause the last line of the most recent message to
+  overwrite anything that was in the Status Bar before.  This is OK
+  because these messages are ``low prominence''.]
+\item 2000-2999:  Append the text to the text being displayed in the
+  Text Display Area.  Append the text also to {\tt lastDisplayedText}.
+\item 3000 and higher:  Create a dialog box containing the text and an
+  ``OK'' button, and display it.  When the user clicks the ``OK'' button,
+  the box should be deleted.
+\end{enumerate}
+
+\section{The Main Panel}
+
+See Figure \ref{mainPanelFig}.  The Main Panel is displayed when the
+application is started, and remains visible throughout the lifetime of the
+application.
+\begin{enumerate}
+\item At the top is the {\it Menu Bar}.  This shows one menu
+  for each command group in the application.
+\item Each menu is labelled in the Menu Bar by the name of the
+  command group.
+\item The menu items in each menu are the commands that are in
+  that command group.
+\item A menu item is clickable (not greyed out) if the corresponding
+  command is {\it active}.
+\item A command is {\it active} at a given point if either it has no
+  {\tt ActiveIfMethod}, or it has an {\tt ActiveIfMethod} and that
+  method returns {\tt true}.
+\item On the left is the {\it Text Display Area}.  This shows all
+  text messages sent by the application engine using {\tt displayText}
+  that are not displayed through some other means.
+\item On the right is the {\it Table Area}.  This is a tabbed pane.
+\item In the Table Area, there is one tab corresponding to every
+  revealed Table currently in the application.
+\item The application decides which Tables to conceal and reveal.
+\item If, during the processing of a command, the application engine sets
+  the top table, then immediately after the command has finished
+  processing, the topmost table in the Table Area is the last table to
+  have been set as the top table.
+\item If, during the processing of a command, the application engine
+  does not set the top table, then immediately
+  after the command has finished processing, the topmost table in the
+  Table Area remains unchanged from the time that the command was issued.
+\item Notwithstanding the table set as the topmost table by the app
+  engine, the user can (between issuing one command and issuing the
+  next command) click on a table tab in order to move that table to
+  the top.
+\item At the bottom is the {\it Status Bar}.  This shows low-prominence
+  messages sent by the application engine using {\tt displayText}.
+\end{enumerate}
+
+\begin{figure}[t]
+
+\centerline{\epsffile{StarGui_mainPanel.eps}}
+
+\caption{
+  The main panel.
+}
+\label{mainPanelFig}
+\end{figure}
+
+
+\section{The Command Dialog Box}
+
+\begin{figure}
+
+\centerline{\epsfxsize=5.5in \epsffile{StarGui_commandDialogBox.eps}}
+
+\caption{
+  The command dialog box.
+}
+\label{commandDialogBoxFig}
+\end{figure}
+
+See Figure \ref{commandDialogBoxFig}.
+\begin{enumerate}
+\item At the top is the {\tt Label} attribute of the command.
+\item Under that is one section for every {\it queryable parameter}
+  (see below) in the current stage.
+\item Many commands have only one stage.  However, if there is
+  more than one stage, only the queryable parameters in the current stage
+  will appear in the parameter section.
+\item There is one section of the box for each queryable parameter in the
+  current stage.
+\item At the bottom are two to four buttons: {\tt Cancel}, {\tt Previous},
+  {\tt Next}, and {\tt OK}.  {\tt Cancel} and {\tt OK} always appear;
+  {\tt Previous} and {\tt Next} do not always appear.
+\item The {\it Cancel button} always appears and is always enabled.
+\item The Cancel button is on the left-hand side of the dialog box.
+\item The {\it Previous button}:
+  \begin{enumerate}
+  \item Appears if there is more than one {\it queryable stage} (see below).
+  \item Is enabled if the current stage is not the first queryable stage.
+  \end{enumerate}
+\item The {\it Next button}:
+  \begin{enumerate}
+  \item Appears if there is more than one queryable stage.
+  \item Is enabled if the current stage is not the last queryable stage.
+  \end{enumerate}
+\item The {\it OK button}:
+  \begin{enumerate}
+  \item Always appears.
+  \item Is enabled if there are no {\it incomplete stages} (see below).
+  \end{enumerate}
+\item The OK button is on the right-hand side of the dialog box.
+\item A parameter is {\it inactive} if both (a) it has a {\tt ParentParameter},
+  and (b) the current value of the {\tt ParentParameter} is not the
+  {\tt ParentValue} for this parameter.
+\item A {\it queryable parameter} is any parameter
+  that is not a {\tt tableEntry} parameter with
+  a browsable {\tt SourceTable}.
+\item A {\it queryable stage} is a stage that contains some
+  queryable parameter.
+\item An {\it incomplete stage} is a stage that contains some parameter
+  such that: (a) the parameter is not inactive, (b) there is no
+  {\tt DefaultValue} or {\tt DefaultValueMethod} for the parameter,
+  and (c) the current number of repetitions is less than the
+  {\tt MinNumberOfReps} for the parameter.
+\end{enumerate}
+
+\section{Parameter Section of the Command Dialog Box}
+
+\begin{figure}
+
+\centerline{\epsfxsize=5.5in \epsffile{StarGui_parameterSection.eps}}
+
+\caption{
+  The parameter section of the command dialog box.
+}
+\label{parameterSectionFig}
+\end{figure}
+
+Every queryable parameter in the current stage is represented by a section
+of the command dialog box.  See Figure \ref{parameterSectionFig}.
+\begin{enumerate}
+\item On the left is the {\tt Label} attribute of the parameter,
+  at the top of the left-hand side, followed by a colon.
+\item On the right is one subsection for each repetition of the parameter,
+  and sometimes a small {\it Add Another} button.
+\item Initially (before any user interaction), the number of repetition
+  sections will be equal to maximum(1, $m$), where $m$ is the value of
+ {\tt MinNumberOfReps} for the parameter.
+\item The {\tt Add Another} button:
+  \begin{enumerate}
+  \item Has the ToolTip ``Add another''.
+  \item Is a small button with a plus sign (``{\tt +}'') in it.
+  \item Appears only if {\tt MinNumberOfReps} is not equal to
+    {\tt MaxNumberOfReps} for this parameter.
+  \item Is enabled only if the current number of repetitions of the
+    parameter is less than {\tt MaxNumberOfReps} for this parameter.
+  \item Is on the left-hand side of the right-hand half of the parameter
+    section.
+  \end{enumerate}
+\item The entire section corresponding to the parameter is greyed out
+  if the parameter is inactive.
+\end{enumerate}
+
+\section{Repetition Section of the Parameter Section}
+
+\begin{figure}
+
+\centerline{\epsfxsize=5.5in \epsffile{StarGui_repetitionSection.eps}}
+
+\caption{
+  The repetition section of the parameter section.
+}
+\label{repetitionSectionFig}
+\end{figure}
+
+Every repetition of a queryable parameter in the current stage is
+represented by a section of the command dialog box.  See Figure
+\ref{repetitionSectionFig}.
+\begin{enumerate}
+\item On the left is a widget which the user can use to select the
+  value of the repetition.  This widget will be different for different
+  types of parameters.  For instance, for a {\tt boolean} parameter,
+  it may be a widget consisting of two radio buttons labelled ``Yes''
+  and ``No'', whereas for a {\tt string} parameter it may be a
+  text area.
+\item On the right of the section is zero to three small buttons
+  with icons in them.
+\item The {\tt Move Up} button:
+  \begin{enumerate}
+  \item Is a small button with an up-arrow in it.
+  \item Has the ToolTip ``Move up''.
+  \item Appears only if
+    {\tt MaxNumberOfReps} is not equal to 1 for this parameter, and
+    {\tt RepsModel} for this parameter is {\tt sequence}.
+  \item Is enabled only if this is not the first repetition (the topmost
+    repetition).
+  \end{enumerate}
+\item The {\tt Move Down} button:
+  \begin{enumerate}
+  \item Is a small button with an down-arrow in it.
+  \item Has the ToolTip ``Move down''.
+  \item Appears only if
+    {\tt MaxNumberOfReps} is not equal to 1 for this parameter, and
+    {\tt RepsModel} for this parameter is {\tt sequence}.
+  \item Is enabled only if this is not the last repetition (the bottommost
+    repetition).
+  \end{enumerate}
+\item The {\tt Delete} button:
+  \begin{enumerate}
+  \item Is a small button with an X (``\verb/x/'') in it.
+  \item Has the ToolTip ``Delete''.
+  \item Appears only if {\tt MinNumberOfReps} is not equal to
+    {\tt MaxNumberOfReps} for this parameter.
+  \item Is enabled only if the current number of repetitions of the
+    parameter is more than maximum(1, $m$), where $m$ is the value
+    of {\tt MinNumberOfReps} for this parameter.
+  \end{enumerate}
+\end{enumerate}
+
+
+\end{document}

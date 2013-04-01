@@ -1,0 +1,69 @@
+/* IdfTable.java
+ * This source file is part of the Johar project.
+ * @author Jamie Andrews
+ */
+
+package johar.idf;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import johar.utilities.TextInputValidator;
+
+public class IdfTable extends IdfElement {
+    // The attributes of Table
+    private String  _tableName;
+    private boolean _browsable;
+    private String  _defaultHeading;
+
+    public IdfTable(Element domElement, ErrorHandler eh) {
+	super(domElement, eh, "Table");
+
+	NodeList nodeList;
+	int n;
+
+        _tableName = domElement.getAttribute("name");
+        setElementName(_tableName);
+        String ccConvertedName =
+            TextInputValidator.titleCaseTranslation(_tableName);
+
+	// Confirm counts of attributes
+	complainIfMoreThanOne("Browsable");
+	complainIfMoreThanOne("DefaultHeading");
+
+	_browsable = extractAttr("Browsable", true);
+	_defaultHeading = extractAttr("DefaultHeading", "");
+
+	// Release document and error handler for eventual GC
+	_domElement = null;
+	_eh = null;
+    }
+
+    // Getters.
+
+    public String getName() {
+	return _tableName;
+    }
+
+    public boolean getBrowsable() {
+	return _browsable;
+    }
+
+    public String getDefaultHeading() {
+	return _defaultHeading;
+    }
+
+    // For displaying.
+
+    public int indentLevel() {
+	return 2;
+    }
+
+    public void contentsToString() {
+	fieldToString("Browsable", (_browsable ? "true" : "false"));
+	fieldToString("DefaultHeading", _defaultHeading);
+    }
+
+}
+

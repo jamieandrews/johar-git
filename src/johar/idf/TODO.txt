@@ -1,0 +1,3 @@
+- idfFromFile should throw exception containing error message.
+- idfFromFile should convert IDF to XML.
+

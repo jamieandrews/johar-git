@@ -1,0 +1,233 @@
+\documentclass[11pt]{article}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\headheight}{0pt}
+\setlength{\topskip}{0pt}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9in}
+%\setlength{\parindent}{0pt}
+\setlength{\parskip}{1mm}
+
+\usepackage{epsf}
+
+% Magic incantation to allow proper PostScript to PDF conversion:
+  \usepackage[T1]{fontenc} % type 1 fonts
+  \usepackage{times}       % Times-Roman
+
+\sloppy
+
+\newcommand{\Fwname}{Johar}
+
+\begin{document}
+
+\begin{center} \bf \Large
+Johar ``Star'' Interface Interpreter \\
+Requirements Specification of the Star GUI
+\end{center}
+
+\section{The Main Panel}
+
+See Figure \ref{mainPanelFig}.  The Main Panel is displayed when the
+application is started, and remains visible throughout the lifetime of the
+application.
+\begin{enumerate}
+\item At the top is the {\it Menu Bar}.  This shows one menu
+  for each command group in the application.
+\item Each menu is labelled in the Menu Bar by the name of the
+  command group.
+\item The menu items in each menu are the commands that are in
+  that command group.
+\item A menu item is clickable (not greyed out) if the corresponding
+  command is {\it active}.
+\item A command is {\it active} at a given point if either it has no
+  {\tt ActiveIfMethod}, or it has an {\tt ActiveIfMethod} and that
+  method returns {\tt true}.
+\item On the left is the {\it Text Display Area}.  This shows all
+  text messages sent by the application engine using {\tt displayText}
+  that are not displayed through some other means.
+\item On the right is the {\it Table Area}.  This is a tabbed pane.
+\item In the Table Area, there is one tab corresponding to every
+  revealed Table currently in the application.
+\item The application decides which Tables to conceal and reveal.
+\item If, during the processing of a command, the application engine sets
+  the top table, then immediately after the command has finished
+  processing, the topmost table in the Table Area is the last table to
+  have been set as the top table.
+\item If, during the processing of a command, the application engine
+  does not set the top table, then immediately
+  after the command has finished processing, the topmost table in the
+  Table Area remains unchanged from the time that the command was issued.
+\item Notwithstanding the table set as the topmost table by the app
+  engine, the user can (between issuing one command and issuing the
+  next command) click on a table tab in order to move that table to
+  the top.
+\item At the bottom is the {\it Status Bar}.  This shows low-prominence
+  messages sent by the application engine using {\tt displayText}.
+\end{enumerate}
+
+\begin{figure}[t]
+
+\centerline{\epsffile{StarGui_mainPanel.eps}}
+
+\caption{
+  The main panel.
+}
+\label{mainPanelFig}
+\end{figure}
+
+
+\section{The Command Dialog Box}
+
+\begin{figure}
+
+\centerline{\epsfxsize=5.5in \epsffile{StarGui_commandDialogBox.eps}}
+
+\caption{
+  The command dialog box.
+}
+\label{commandDialogBoxFig}
+\end{figure}
+
+See Figure \ref{commandDialogBoxFig}.
+\begin{enumerate}
+\item At the top is the {\tt Label} attribute of the command.
+\item Under that is one section for every {\it queryable parameter}
+  (see below) in the current stage.
+\item Many commands have only one stage.  However, if there is
+  more than one stage, only the queryable parameters in the current stage
+  will appear in the parameter section.
+\item There is one section of the box for each queryable parameter in the
+  current stage.
+\item At the bottom are two to four buttons: {\tt Cancel}, {\tt Previous},
+  {\tt Next}, and {\tt OK}.  {\tt Cancel} and {\tt OK} always appear;
+  {\tt Previous} and {\tt Next} do not always appear.
+\item The {\it Cancel button} always appears and is always enabled.
+\item The Cancel button is on the left-hand side of the dialog box.
+\item The {\it Previous button}:
+  \begin{enumerate}
+  \item Appears if there is more than one {\it queryable stage} (see below).
+  \item Is enabled if the current stage is not the first queryable stage.
+  \end{enumerate}
+\item The {\it Next button}:
+  \begin{enumerate}
+  \item Appears if there is more than one queryable stage.
+  \item Is enabled if the current stage is not the last queryable stage.
+  \end{enumerate}
+\item The {\it OK button}:
+  \begin{enumerate}
+  \item Always appears.
+  \item Is enabled if there are no {\it incomplete stages} (see below).
+  \end{enumerate}
+\item The OK button is on the right-hand side of the dialog box.
+\item A parameter is {\it inactive} if both (a) it has a {\tt ParentParameter},
+  and (b) the current value of the {\tt ParentParameter} is not the
+  {\tt ParentValue} for this parameter.
+\item A {\it queryable parameter} is any parameter
+  that is not a {\tt tableEntry} parameter with
+  a browsable {\tt SourceTable}.
+\item A {\it queryable stage} is a stage that contains some
+  queryable parameter.
+\item An {\it incomplete stage} is a stage that contains some parameter
+  such that: (a) the parameter is not inactive, (b) there is no
+  {\tt DefaultValue} or {\tt DefaultValueMethod} for the parameter,
+  and (c) the current number of repetitions is less than the
+  {\tt MinNumberOfReps} for the parameter.
+\end{enumerate}
+
+\section{Parameter Section of the Command Dialog Box}
+
+\begin{figure}
+
+\centerline{\epsfxsize=5.5in \epsffile{StarGui_parameterSection.eps}}
+
+\caption{
+  The parameter section of the command dialog box.
+}
+\label{parameterSectionFig}
+\end{figure}
+
+Every queryable parameter in the current stage is represented by a section
+of the command dialog box.  See Figure \ref{parameterSectionFig}.
+\begin{enumerate}
+\item On the left is the {\tt Label} attribute of the parameter,
+  at the top of the left-hand side, followed by a colon.
+\item On the right is one subsection for each repetition of the parameter,
+  and sometimes a small {\it Add Another} button.
+\item Initially (before any user interaction), the number of repetition
+  sections will be equal to maximum(1, $m$), where $m$ is the value of
+ {\tt MinNumberOfReps} for the parameter.
+\item The {\tt Add Another} button:
+  \begin{enumerate}
+  \item Has the ToolTip ``Add another''.
+  \item Is a small button with a plus sign (``{\tt +}'') in it.
+  \item Appears only if {\tt MinNumberOfReps} is not equal to
+    {\tt MaxNumberOfReps} for this parameter.
+  \item Is enabled only if the current number of repetitions of the
+    parameter is less than {\tt MaxNumberOfReps} for this parameter.
+  \item Is on the left-hand side of the right-hand half of the parameter
+    section.
+  \end{enumerate}
+\item The entire section corresponding to the parameter is greyed out
+  if the parameter is inactive.
+\end{enumerate}
+
+\section{Repetition Section of the Parameter Section}
+
+\begin{figure}
+
+\centerline{\epsfxsize=5.5in \epsffile{StarGui_repetitionSection.eps}}
+
+\caption{
+  The repetition section of the parameter section.
+}
+\label{repetitionSectionFig}
+\end{figure}
+
+Every repetition of a queryable parameter in the current stage is
+represented by a section of the command dialog box.  See Figure
+\ref{repetitionSectionFig}.
+\begin{enumerate}
+\item On the left is a widget which the user can use to select the
+  value of the repetition.  This widget will be different for different
+  types of parameters.  For instance, for a {\tt boolean} parameter,
+  it may be a widget consisting of two radio buttons labelled ``Yes''
+  and ``No'', whereas for a {\tt string} parameter it may be a
+  text area.
+\item On the right of the section is zero to three small buttons
+  with icons in them.
+\item The {\tt Move Up} button:
+  \begin{enumerate}
+  \item Is a small button with an up-arrow in it.
+  \item Has the ToolTip ``Move up''.
+  \item Appears only if
+    {\tt MaxNumberOfReps} is not equal to 1 for this parameter, and
+    {\tt RepsModel} for this parameter is {\tt sequence}.
+  \item Is enabled only if this is not the first repetition (the topmost
+    repetition).
+  \end{enumerate}
+\item The {\tt Move Down} button:
+  \begin{enumerate}
+  \item Is a small button with an down-arrow in it.
+  \item Has the ToolTip ``Move down''.
+  \item Appears only if
+    {\tt MaxNumberOfReps} is not equal to 1 for this parameter, and
+    {\tt RepsModel} for this parameter is {\tt sequence}.
+  \item Is enabled only if this is not the last repetition (the bottommost
+    repetition).
+  \end{enumerate}
+\item The {\tt Delete} button:
+  \begin{enumerate}
+  \item Is a small button with an X (``\verb/x/'') in it.
+  \item Has the ToolTip ``Delete''.
+  \item Appears only if {\tt MinNumberOfReps} is not equal to
+    {\tt MaxNumberOfReps} for this parameter.
+  \item Is enabled only if the current number of repetitions of the
+    parameter is more than maximum(1, $m$), where $m$ is the value
+    of {\tt MinNumberOfReps} for this parameter.
+  \end{enumerate}
+\end{enumerate}
+
+
+\end{document}

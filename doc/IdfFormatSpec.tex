@@ -1,0 +1,1081 @@
+\documentclass[11pt]{article}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\headheight}{0pt}
+\setlength{\topskip}{0pt}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9in}
+%\setlength{\parindent}{0pt}
+\setlength{\parskip}{1mm}
+
+%\usepackage{epsf}
+\usepackage{graphicx}
+
+% Magic incantation to allow proper PostScript to PDF conversion:
+  \usepackage[T1]{fontenc} % type 1 fonts
+  \usepackage{times}       % Times-Roman
+
+\newcommand{\Fwname}{Johar}
+
+\sloppy
+
+\begin{document}
+
+\begin{center} \bf \Large
+Johar Interface Description File (IDF) \\
+Format Specification
+\end{center}
+
+This document describes the specification of the Johar Interface
+Description File (IDF), version 1.0.
+
+\section{Syntax}
+
+\subsection{Syntax of Attribute Declarations}
+
+An IDF consists of {\it attribute declarations}, possibly
+separated by whitespace.  Whitespace has no particular meaning
+except inside string or longtext values (see below).
+Each attribute declaration is of one of the following forms:
+\begin{center}
+\begin{tabular}{l}
+{\it Attribute} \\
+{\it Attribute name} \\
+{\it Attribute = value} \\
+{\it Attribute name = value} \\
+\end{tabular}
+\end{center}
+Each {\it Attribute} is an upper-case identifier, i.e.\ a
+sequence of letters, numbers and underscores starting with an
+upper-case letter.  Attributes must be those named in the
+specification below.  Each {\it name} is a lower-case
+identifier, i.e.\ a sequence of letters, numbers and underscores
+starting with a lower-case letter.  Generally, each {\it name}
+is chosen by the writer of the IDF.
+
+Values are of four different forms: identifiers, strings,
+longtext, and structures.  An {\it identifier} is a
+sequence of letters, numbers and underscores.  A {\it string}
+is a sequence of characters in-between paired double quote
+characters.  Inside a string, the backslash is the escape
+character:  the sequence \verb^\"^ indicates a literal double
+quote, the sequence \verb^\\^ indicates a literal backslash,
+and the backslash followed by a newline indicates a literal
+newline.
+
+Although multi-line strings can be constructed by using the
+backslash followed by a newline, this is not a very convenient
+way of entering them.  A {\it longtext} is a value format
+designed for multi-line text.  A longtext value consists of
+a sequence of two open curly braces (``\verb/{{/'') at the end
+of a line, followed by any lines of arbitrary text, followed by
+a sequence of two close curly braces (``\verb/}}/'') on a
+separate line.
+
+A {\it structure} consists of a single open curly brace,
+followed by any number of attribute declarations, followed
+by a single close curly brace.  Each attribute declaration
+has the format described at the top of this section.
+If an attribute declaration contains a structure, then
+the attributes in the structure are referred to as
+{\it child} attributes, and the enclosing attribute as the
+{\it parent} attribute; we also say that the child attributes
+are {\it sub-attributes} of the parent.
+
+\subsection{Example}
+
+\begin{figure}
+\begin{verbatim}
+Table clientData
+Command open = {
+  BriefHelp = "Open or create client data file."
+  MultiLineHelp = {{
+    Open the file containing data about clients.
+    If the file does not exist, it is created.
+  }}
+  Parameter preferredExtension = {
+    Type = text
+  }
+}
+\end{verbatim}
+\caption{
+  Example of IDF syntax.
+}
+\label{idf-example-fig}
+\end{figure}
+
+As an example of all of the above, consider the attribute declarations
+shown in Figure \ref{idf-example-fig}.
+In that example, there happen to be no repetitions of
+attribute names, although in some cases attributes can be
+repeated.  The {\tt Table} attribute has a name but no value;
+the {\tt Command} and {\tt Parameter} attributes each have both
+a name and a value (both values happen to be structures); and
+all other attributes have a value but no name.  {\tt Type} has
+an identifier value, {\tt BriefHelp} has a string value, and
+{\tt MultiLineHelp} has a longtext value.  {\tt BriefHelp},
+{\tt MultiLineHelp}, and {\tt Parameter} are sub-attributes of
+{\tt Command}, and {\tt Type} is a
+sub-attribute of {\tt Parameter}.
+
+\subsection{Processing of Identifiers as Values}
+
+Wherever a double-quoted string literal can appear as a value
+for an attribute, an upper- or lower-case identifier can also
+appear if such an identifier would be in the right format.
+In this case the value is treated as a string
+consisting of just the characters in the identifier.  For
+instance, the string \verb/"tableEntry"/ and the lower-case
+identifier \verb/tableEntry/ are treated exactly the same
+when they appear as the value of a parameter.
+
+\section{Allowed Attributes}
+
+In what follows below, if no mention is made of the {\it name}
+corresponding to an attribute, then the attribute must have no associated
+name.  Each attribute is followed by a description of the
+{\it multiplicity} of the attribute, i.e.\ the number of times that the
+attribute can appear at the top level and/or as a sub-attribute of another
+attribute.  If an attribute is optional (has multiplicity ``0 or 1''),
+it may have a {\it default value}, which is also described.
+
+\subsection{Top-level Attributes}
+
+This section describes the attributes that can appear at the top
+level of the IDF.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+
+\item \underline{\tt Application}:  The unique
+identifier of the application.  (Required)
+\begin{itemize}
+\item {\it value}: An upper-case identifier (the name of the application).
+\end{itemize}
+Multiplicity: Exactly 1. \\
+
+\item \underline{\tt ApplicationEngine}:  The class which contains the
+application-specific logic of the application.
+\begin{itemize}
+\item {\it value}: An upper-case identifier (the name of the
+  application engine class).
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: The value of the {\tt Application} attribute.
+
+\item \underline{\tt Command}:  A structure representing the basic
+top-level unit of user-application interaction.
+\begin{itemize}
+\item {\it name}: A lower-case identifier (the name of the command).
+\item {\it value}: A structure.  See Sections
+  \ref{sub-attr-command-sec}, Sub-attributes of {\tt Command},
+  and \ref{sub-attr-stage-sec}, Sub-attributes of {\tt Stage} and
+  Single-Stage {\tt Command}s.
+\end{itemize}
+Multiplicity: 1 or more.
+
+\item \underline{\tt CommandGroup}:  A structure representing a
+group of related commands.
+\begin{itemize}
+\item {\it name}: A lower-case identifier (the name of the command group).
+\item {\it value}: A structure.  See Section
+  \ref{sub-attr-command-group-sec}, Sub-attributes of {\it CommandGroup}.
+\end{itemize}
+Multiplicity: 0 or more. \\
+A {\tt CommandGroup} is a group of conceptually related commands.
+The commands themselves are defined in {\tt Command} attributes;
+{\tt CommandGroup}s group them by name, and contain no additional
+information about the {\tt Command}s.
+
+An interface interpreter may use command group information in order
+to structure the interface.  For instance, a classic GUI might
+present each command group in a separate dropdown menu on a menu
+bar, and any interface interpreter might use command group information
+in order to structure help information.
+
+A command cannot appear as a member of more than one command group.
+All commands that are not explicitly put into a command group in
+an IDF are put into an implicitly-defined command group, whose name
+is {\tt commands}.  In particular, if no {\tt CommandGroup}s are
+defined, all commands become members of {\tt commands}.
+
+\item \underline{\tt IdfVersion}:  The version of the IDF format used
+in the creation of the file.  (Required)
+\begin{itemize}
+\item {\it value}: A double-quoted string literal, containing a valid
+  major and minor version number.
+\end{itemize}
+Multiplicity: Exactly 1. \\
+The version of the first public release of Johar will be 1.0.
+Therefore, initially all Johar IDFs should contain the declaration
+\verb/IdfVersion = "1.0"/.
+
+\item \underline{\tt InitializationMethod}:  The name of the
+application engine method used to initialize the engine.
+\begin{itemize}
+\item {\it value}: A lower-case identifier (the name of the
+  application engine method).
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: {\tt applicationEngineInitialize}.
+
+\item \underline{\tt Table}:  The structure representing a list of
+similar entities presented to the user by the application engine.
+\begin{itemize}
+\item {\it name}: A lower-case identifier (the name of the table).
+\item {\it value}: A structure.  See Section
+  \ref{sub-attr-table-sec}, Sub-attributes of {\tt Table}.
+\end{itemize}
+Multiplicity: 0 or more.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Sub-attributes of {\tt Command}}
+\label{sub-attr-command-sec}
+
+This section describes the attributes that are acceptable sub-attributes
+of any {\tt Command} attribute.  In addition, single-stage {\tt Command}s
+(commands that have no {\tt Stage} attribute) can contain any of the
+attributes described below in Section \ref{sub-attr-stage-sec},
+Sub-attributes of {\tt Stage} and Single-Stage {\tt Command}s.
+
+\begin{itemize}
+
+\item \underline{\tt ActiveIfMethod}:  The name of an application
+engine method that
+can be called to determine if the user should be able to access
+the command.
+\begin{itemize}
+\item {\it value}: A lower-case identifier.  This is the method
+  that will be called to determine if the command is active, i.e.\ if
+  the user should be allowed to issue the command.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+If no {\tt ActiveIfMethod} attribute is given, then the command
+is always active.
+
+It is recommended that the {\tt ActiveIfMethod} is as efficient
+as possible (e.g.\ returning only the value of a field or data
+member), because it may be called frequently by the interface
+interpreter.
+
+\item \underline{\tt BriefHelp}:  A brief help message describing
+the purpose of the command.
+\begin{itemize}
+\item {\it value}: A string of 30 characters or fewer, containing
+  no carriage return.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: The {\tt Label} of the command, truncated to 30
+characters, if needed. \\
+This attribute, if given, gives a very brief help message
+describing the purpose of the command, suitable for such things
+as ToolTips.
+
+\item \underline{\tt CommandMethod}:  The application engine
+method that is called to actually carry out the command.
+\begin{itemize}
+\item {\it value}: A lower-case identifier.  This is the method
+  that will be called to carry out the actual command.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value:  The command name.
+
+\item \underline{\tt Label}:  The text describing the {\tt Command}
+in the interface.
+\begin{itemize}
+\item {\it value}: Any string.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value:  Derived from the name of the command using standard
+camel-case translation (see Section \ref{camel-case-sec}). \\
+The {\tt Label}, if given, is the text that will appear (possibly
+with an appended ellipsis, ``\ldots'') on the menu item, button,
+or other interface element corresponding to the command.
+
+\item \underline{\tt MultiLineHelp}:  A thorough help message
+describing the purpose of the command.
+\begin{itemize}
+\item {\it value}: A string or multi-line text of any length.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value:  The value of the {\tt OneLineHelp} attribute. \\
+This attribute, if given, gives a thorough help message.
+IDF writers wanting to give thorough help for each {\it parameter}
+of a command should use the {\tt MultiLineHelp} attributes of the
+{\it parameters}, as this will promote encapsulation and may
+(depending on the interface interpreter) give the user more
+control of the volume of help given.
+
+\item \underline{\tt OneLineHelp}:  A one-line help message
+describing the purpose of the command.
+\begin{itemize}
+\item {\it value}: A string of 80 characters or fewer, containing
+  no carriage return.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value:  The value of the {\tt BriefHelp} attribute. \\
+This attribute, if given, gives a help message describing the purpose of
+the command, somewhat longer than the {\tt BriefHelp}.  The
+{\tt OneLineHelp} messages may be useful for the interface interpreter to
+display in a list.
+
+\item \underline{\tt Prominence}:  An integer describing
+how prominently the {\tt Command} should be shown to the user.
+\begin{itemize}
+\item {\it value}: An integer greater than or equal to 0.  Value ranges:
+  \begin{itemize}
+  \item 3000 or more:  High prominence.  For instance, in a
+    classic GUI, commands
+    with prominence 3000 or more might be placed on the screen as
+    buttons so that they are as quickly accessible as possible.
+  \item 2000-2999:  Normal prominence.
+  \item 1000-1999:  Reduced prominence.
+  \item 0-999:  Low prominence.  For instance, in a classic GUI,
+    commands with prominence 0-999 might be placed on a ``More
+    commands'' popup.
+  \end{itemize}
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: 2000.
+
+\item \underline{\tt Question}:  A question which may be asked
+of the user, given the values of the {\tt Parameter}s and
+previous {\tt Question}s in the command.
+\begin{itemize}
+\item {\it name}: A lower-case identifier (the name of the question).
+\item {\it value}: A structure.  See Section
+  \ref{sub-attr-question-sec}, Sub-attributes of {\tt Question}.
+\end{itemize}
+Multiplicity: 0 or more.
+
+\item \underline{\tt QuitAfter}:  An indication of whether the interface
+interpreter running the application should always terminate after the
+command terminates.
+\begin{itemize}
+\item {\it value}: A Johar boolean (e.g., \verb/yes/ or \verb/no/).
+  See Section \ref{johar-booleans-sec}.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: \verb/no/. \\
+A value of \verb/yes/ means that the interface interpreter should always
+quit after execution of the {\tt CommandMethod}.  A value of \verb/no/
+means that it should expect more commands, unless there is a
+{\tt QuitAfterIfMethod} which returns {\tt true} (see below).
+
+\item \underline{\tt QuitAfterIfMethod}:  An application engine method
+that is called to determine whether the interface interpreter running the
+application engine should terminate after the command terminates.
+\begin{itemize}
+\item {\it value}: A lower-case identifier (the method to be
+  called to determine quit status).
+  The method should return a boolean (true if the application
+  should terminate, false otherwise).
+\end{itemize}
+Multiplicity: 0 or 1. \\
+If a {\tt QuitAfterIfMethod} attribute is present, the indicated method
+is called after the {\tt CommandMethod} is called.  If the
+{\tt QuitAfterIfMethod} returns true, then the interface interpreter
+takes this to be an indication that the application should
+terminate.
+
+\item \underline{\tt Stage}:  One stage in the processing of the
+{\tt Command}.  Each stage may take separate {\tt Parameter}s.
+\begin{itemize}
+\item {\it name}: A lower-case identifier (the name of the {\tt Stage}).
+\item {\it value}: A structure.  See Section
+  \ref{sub-attr-stage-sec}, Sub-attributes of {\tt Stage} and
+  Single-Stage {\tt Command}s.
+\end{itemize}
+Multiplicity: 0 or more. \\
+A {\tt Command} can be broken up into several {\tt Stage}s.
+There can be zero or more explicit {\tt Stage} sub-attributes.
+If there are zero explicit {\tt Stage} attributes, then
+one stage is implicitly defined.
+All the attributes mentioned in Section \ref{sub-attr-stage-sec}
+which appear as sub-attributes of the {\tt Command} are then
+placed into the one implicitly-defined stage.
+The names of the {\tt Parameter}s in all of the {\tt Stage}s in a command
+must be disjoint.
+
+\end{itemize}
+
+Each stage in a multi-stage command may be handled at a separate time by
+an interface interpreter.  A classic GUI interface interpreter, for
+instance, may present a multi-stage command using a ``wizard''-style
+dialog box, in which the user can move forward or backward through the
+stages by clicking a ``next'' button.  This may facilitate the elicitation
+of parameters for infrequently-given commands or commands that have many
+parameters.
+
+If a {\tt Command} has more than one {\tt Stage}, then the interface
+interpreter may call the {\tt ParameterCheckMethod}s of each stage
+separately, and the {\tt DefaultValueMethod}s of each parameter
+separately (see below for more thorough information).
+This gives a mechanism by which the user can supply values
+for parameters in one stage, which are then used to compute the default
+values of other parameters.  Thus, if the application programmer needs to
+collect user-input values of parameter A (e.g.\ input file name) before
+computing the default value of parameter B (e.g.\ output file name),
+parameter A can be in an earlier stage and parameter B in a later
+stage.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Sub-attributes of {\tt Stage} and Single-Stage {\tt Command}s}
+\label{sub-attr-stage-sec}
+
+These sub-attributes can appear inside a {\tt Stage} in a {\tt Command}.
+If the command has no explicit {\tt Stage}s, they can also appear
+directly inside the {\tt Command}, in which case they define the
+sub-attributes of the one implicit stage of the command.
+
+\begin{itemize}
+
+\item \underline{\tt Parameter}:  A piece of data
+which comes from the user and is relevant
+to the {\tt Command}, such as an integer, floating-point
+number or string.
+\begin{itemize}
+\item {\it name}: A lower-case identifier (the name of the parameter).
+\item {\it value}: A structure.  See Section
+  \ref{sub-attr-param-sec}, Sub-attributes of {\tt Parameter}.
+\end{itemize}
+Multiplicity: 0 or more. \\
+
+\item \underline{\tt ParameterCheckMethod}:  A method in the
+application engine that can be
+called to check the validity of the stage's parameters.
+\begin{itemize}
+\item {\it value}: A lower-case identifier.  This is the method
+  that will be called to check the validity of the parameter values.
+  It should return a string value (null or the empty string if all
+  the parameters are valid, an error message if one or more parameters
+  are invalid).
+\end{itemize}
+Multiplicity: 0 or 1. \\
+If a {\tt ParameterCheckMethod} is given, then if the user has
+input invalid values, the interface interpreter can display the
+error message and allow the user to edit the erroneous values
+they originally gave.  The {\tt ParameterCheckMethod}
+should not do any processing related to the main function of the
+command, since the user may later decide to change the parameters, or
+even to cancel the command.
+
+If no {\tt ParameterCheckMethod} is given, then the parameter
+values will be checked by any implicit rules given for the
+parameter (e.g.\ the {\tt MinValue} and {\tt MaxValue} attributes
+for an {\tt int} parameter).
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Sub-attributes of {\tt Parameter}}
+\label{sub-attr-param-sec}
+
+This section describes the attributes that are acceptable
+sub-attributes of any {\tt Parameter} attribute.
+
+\begin{itemize}
+
+\item \underline{\tt BriefHelp}:  A brief help message describing
+the meaning of the parameter.
+\begin{itemize}
+\item {\it value}: A string of 30 characters or fewer, containing
+  no carriage return.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: The {\tt Label} of the parameter, truncated to 30
+characters, if needed. \\
+This attribute, if given, gives a very brief help message
+describing the purpose of the parameter.  For instance, a classic
+GUI could use this as the text of a ToolTip.
+
+\item \underline{\tt Choices}:  A string representing the possible
+choices of values of a parameter of type {\tt choice} (see below,
+attribute {\tt Type}).
+\begin{itemize}
+\item {\it value}:  A double-quoted string literal.
+\end{itemize}
+Multiplicity:  For parameters of type {\tt choice}, exactly 1.
+For other parameters, 0. \\
+The string contains the possible choices of values, separated
+by bar (``\verb/|/'') characters; e.g. \\
+\verb/"portrait|landscape"/,
+\verb/"clubs|diamonds|hearts|spades"/.
+To include a literal bar character in a choice, the bar should
+be preceded by a backslash (``\verb/\/'') character.
+To include a literal backslash character in a choice,
+use two backslashes (``\verb/\\/'').
+
+\item \underline{\tt DefaultValue}:  The default value for the parameter.
+\begin{itemize}
+\item {\it value}:  A boolean, integer, real number or double-quoted
+  string literal, as appropriate.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+If the user gives no explicit value for a parameter, then the interface
+interpreter will act as if they have given the {\tt DefaultValue} as the
+value.  For a parameter of type {\tt choice}, the value must be one
+of the choices in the {\tt Choices} attribute string.
+
+\item \underline{\tt DefaultValueMethod}:  A method in the application
+engine to be called to give the default value for the parameter.
+\begin{itemize}
+\item {\it value}:  A lower-case identifier (the name of the method
+  to be called to return the default value).
+\end{itemize}
+Multiplicity: 0 or 1.  A parameter cannot have both a {\tt DefaultValue}
+attribute and a {\tt DefaultValueMethod} attribute. \\
+In a Java application engine, the {\tt DefaultValueMethod} must return a
+value of type {\tt boolean},
+{\tt long}, {\tt double} or {\tt String}, as appropriate.
+For a parameter of type {\tt choice}, the value returned must be one
+of the choices in the {\tt Choices} attribute string.
+
+\item \underline{\tt FileConstraint}:  A constraint on the status of
+a parameter of type {\tt file} (see below, attribute {\tt Type}).
+\begin{itemize}
+\item {\it value}: A lower-case identifier.  Accepted values:
+  \begin{itemize}
+  \item {\tt mustExist}:  The file must exist at the time the
+    command is issued.
+  \item {\tt mustBeReadable}:  The file must exist and be
+    readable by the application at the time the command is issued.
+  \item {\tt mustNotExistYet}:  The file must not exist at the
+    time the command is issued.
+  \item {\tt none}:  No constraint.
+% \item {\tt confirmOverwriteIfExists}:  The file will be
+%   overwritten, so the interface interpreter must confirm the
+%   user's intention to overwrite the file if it currently exists.
+  \end{itemize}
+\end{itemize}
+Multiplicity: For parameters of type {\tt file},  0 or 1.
+For other parameters, 0. \\
+Default value: {\tt none}.
+
+\item \underline{\tt Label}:  The string that will be used to describe the
+parameter if and when the user is asked to enter a value for the parameter.
+\begin{itemize}
+\item {\it value}:  A double-quoted string literal.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value:  Derived from the name of the command using standard
+camel-case translation (see Section \ref{camel-case-sec}). \\
+The {\tt Label}, if given, is the text that will appear to the user to
+indicate what parameter they are to enter.  For instance, in a classic
+GUI, this would be text displayed beside the user-controllable widget used
+to set the value of the parameter.
+
+\item \underline{\tt MaxNumberOfChars}:  The maximum number of characters
+that can be entered by the user as the value of a {\tt text} parameter
+(see below, attribute {\tt Type}).
+\begin{itemize}
+\item {\it value}:  An integer literal greater than or equal to 1;
+  or the lower-case identifier \verb/unlim/.
+\end{itemize}
+Multiplicity: For parameters of type {\tt text}, 0 or 1.
+For other parameters, 0. \\
+Default value: {\tt unlim}.
+
+\item \underline{\tt MaxNumberOfLines}:  The maximum number of lines that
+can be entered by the user as the value of a {\tt text} parameter
+(see below, attribute {\tt Type}).
+\begin{itemize}
+\item {\it value}:  An integer literal greater than or equal to 1;
+  or the lower-case identifier \verb/unlim/.
+\end{itemize}
+Multiplicity: For parameters of type {\tt text}, 0 or 1.
+For other parameters, 0. \\
+Default value: 1.
+
+\item \underline{\tt MaxNumberOfReps}:  The maximum number of
+repetitions of the parameter that the user can give.
+\begin{itemize}
+\item {\it value}: An integer literal greater than or equal
+  to 1, giving the
+  maximum number of repetitions allowed for this parameter;
+  or the lower-case identifier \verb/unlim/.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: 1. \\
+The user is not allowed to give more than {\tt MaxNumberOfReps}
+repetitions of the parameter.
+See {\tt MinNumberOfReps} for more detail.
+
+\item \underline{\tt MaxValue}:  The maximum possible value of
+a parameter of type {\tt int} or {\tt float}
+(see below, attribute {\tt Type}).
+\begin{itemize}
+\item {\it value}: An integer or real number literal.
+\end{itemize}
+Multiplicity:  For parameters of type {\tt int} or {\tt float}, 0 or 1.
+For other parameters, 0. \\
+Default value:  The maximum value representable in a signed 64-bit integer
+(resp.\ 64-bit floating-point) number.
+
+\item \underline{\tt MinNumberOfReps}:  The minimum number of
+repetitions of the parameter that the user can give (see below).
+\begin{itemize}
+\item {\it value}: An integer literal greater than or equal
+  to 0, giving the
+  minimum number of repetitions allowed for this parameter.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: 1. \\
+{\tt MinNumberOfReps} must be less than or equal to {\tt MaxNumberOfReps}.
+
+The minimum and maximum number of repetitions indicate how many
+times the parameter can be repeated.  If a {\tt Parameter}
+has a {\tt DefaultValue} or {\tt DefaultValueMethod}, then any
+repetitions up to the {\tt MinNumberOfReps} that are not explicitly
+changed by the end user are filled in by that value.  If the
+{\tt Parameter} has neither a {\tt DefaultValue} nor a
+{\tt DefaultValueMethod}, and {\tt MinNumberOfReps} is greater
+than 0, then the end user is required to fill in at least
+{\tt MinNumberOfReps} repetitions.
+
+For example, a command which takes a person's name as a parameter
+might have a {\tt Parameter} of type {\tt text} with no default
+value and a minimum and maximum number of repetitions equal to 1,
+obliging the user to enter a name.
+As another example, a command to show the differences between two files
+might take exactly two file parameters.  To enforce this
+restriction, the programmer might create a {\tt Parameter} with
+type {\tt file} and with {\tt MinNumberOfReps} and
+{\tt MaxNumberOfReps} both equal to 2.
+
+\item \underline{\tt MinValue}:  The minimum possible value of
+a parameter of type {\tt int} or {\tt float}
+(see below, attribute {\tt Type}).
+\begin{itemize}
+\item {\it value}: An integer or real number literal.
+\end{itemize}
+Multiplicity:  For parameters of type {\tt int} or {\tt float}, 0 or 1.
+For other parameters, 0. \\
+Default value:  The minimum value representable in a signed 64-bit integer
+(resp.\ 64-bit floating-point) number. \\
+{\tt MinValue} must be less than or equal to {\tt MaxValue}.
+
+\item \underline{\tt MultiLineHelp}:  A thorough help message
+describing the meaning of the parameter.
+\begin{itemize}
+\item {\it value}: A string or multi-line text of any length.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: The {\tt OneLineHelp} of the parameter. \\
+This attribute, if given, gives a thorough help message
+regarding the parameter.
+
+\item \underline{\tt OneLineHelp}:  A one-line help message describing
+the meaning of the parameter.
+\begin{itemize}
+\item {\it value}: A string of 80 characters or fewer, containing
+  no carriage return.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: The {\tt BriefHelp} of the parameter. \\
+This attribute, if given, gives a help message describing the purpose of
+the parameter, somewhat longer than the {\tt BriefHelp}.  The
+{\tt OneLineHelp} messages may be useful for the interface interpreter to
+display in a list.
+
+\item \underline{\tt ParentParameter}:  The name of another parameter
+that controls the existence of the current parameter.
+\begin{itemize}
+\item {\it value}:  A lower-case identifier (the name of the
+  parent parameter).
+\end{itemize}
+Multiplicity: 0 or 1. \\
+This attribute and {\tt ParentValue}
+are used for parameters that only make sense when some other parameter
+has a certain value.  In this case the other parameter is referred
+to as the parent parameter.
+
+As an example, when printing a document, the user may choose to
+``print to a file'', in which case the user must enter a file name
+parameter.  However, if the user does not choose to print to a
+file, then there is no reason to expect the user to enter a
+file name.  This situation can be set up by giving the
+{\tt print} command two parameters:  {\tt printToFile},
+a {\tt boolean} parameter, and
+{\tt outputFileName}, a {\tt file} parameter
+whose parent parameter is {\tt printToFile} and whose
+{\tt ParentValue} is \verb/true/.
+If the parent parameter does not have the indicated {\tt ParentValue},
+then the user is not required to enter any value for the parameter,
+regardless of any information about the minimum number of
+repetitions required.
+
+Circular {\tt ParentParameter} references are not allowed.  That is,
+a chain of {\tt ParentParameter} references must end in a parameter
+with no {\tt ParentParameter}.
+
+\item \underline{\tt ParentValue}:  The value of the parent parameter
+that triggers the existence of this parameter.
+\begin{itemize}
+\item {\it value}:  An integer, floating-point or string
+  literal, as appropriate.
+\end{itemize}
+Multiplicity:  For parameters with a {\tt ParentParameter} value,
+exactly 1.  For other parameters, 0. \\
+See {\tt ParentParameter} for more detail.
+
+\item \underline{\tt Prominence}:  An integer describing how
+prominently the {\tt Parameter} should be shown to the user.
+\begin{itemize}
+\item {\it value}: An integer greater than or equal to 0.  Value ranges:
+  \begin{itemize}
+  \item 3000 or more:  High prominence.  For instance, in a
+    classic GUI, parameters
+    with prominence 3000 or more may be placed in the most
+    prominent location in the dialog box.
+  \item 2000-2999:  Normal prominence.
+  \item 1000-1999:  Reduced prominence.
+  \item 0-999:  Low prominence.  For instance, in a classic GUI,
+    parameters with prominence 0-999 might be accessed only through an
+    ``Advanced'' button in the parameter dialog box.
+  \end{itemize}
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: 2000.
+
+\item \underline{\tt RepsModel}:  A description of the intended
+model for the repetitions of the parameter.
+\begin{itemize}
+\item {\it value}: A lower-case identifier.  Accepted values:
+  \begin{itemize}
+  \item {\tt set}:  The repetitions of the parameter are considered
+    to be a set of disjoint values.  The interface interpreter does not have
+    to keep track of the order in which the user has input the
+    values, and does not have to load them in the Gem in the
+    order that the user has given them.  The interface interpreter
+    does not have to provide a way for the user to input multiple
+    repetitions that have the same value.
+  \item {\tt multiset}:  The repetitions of the parameter are considered
+    to be a set of values, with one repetition possibly having the
+    same value as another.  The interface interpreter does not have
+    to keep track of the order in which the user has input the
+    values, and does not have to load them in the Gem in the
+    order that the user has given them.  However, it does have to
+    provide the user with the ability to give multiple repetitions
+    with the same value.
+  \item {\tt sequence}:  The repetitions of the parameter are
+    considered to be a sequence of values, with one repetition
+    possibly having the same value as another.  The interface
+    interpreter must load them in the Gem in the order that
+    the user has given them.
+  \end{itemize}
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: {\tt set}.
+
+The {\tt RepsModel} may be used by an interface interpreter in order
+to structure the interface.  For instance, in a classic GUI, a {\tt choice}
+parameter with {\tt MaxNumberOfReps = unlim} and {\tt RepsModel = set} may
+be presented as a set of radio buttons, any of which can be turned on.
+In contrast, a {\tt file} parameter 
+with {\tt MaxNumberOfReps = unlim} and {\tt RepsModel = sequence} must
+be presented so that the user can specify a sequence of files, for
+instance so that the application engine method is guaranteed to process
+them in that order.
+
+\item \underline{\tt SourceTable}:  The {\tt Table} associated
+with a {\tt tableEntry} parameter (see below, attribute {\tt Type}).
+\begin{itemize}
+\item {\it value}: A lower-case identifier (the name of the
+  table from which the user selects values for the parameter).
+\end{itemize}
+Multiplicity: For a parameter of type {\tt TableEntry}, exactly 1.
+For other parameters, 0.
+
+\item \underline{\tt Type}:  One of a few values describing
+what kind of parameter it is.
+\begin{itemize}
+\item {\it value}: A lower-case identifier, signifying the
+  type of the parameter.  Possible values are:
+  \begin{itemize}
+  \item {\tt boolean}:  Either true or false.
+  \item {\tt choice}:  One of a fixed number of choices.
+    Every parameter with a {\tt Type} of {\tt choice} must
+    have a {\tt Choices} attribute.
+  \item {\tt date}:  A calendar date.
+  \item {\tt file}:  A file name.
+  \item {\tt float}:  A floating-point number.
+  \item {\tt int}:  An integer.
+  \item {\tt text}:  A text string.
+  \item {\tt tableEntry}:  The parameter is an entry from
+    one of the tables declared in the IDF.
+    Every parameter with a {\tt Type} of {\tt tableEntry} must
+    have a {\tt SourceTable} attribute.
+  \item {\tt timeOfDay}:  A time of day.
+  \end{itemize}
+\end{itemize}
+Multiplicity: exactly 1.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Sub-attributes of {\tt Question}}
+\label{sub-attr-question-sec}
+
+This section describes the attributes that are acceptable
+sub-attributes of any {\tt Question} attribute.
+
+{\tt Question}s are similar to {\tt Parameter}s.  However, the
+intention is that the system expects a value for a {\tt Question}
+only when an application engine method judges that a value is
+required, based on the values of the {\tt Parameter}s.
+An interface interpreter may also provide a ``cancel'' option
+when asking a question, to allow the user to cancel the command
+in response to the question.
+
+\begin{itemize}
+
+\item \underline{\tt AskIfMethod}:  The application engine
+method to call in order to see if the question should be asked.
+(Required)
+\begin{itemize}
+\item {\it value}: A lower-case identifier, the name of the
+  method to call to determine whether to require a value for
+  the {\tt Question}.
+\end{itemize}
+Multiplicity: exactly 1. \\
+The application engine programmer can assume that the values for
+the {\tt Parameter}s of the command, and all previous {\tt Question}s,
+are accessible from the Gem when the ask-if method is called.
+
+For example, say that the programmer of an editor
+application wants the question ``File has been modified.  Save changes?''
+to be asked at appropriate points (for instance, for the {\tt close},
+{\tt new}  and {\tt quit} commands).  They could do this by adding
+the following {\tt Question} to all appropriate commands:
+\begin{verbatim}
+Question saveIfModified = {
+  Type = boolean
+  Label = "File has been modified.  Save changes?"
+  AskIfMethod = fileModified
+}
+\end{verbatim}
+
+\item The following attributes of Parameter are also acceptable
+  sub-attributes of any {\tt Question}:
+  \begin{itemize}
+  \item{} {\tt BriefHelp}
+  \item{} {\tt Choices}
+  \item{} {\tt DefaultValue}
+  \item{} {\tt DefaultValueMethod}
+  \item{} {\tt FileConstraint}
+  \item{} {\tt Label}
+  \item{} {\tt MaxNumberOfChars}
+  \item{} {\tt MaxNumberOfLines}
+  \item{} {\tt MaxValue}
+  \item{} {\tt MinValue}
+  \item{} {\tt MultiLineHelp}
+  \item{} {\tt OneLineHelp}
+  \item{} {\tt Prominence}
+  \item{} {\tt SourceTable}
+  \item{} {\tt Type}
+  \end{itemize}
+
+\item The following attributes of Parameter are {\it not} acceptable
+  sub-attributes of any {\tt Question}:
+  \begin{itemize}
+  \item{} {\tt MaxNumberOfReps}
+  \item{} {\tt MinNumberOfReps}
+  \item{} {\tt ParentParameter}
+  \item{} {\tt ParentValue}
+  \item{} {\tt RepsModel}
+  \end{itemize}
+  In addition, the {\tt SourceTable} of any question of type
+  {\tt tableEntry} must refer to a non-browsable table.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Sub-attributes of {\tt CommandGroup}}
+\label{sub-attr-command-group-sec}
+
+This section describes the attributes that are acceptable
+sub-attributes of any {\tt CommandGroup} attribute.
+
+\begin{itemize}
+
+\item \underline{\tt Label}:  The text describing the {\tt CommandGroup}
+in the interface.
+\begin{itemize}
+\item {\it value}: Any string.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: Derived from the name of the command group using standard
+camel-case translation (see Section \ref{camel-case-sec}). \\
+The {\tt Label}, if given, is the text that will appear
+on the menu heading, button,
+or other interface element corresponding to the command group.
+
+\item \underline{\tt Member}:  One of the commands which is
+a member of this {\tt CommandGroup}.
+\begin{itemize}
+\item {\it value}: a lower-case identifier specifying one
+  command that is a member of this command group.
+\end{itemize}
+Multiplicity: 1 or more.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Sub-attributes of {\tt Table}}
+\label{sub-attr-table-sec}
+
+This section describes the attributes that are acceptable
+sub-attributes of any {\tt Table} attribute.
+
+\begin{itemize}
+
+\item \underline{\tt Browsable}:  A value indicating whether
+the user should be able to browse the table.
+\begin{itemize}
+\item {\it value}: A Johar boolean (e.g., \verb/yes/ or \verb/no/).
+  See Section \ref{johar-booleans-sec}.
+\end{itemize}
+Default value: {\tt yes}.
+
+Some tables are intended to be presented to the user for them
+to browse and select rows in, separately from the processing
+of a given command.  Others are simply intended to be
+tables of candidate values for parameters.  The former kind of
+table is referred to as ``browsable'', the latter
+``not browsable''.  The {\tt Browsable} attribute controls this
+behaviour.
+
+\item \underline{\tt DefaultHeading}:  The default heading of the
+table.
+\begin{itemize}
+\item {\it value}: A double-quoted string or long text.
+\end{itemize}
+Default value: The {\tt Label} of the table. \\
+This attribute gives the heading that will be associated with
+the table if no heading is set by the application engine.
+If no {\tt DefaultHeading} attribute is given, then the heading will be
+derived from the name of the table using standard camel-case
+translation (see Section \ref{camel-case-sec}).
+
+\item \underline{\tt Label}:  The text describing the {\tt Table}
+in the interface.
+\begin{itemize}
+\item {\it value}: Any string.
+\end{itemize}
+Multiplicity: 0 or 1. \\
+Default value: Derived from the name of the table using standard
+camel-case translation (see Section \ref{camel-case-sec}). \\
+The {\tt Label}, if given, is the text that will appear on the menu item,
+button, tab, or other interface element corresponding to the table.
+
+
+\end{itemize}
+
+\subsection{Generated Attribute Values}
+
+When an IDF is read, it is processed into an internal form
+that can be used by an interface interpreter.  For convenience,
+default values are generated automatically for some sub-attributes if
+they are not given explicitly in the IDF.  The descriptions of
+these default values are given above, in the sections pertinent
+to the individual parameters.
+
+The label and help attributes, if not given, are generated in a specific
+sequence.  The sequence, along with the default values generated, are as
+follows.
+\begin{itemize}
+\item {\tt Label}:  The de-camel-cased version of the name of
+  the command, command group, parameter or question.
+\item {\tt BriefHelp}:  The {\tt Label} for the command, parameter, or
+  question, truncated to 30 characters if necessary.
+\item {\tt OneLineHelp}:  The value of {\tt BriefHelp}.
+\item {\tt MultiLineHelp}:  The value of {\tt OneLineHelp}.
+\end{itemize}
+
+\section{Johar Booleans}
+\label{johar-booleans-sec}
+
+In some places in Johar IDFs, it is possible to give a boolean value.
+In all of these places, the following values are acceptable:
+\begin{itemize}
+\item \verb/yes/, \verb/Yes/, \verb/YES/, \verb/true/, \verb/True/, or
+  \verb/TRUE/, all of which mean the same thing.
+\item \verb/no/, \verb/No/, \verb/NO/, \verb/false/, \verb/False/, or
+  \verb/FALSE/, all of which mean the same thing.
+\end{itemize}
+This flexibility is intended to mirror the flexibility which interface
+interpreters are encouraged to have in accepting boolean values from end
+users of the applications.
+
+\section{Camel Case Translation}
+\label{camel-case-sec}
+
+To simplify interface description files, some values of
+attributes of commands and parameters are translated into
+strings shown to the user by following an algorithm for
+translating camel-case identifiers.  This section
+describes this algorithm.
+
+``Camel case'' is the phrase used to refer to the practice
+of writing identifiers with mixed upper- and lower-case
+letters but no underscores.  Often, when camel case
+is used, each upper-case letter is intended to start a word.
+The algorithm used for camel-case translation is
+therefore as follows.
+\begin{enumerate}
+\item Separate the words in the identifer by single spaces,
+  assuming that each upper-case letter starts a new word.
+\item Capitalize the first letter of the resulting string
+  if it is not capitalized.
+\item Translate all the rest of the letters in the resulting string to
+  lower-case.
+\end{enumerate}
+
+\begin{figure}
+
+\begin{center}
+\begin{tabular}{|c|c|}
+Camel-Case Identifier & Translation \\
+\hline
+\verb/add/ & Add \\
+\hline
+\verb/saveAs/ & Save as \\
+\hline
+\verb/findInThisPage/ & Find in this page \\
+\hline
+\verb/inputTextFile/ & Input text file \\
+\hline
+\verb/inputXMLFile/ & Input x m l file \\
+\hline
+\verb/inputXmlFile/ & Input xml file \\
+\hline
+\end{tabular}
+\end{center}
+
+\caption{Examples of camel-case translation.}
+\label{camel-case-fig}
+\end{figure}
+
+Figure \ref{camel-case-fig} shows some examples of the effect of
+the camel-case translation algorithm.  The first four
+examples are likely to be what the developer wants; the
+last two are unlikely to be what the developer wants.
+If the effect of the translation algorithm is not what the
+developer wants, then they can use the {\tt Label} attribute
+to achieve what they want -- for instance, by using a parameter name
+{\tt inputXMLFile} with the attribute \verb/Label = "Input XML file"/.
+
+\end{document}
+

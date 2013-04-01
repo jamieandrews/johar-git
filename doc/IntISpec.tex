@@ -1,0 +1,322 @@
+\documentclass[11pt]{article}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\headheight}{0pt}
+\setlength{\topskip}{0pt}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9in}
+%\setlength{\parindent}{0pt}
+\setlength{\parskip}{1mm}
+
+%\usepackage{epsf}
+\usepackage{graphicx}
+
+% Magic incantation to allow proper PostScript to PDF conversion:
+  \usepackage[T1]{fontenc} % type 1 fonts
+  \usepackage{times}       % Times-Roman
+
+\newcommand{\Fwname}{Johar}
+
+\newcommand{\must}{{\it must}}
+\newcommand{\mustnot}{{\it must not}}
+\newcommand{\may}{{\it may}}
+\newcommand{\doesnothaveto}{{\it does not have to}}
+\newcommand{\should}{{\it should}}
+\newcommand{\shouldnot}{{\it should not}}
+
+\newcounter{coreReq}
+
+\sloppy
+
+\begin{document}
+
+\begin{center} \bf \Large
+Johar Interface Interpreters (IntIs) \\
+Requirements Specification for All Java IntIs
+\end{center}
+
+This document describes the requirements that must be met by all Johar
+interface interpreters (IntIs).  It is assuming that the IntI is written
+in Java, but similar requirements apply to IntIs written in any language.
+
+In this document, the words {\must} and {\mustnot} are in italics and
+indicate normative statements (strict requirements for the IntI).  The
+words {\may} and {\doesnothaveto} are also in italics, but indicate
+behaviour that is permitted or not forbidden; they are used for clarity. 
+The words {\should} and {\shouldnot} are also in italics, and indicate
+behaviour that is recommended but not necessary.
+
+The requirements in this document are numbered 1, 2, 3 and so on.
+They will be referred to in other documents as IntI-R1, IntI-R2, IntI-R3,
+and so on.
+
+\section{Core Steps}
+
+This section describes the sequence of steps that must be taken by an IntI
+in interacting with the IDF, the {\tt GemSetting}, and the application
+engine.  We refer to these as the ``core steps''.
+
+\begin{enumerate}
+\item A given IntI {\may} take many steps other than the
+  core steps, and {\may} interact with the user in many ways outside of
+  these core steps (for instance, in providing help or facilitating table
+  browsing).
+\item However, whenever it interacts with the IDF, the
+  {\tt GemSetting} and the application engine, the method calls {\must}
+  follow the pattern of the core steps.
+\setcounter{coreReq}{\value{enumi}}
+\end{enumerate}
+
+\noindent
+Core steps:
+\begin{enumerate}
+\setcounter{enumi}{\value{coreReq}}
+\item Initialization phase:
+  \begin{enumerate}
+  \item The IntI {\must} first get a {\tt johar.idf.Idf} object by using the
+    method {\tt johar.idf.Idf.idfFromFile(fname)}, where the file name
+    argument is the name of an XML or IDF-format file.
+  \item If {\tt johar.idf.Idf.idfFromFile(fname)} throws an
+    {\tt IdfFormatException}, then the IntI {\must} show the error message
+    and exit.
+  \item If the IDF's {\tt IdfVersion} is greater than that supported
+    by the IntI, then the IntI {\must} show an error message
+    and exit.
+  \item The IntI {\must} then call {\tt GemFactory.newGemSetting(idf)},
+    using the {\tt Idf} object returned by {\tt idfFromFile} as the
+    parameter.
+  \item The IntI {\must} then call {\tt GemSetting.validate()} on the
+    {\tt GemSetting} returned by {\tt GemFactory}.
+  \item If {\tt GemSetting.validate()} throws an
+    {\tt IdfFormatException}, the IntI {\must} show the error message
+    and exit.
+  \item The IntI {\must} then call {\tt GemSetting.initializeAppEngine()}.
+  \end{enumerate}
+\item After the initialization phase, the IntI {\it may}
+  continue with the processing described below.
+\item The IntI {\may} then perform the Command Loop
+  (see below) as many times as needed, until the IntI terminates.
+\item At any time while executing the Command Loop, the IntI
+  {\may} exit its current iteration and begin a new iteration.
+  [Rationale: the user may cancel the command processing at any time.]
+\setcounter{coreReq}{\value{enumi}}
+\end{enumerate}
+
+\noindent
+The Command Loop consists of the following steps:
+\begin{enumerate}
+\setcounter{enumi}{\value{coreReq}}
+\item The IntI {\may} call the {\tt ActiveIfMethod}s of any commands
+  that have them.
+\item It {\must} then call
+  {\tt GemSetting.selectCurrentCommand(cmdName)}.  If {\tt cmdName}
+  corresponds to a command with an {\tt ActiveIfMethod}, then that method
+  {\must} be one that was called since the beginning of this iteration of
+  the Command Loop.  [Rationale:  the active status of a command may have
+  been changed by the effect of the previous command.]
+\item It {\must} then call {\tt GemSetting.selectCurrentStage(0)}.
+  [Rationale: the parameter values for one stage must be loaded and checked
+  before the default values of the parameters in the next stage are
+  obtained, to ensure correct communication with the application
+  engine methods of multi-stage commands.]
+\item The IntI {\may} then perform the Stage Loop (see below)
+  as many
+  times as needed, at least until {\tt MinNumberOfReps} repetitions of of
+  every parameter of every stage of the command has been loaded into the
+  {\tt GemSetting}.
+\item The IntI {\it may} continue to perform the Stage Loop
+  after a value for every parameter of every stage of the command has been
+  loaded.
+\item The IntI {\must} continue to perform the Stage Loop until
+  every {\tt ParameterCheckMethod}, in every stage of the command that
+  has one, has returned {\tt null} or the empty string.
+\item The IntI {\it must} perform the following steps
+  for every question in the current command,
+  from the first question specified to the last question specified.
+  \begin{enumerate}
+  \item The IntI {\must} call the {\tt AskIfMethod} of the question.
+  \item If the {\tt AskIfMethod} returns {\tt true}, and the question
+    has a {\tt DefaultValueMethod}, the IntI {\must}
+    call the {\tt DefaultValueMethod} of the question.
+  \item If the {\tt AskIfMethod} returns {\tt true}, the IntI {\must}
+    load a value for the question into the {\tt GemSetting}.
+  \end{enumerate}
+\item The IntI {\must} call the {\tt CommandMethod} for the
+  command.
+\item The IntI {\must} ensure that the {\tt showText} text
+  from the command has been effectively communicated to the user. 
+  [Rationale: the {\tt showText} from the last command executed in a run
+  of the application may be important, and must not be rendered
+  inaccessible by the termination of the application.]
+\item If the command's {\tt QuitAfter} attribute is
+  {\tt false}, but the command has a {\tt QuitAfterIfMethod}, then the
+  IntI {\must} call that method.
+\item If the command's {\tt QuitAfter} attribute is
+  {\tt true}, or the command has a {\tt QuitAfterIfMethod} which has
+  returned {\tt true}, then the IntI {\it must} terminate.
+\setcounter{coreReq}{\value{enumi}}
+\end{enumerate}
+
+\noindent
+The Stage Loop consists of the following steps:
+\begin{enumerate}
+\setcounter{enumi}{\value{coreReq}}
+\item At any time, the IntI {\it may} call the
+  {\tt DefaultValueMethod} of any parameter in the current
+  stage.
+\item At any time, the IntI {\it may} load values for
+  repetitions of any parameter in the current stage.
+\item If the IntI loads a value for a repetition of a parameter
+  with a {\tt DefaultValue} or {\tt DefaultValueMethod}, and the
+  value was not selected directly by the user, then the value must come
+  from the {\tt DefaultValue} or from a call to the
+  {\tt DefaultValueMethod} made since the beginning of this iteration of
+  the Stage Loop.  [Rationale: the previous stage's
+  {\tt ParameterCheckMethod} may have caused a change to the value
+  returned by the parameter's {\tt DefaultValueMethod}.]
+\item The IntI {\must} load at least {\tt MinNumberOfReps}
+  repetitions of each parameter in the current stage before calling
+  the current stage's {\tt ParameterCheckMethod},
+  unless the parameter has a {\tt ParentParameter} whose value is
+  not the parameter's {\tt ParentValue}.
+\item At any time after that, the IntI {\it may} call the
+  current stage's {\tt ParameterCheckMethod}, if it has one.
+\item If the current stage has a {\tt ParameterCheckMethod},
+  then the IntI {\must} call it at least once.
+\item If the current stage has a {\tt ParameterCheckMethod}, then
+  the IntI {\mustnot} load any parameter values between the time
+  it last calls the {\tt ParameterCheckMethod} and the time it next
+  calls {\tt GemSetting.selectCurrentStage()}.
+\item Finally, the IntI {\it may} call {\tt GemSetting.selectCurrentStage()}
+  with a parameter that is either one greater than the index number of the
+  current stage, or less than the index number of the current stage.
+\setcounter{coreReq}{\value{enumi}}
+\end{enumerate}
+
+\section{Other Requirements}
+
+\noindent Requirements concerning values of parameters and questions:
+\begin{enumerate}
+\setcounter{enumi}{\value{coreReq}}
+
+\item The IntI {\must} provide a way for the user to select values for
+  parameters and qustions for any command.
+
+\item For a parameter or question of type {\tt choice}, any value loaded
+  by the IntI {\must} be a choice from the parameter's or question's
+  {\tt Choices} string.
+
+\item For a parameter or question of type {\tt file}, any value loaded by
+  the IntI {\must} respect the parameter's or question's {\tt FileConstraint}.
+
+\item For a parameter or question of type {\tt text}, any value loaded by
+  the IntI {\must} respect the parameter's or question's
+  {\tt MaxNumberOfChars} and {\tt MaxNumberOfLines} attribute values.
+
+\item For a parameter or question of type {\tt int} or {\tt float}, any
+  value loaded by the IntI {\must} respect the parameter's or question's
+  {\tt MaxValue} and {\tt MinValue} attribute values.
+
+\setcounter{coreReq}{\value{enumi}}
+\end{enumerate}
+
+\noindent Requirements concerning repetitions of parameters:
+\begin{enumerate}
+\setcounter{enumi}{\value{coreReq}}
+
+\item The IntI {\must} provide a way for the user to select
+  multiple values for repetitions of every parameter of a command, up to
+  the parameter's {\tt MaxNumberOfReps}.
+
+\item For every parameter, the IntI {\must} load at least
+  {\tt MinNumberOfReps} repetitions for the parameter before
+  calling the {\tt CommandMethod} of the command, unless the
+  parameter has a {\tt ParentParameter} whose value is not
+  the {\tt ParentValue} of the parameter.
+
+\item For every parameter, the IntI {\mustnot} load a value
+  for the parameter if the parameter has a {\tt ParentParameter} whose
+  value is not the {\tt ParentValue} of the parameter.
+
+\item For every parameter, the IntI {\must} load at most
+  {\tt MaxNumberOfReps} repetitions for the parameter before
+  calling the {\tt CommandMethod} of the command.
+
+\item If the {\tt RepsModel} of a parameter is {\tt set}, then
+  the IntI {\may} load only one repetition of each value selected by the user.
+
+\item If the {\tt RepsModel} of a parameter is {\tt multiset} or
+  {\tt sequence}, then the IntI {\must} load the number of repetitions
+  of each value selected by the user.
+
+\item If the {\tt RepsModel} of a parameter is {\tt set} or
+  {\tt multiset}, then the IntI {\may} load values in any order.
+
+\item If the {\tt RepsModel} of a parameter is {\tt sequence},
+  then the IntI {\must} load values in the order specified by
+  the user.
+
+\setcounter{coreReq}{\value{enumi}}
+\end{enumerate}
+
+\noindent Requirements concerning user interface structure:
+\begin{enumerate}
+\setcounter{enumi}{\value{coreReq}}
+
+\item The IntI {\may} use the value of {\tt Application} as a
+  unique identifier of the application currently being run.
+
+\item The IntI {\may} use the application's command groups
+  in order to structure the interface.
+
+\item The IntI {\may} use the {\tt Prominence} of commands,
+  etc.\ in order to structure the interface.
+
+\item The IntI {\should} use the {\tt Label} of a command, parameter, or
+  question as a description, where needed in the interface.
+
+\item The IntI {\may} use the {\tt RepsModel} of any
+  parameter in order to structure the interface.
+
+\item The IntI {\should} provide a convenient way for the user
+  to select valid values for parameters or questions of type {\tt date},
+  {\tt file}, and {\tt timeOfDay}.
+
+\setcounter{coreReq}{\value{enumi}}
+\end{enumerate}
+
+\noindent Other IntI requirements:
+\begin{enumerate}
+\setcounter{enumi}{\value{coreReq}}
+
+\item The IntI {\must} provide access to all commands in the
+  application.
+
+\item For a command with any stage with any parameter of type
+  {\tt tableEntry}, where the {\tt SourceTable} is browsable,
+  the IntI {\mustnot} select the command as the
+  current command unless the user has selected at least
+  {\tt MinNumberOfReps} entries in the parameter's {\tt SourceTable}.
+
+\item The IntI {\must} allow the user to access, browse and
+  select rows in all browsable tables that are not currently hidden.
+
+\item The IntI {\mustnot} allow the user to access, browse
+  or select rows in non-browsable tables.
+
+\item The IntI {\mustnot} allow the user to access, browse
+  or select rows in tables that are currently hidden.
+
+\item The IntI {\must} provide access to all the help
+  messages provided in the IDF.
+
+\item The IntI {\may} use any of the {\tt Label}, {\tt BriefHelp},
+  {\tt OneLineHelp}, and {\tt MultiLineHelp} messages provided in the IDF
+  wherever they are needed.
+
+\end{enumerate}
+
+\end{document}
+

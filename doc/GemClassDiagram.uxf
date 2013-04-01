@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><umlet_diagram><help_text>//Uncomment the following line to change the fontsize:
+//fontsize=14
+
+//Welcome to UMLet!
+
+// *Double-click on UML elements to add them to the diagram.
+// *Edit element properties by modifying the text in this panel.
+// *Edit the files in the 'palettes' directory to store your own element palettes.
+// *Press Del or Backspace to remove elements from the diagram.
+// *Hold down Ctrl key to select multiple elements.
+// *Press c to copy the UML diagram to the system clipboard.
+// * This text will be stored with each diagram. Feel free to use the area for notes.
+</help_text><element><type>com.umlet.element.base.Note</type><coordinates><x>440</x><y>620</y><w>320</w><h>130</h></coordinates><panel_attributes>GemFullImplementation knows that it is
+also a Gem, so it can pass itself to the
+Application Engine.
+ApplicationEngine just knows that it has a
+Gem and therefore cannot use the services
+offered by GemSetting.</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>500</x><y>450</y><w>60</w><h>190</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>20;20;40;170</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>310</x><y>550</y><w>90</w><h>90</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>70;20;20;70</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>570</x><y>550</y><w>110</w><h>90</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>90;20;20;70</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>170</x><y>550</y><w>70</w><h>90</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>20;20;50;70</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>690</x><y>240</y><w>40</w><h>320</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>20;20;20;300</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>450</x><y>240</y><w>250</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>230;20;230;60;20;60;20;90</additional_attributes></element><element><type>com.umlet.element.base.Note</type><coordinates><x>80</x><y>620</y><w>310</w><h>130</h></coordinates><panel_attributes>InterfaceInterpreter can get a GemSetting
+from GemFactory.
+GemFactory knows it is returning a
+GemFullImplementation, but
+InterfaceInterpreter does not.
+Therefore, InterfaceInterpreter cannot use
+the services offered by Gem.
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>400</x><y>450</y><w>40</w><h>110</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>20;20;20;90</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>340</x><y>540</y><w>160</w><h>30</h></coordinates><panel_attributes>GemFactory</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>80</x><y>540</y><w>160</w><h>30</h></coordinates><panel_attributes>InterfaceInterpreter</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>110</x><y>240</y><w>40</w><h>320</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>20;20;20;300</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>600</x><y>540</y><w>160</w><h>30</h></coordinates><panel_attributes>ApplicationEngine</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>150</x><y>240</y><w>240</w><h>210</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>20;20;20;160;220;160;220;190</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>290</x><y>430</y><w>260</w><h>40</h></coordinates><panel_attributes>johar::GemFullImplementation
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>290</x><y>330</y><w>260</w><h>40</h></coordinates><panel_attributes>johar::GemImplementation
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>400</x><y>350</y><w>40</w><h>100</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>20;20;20;80</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>400</x><y>120</y><w>40</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>20;20;20;90</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>400</x><y>230</y><w>40</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>20;20;20;100</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>290</x><y>210</y><w>260</w><h>40</h></coordinates><panel_attributes>johar::GemBaseImplementation
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>440</x><y>120</y><w>260</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>20;20;20;60;240;60;240;90</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>150</x><y>120</y><w>250</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>230;20;230;60;20;60;20;90</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>600</x><y>210</y><w>150</w><h>50</h></coordinates><panel_attributes>&lt;&lt;Interface&gt;&gt;
+johar::Gem
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>90</x><y>210</y><w>150</w><h>50</h></coordinates><panel_attributes>&lt;&lt;Interface&gt;&gt;
+johar::GemSetting
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>340</x><y>90</y><w>160</w><h>50</h></coordinates><panel_attributes>&lt;&lt;Interface&gt;&gt;
+johar::GemBase
+</panel_attributes><additional_attributes/></element></umlet_diagram>

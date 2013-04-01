@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!-- What goes inside a Parameter declaration -->
+    <xs:complexType name="paramType">
+
+	<xs:choice minOccurs="0" maxOccurs="unbounded">
+
+	    <xs:element name="Type">
+		<xs:simpleType>
+		    <xs:restriction base="xs:string">
+			<xs:enumeration value="boolean"/>
+			<xs:enumeration value="choice"/>
+			<xs:enumeration value="date"/>
+			<xs:enumeration value="file"/>
+			<xs:enumeration value="float"/>
+			<xs:enumeration value="int"/>
+			<xs:enumeration value="text"/>
+			<xs:enumeration value="tableEntry"/>
+			<xs:enumeration value="timeOfDay"/>
+		    </xs:restriction>
+		</xs:simpleType>
+	    </xs:element>
+
+	    <xs:element name="Choices" minOccurs="0" maxOccurs="1"
+			type="xs:string"/>
+	    <xs:element name="DefaultValue" type="xs:string"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="DefaultValueMethod" type="lowerIdentifier"
+			minOccurs="0" maxOccurs="1"/>
+
+	    <xs:element name="FileConstraint" minOccurs="0" maxOccurs="1">
+		<xs:simpleType>
+		    <xs:restriction base="xs:string">
+			<xs:enumeration value="mustExist"/>
+    			<xs:enumeration value="mustBeReadable"/>
+			<xs:enumeration value="mustNotExistYet"/>
+		    </xs:restriction>
+		</xs:simpleType>
+	    </xs:element>
+
+	    <xs:element name="RepsModel" minOccurs="0" maxOccurs="1">
+		<xs:simpleType>
+		    <xs:restriction base="xs:string">
+			<xs:enumeration value="set"/>
+    			<xs:enumeration value="multiset"/>
+			<xs:enumeration value="sequence"/>
+		    </xs:restriction>
+		</xs:simpleType>
+	    </xs:element>
+
+	    <xs:element name="Label" minOccurs="0" maxOccurs="1"
+			type="xs:string"/>
+	    <xs:element name="MaxNumberOfChars" type="positiveInt"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="MaxNumberOfLines" type="positiveInt"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="MaxNumberOfReps" type="positiveInt"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="MinNumberOfReps" type="nonNegativeInt"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="MaxValue" type="xs:decimal"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="MinValue" type="xs:decimal"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="Optional" type="joharBoolean"
+			 minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="ParentParameter" type="lowerIdentifier"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="ParentValue" minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="Prominence" type="nonNegativeInt"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="SourceTable" type="lowerIdentifier"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element ref="BriefHelp" minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="MultiLineHelp" type="xs:string"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element ref="OneLineHelp" minOccurs="0" maxOccurs="1"/>
+	</xs:choice>
+
+	<xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
+
+    <!-- What goes inside a Question declaration -->
+    <xs:complexType name="questionType">
+	<xs:complexContent>
+	    <xs:extension base="paramType">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+		    <xs:element name="AskIfMethod" type="lowerIdentifier"/>
+		</xs:choice>
+	    </xs:extension>
+	</xs:complexContent>
+    </xs:complexType>
+
+
+    <!-- What goes inside a Stage declaration -->
+    <xs:complexType name="StageContents">
+	<xs:choice minOccurs="0" maxOccurs="unbounded">
+	    <xs:element name="CommandMethod" type="lowerIdentifier"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="Label" type="xs:string"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="Parameter" type="paramType"
+			minOccurs="0" maxOccurs="unbounded"/>
+	    <xs:element name="ParameterCheckMethod" type="lowerIdentifier"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="Question" type="questionType"
+			minOccurs="0" maxOccurs="1"/>
+	</xs:choice>
+    </xs:complexType>
+
+
+    <!-- One sequence of Stages -->
+    <xs:group name="CommandStages">
+	<xs:choice>
+	    <xs:element name="Stage" type="StageContents"
+			minOccurs="0" maxOccurs="unbounded"/>
+	</xs:choice>
+    </xs:group>
+
+
+    <!-- Things that can go inside a Command declaration if there
+	are no Stages -->
+    <xs:group name="CommandContentsNoStages">
+	<xs:choice>
+	    <xs:element name="CommandMethod" type="lowerIdentifier"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="Parameter" type="paramType"
+			minOccurs="0" maxOccurs="unbounded"/>
+	    <xs:element name="ParameterCheckMethod" type="lowerIdentifier"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="Question" type="questionType"
+			minOccurs="0" maxOccurs="1"/>
+	</xs:choice>
+    </xs:group>
+
+
+    <!-- What goes inside a Command declaration -->
+    <xs:complexType name="CommandType">
+	<xs:choice minOccurs="0" maxOccurs="unbounded">
+	    <xs:element name="ActiveIfMethod" type="lowerIdentifier"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="Label" type="xs:string"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element ref="BriefHelp" minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="MultiLineHelp" type="xs:string"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element ref="OneLineHelp" minOccurs="0" maxOccurs="1"/>
+	    <xs:choice minOccurs="0" maxOccurs="unbounded">
+		<xs:group ref="CommandStages"/>
+		<xs:group ref="CommandContentsNoStages"/>
+	    </xs:choice>
+	    <xs:element name="Prominence" type="nonNegativeInt"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="QuitAfter" type="joharBoolean"
+			minOccurs="0" maxOccurs="1"/>
+	    <xs:element name="QuitAfterIfMethod" type="lowerIdentifier"
+			minOccurs="0" maxOccurs="1"/>
+	</xs:choice>
+    	<xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
+
+    <!-- The overall format of a Johar Interface Declaration File (IDF) -->
+    <xs:element name="Johar">
+	<xs:complexType>
+	    <xs:choice minOccurs="0" maxOccurs="unbounded">
+		<xs:element name="Application" type="upperIdentifier"/>
+		<xs:element name="ApplicationEngine" type="xs:string"
+			    minOccurs="0" maxOccurs="1"/>
+		<xs:element name="IdfVersion" type="xs:string"
+			    maxOccurs="1"/>
+		<xs:element ref="Table" minOccurs="0" maxOccurs="unbounded"/>
+		<xs:element ref="CommandGroup"
+			    minOccurs="0" maxOccurs="unbounded"/>
+		<xs:element name="Command" type="CommandType"
+			    maxOccurs="unbounded"/>
+    	    </xs:choice>
+	</xs:complexType>
+    </xs:element>
+
+
+    <!-- What goes inside a Table declaration -->
+    <xs:element name="Table">
+	<xs:complexType>
+	    <xs:choice minOccurs="0" maxOccurs="unbounded">
+		<xs:element name="Browsable" type="joharBoolean"/>
+		<xs:element name="DefaultHeading" type="xs:string"/>
+	    </xs:choice>
+	    <xs:attribute name="name" type="xs:string"/>
+	</xs:complexType>
+    </xs:element>
+
+
+    <!-- What goes inside a CommandGroup declaration -->
+    <xs:element name="CommandGroup">
+	<xs:complexType>
+	    <xs:choice minOccurs="0" maxOccurs="unbounded">
+		<xs:element name="Member" type="xs:string"
+			    minOccurs="1" maxOccurs="unbounded"/>
+		<xs:element name="Mnemonic" type="xs:string"
+			    minOccurs="0" maxOccurs="1"/>
+	    </xs:choice>
+	    <xs:attribute name="name" type="xs:string"/>
+	</xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="BriefHelp" type="xs:string"/>
+
+
+    <xs:element name="OneLineHelp" type="xs:string"/>
+
+
+    <xs:simpleType name="joharBoolean">
+	<xs:restriction base="xs:normalizedString">
+	    <xs:enumeration value="yes"/>
+    	    <xs:enumeration value="no"/>
+    	    <xs:enumeration value="true"/>
+    	    <xs:enumeration value="false"/>
+	    <xs:enumeration value="Yes"/>
+    	    <xs:enumeration value="No"/>
+    	    <xs:enumeration value="True"/>
+    	    <xs:enumeration value="False"/>
+	    <xs:enumeration value="YES"/>
+    	    <xs:enumeration value="NO"/>
+    	    <xs:enumeration value="TRUE"/>
+    	    <xs:enumeration value="FALSE"/>
+      	</xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="positiveInt">
+	<xs:restriction base="xs:integer">
+    	    <xs:minInclusive value="1"/>
+	</xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="nonNegativeInt">
+	<xs:restriction base="xs:integer">
+    	    <xs:minInclusive value="0"/>
+	</xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="lowerIdentifier">
+  	<xs:restriction base="xs:string">
+	    <xs:pattern value="[\s]*[:]?[\s]*[a-z]([a-zA-Z0-9])*[\s]*"/>
+ 	</xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="upperIdentifier">
+	<xs:restriction base="xs:string">
+	    <xs:pattern value="[\s]*[A-Z]([a-zA-Z0-9])*[\s]*"/>
+	</xs:restriction>
+    </xs:simpleType>
+
+
+</xs:schema>
+
