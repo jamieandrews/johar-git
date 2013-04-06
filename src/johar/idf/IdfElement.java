@@ -234,6 +234,24 @@ public class IdfElement {
 	return extractAttr(attrName, defaultValue);
     }
 
+    protected void stringLengthNoCr(String s, String name, int maxLength) {
+	if (s.length() > maxLength) {
+	    _eh.error(
+		"Every " + name +
+		" must be no more than " + maxLength +
+		" characters in length."
+	    );
+	}
+	if (s.contains("\n")) {
+	    _eh.error(
+		"Every " + name +
+		" must consist of only one line."
+	    );
+	}
+    }
+
+    /*** toString and related ***/
+
     private StringBuffer _toStringSb;
     private String _indentString;
 
@@ -280,6 +298,8 @@ public class IdfElement {
     public int indentLevel() {
 	return 0;
     }
+
+    /*** Visitor and related ***/
 
     // Visitor pattern.
     public void acceptVisitor(VisitorOfIdfElement visitor) {
