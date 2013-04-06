@@ -1,0 +1,4 @@
+<project name="Johar" basedir=".">
+<javac srcdir="src" destdir="classes"/>
+</project>
+

@@ -173,5 +173,20 @@ public class IdfCommand extends IdfElement {
 	return _quitAfterIfMethod;
     }
 
+    public void passVisitorToChildren(VisitorOfIdfElement visitor) {
+	int j = _stageVector.size();
+	for (int i=0; i<j; i++) {
+	    _stageVector.elementAt(i).acceptVisitor(visitor);
+	}
+    }
+
+    // Standard methods to effect double dispatch.
+    public void beforeChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+    public void afterChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+
 }
 

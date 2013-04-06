@@ -88,5 +88,13 @@ public class IdfCommandGroup extends IdfElement {
 	return _mnemonic;
     }
 
+    // Standard methods to effect double dispatch.
+    public void beforeChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+    public void afterChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+
 }
 

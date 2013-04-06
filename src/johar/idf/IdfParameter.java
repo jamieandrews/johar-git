@@ -40,12 +40,12 @@ public class IdfParameter extends IdfElement {
     private String _emptyString = "";
 
     public IdfParameter(Element domElement, ErrorHandler eh) {
-        super(domElement, eh, "Parameter/Question");
+	super(domElement, eh, "Parameter/Question");
 
-        _parameterName = domElement.getAttribute("name");
-        setElementName(_parameterName);
-        String ccConvertedName =
-            TextInputValidator.titleCaseTranslation(_parameterName);
+	_parameterName = domElement.getAttribute("name");
+	setElementName(_parameterName);
+	String ccConvertedName =
+	    TextInputValidator.titleCaseTranslation(_parameterName);
 
 	// There must be exactly one Type attribute
 	_type =
@@ -312,6 +312,14 @@ public class IdfParameter extends IdfElement {
 	fieldToString("BriefHelp", _briefHelp);
 	fieldToString("OneLineHelp", _oneLineHelp);
 	fieldToString("MultiLineHelp", _multiLineHelp);
+    }
+
+    // Standard methods to effect double dispatch.
+    public void beforeChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+    public void afterChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
     }
 
 }

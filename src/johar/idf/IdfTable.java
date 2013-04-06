@@ -23,10 +23,10 @@ public class IdfTable extends IdfElement {
 	NodeList nodeList;
 	int n;
 
-        _tableName = domElement.getAttribute("name");
-        setElementName(_tableName);
-        String ccConvertedName =
-            TextInputValidator.titleCaseTranslation(_tableName);
+	_tableName = domElement.getAttribute("name");
+	setElementName(_tableName);
+	String ccConvertedName =
+	    TextInputValidator.titleCaseTranslation(_tableName);
 
 	// Confirm counts of attributes
 	complainIfMoreThanOne("Browsable");
@@ -63,6 +63,14 @@ public class IdfTable extends IdfElement {
     public void contentsToString() {
 	fieldToString("Browsable", (_browsable ? "true" : "false"));
 	fieldToString("DefaultHeading", _defaultHeading);
+    }
+
+    // Standard methods to effect double dispatch.
+    public void beforeChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+    public void afterChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
     }
 
 }

@@ -212,5 +212,32 @@ public class Idf extends IdfElement {
 	}
     }
 
+    public void passVisitorToChildren(VisitorOfIdfElement visitor) {
+	int i, j;
+
+	j = _commandVector.size();
+	for (i=0; i<j; i++) {
+	    _commandVector.elementAt(i).acceptVisitor(visitor);
+	}
+
+	j = _tableVector.size();
+	for (i=0; i<j; i++) {
+	    _tableVector.elementAt(i).acceptVisitor(visitor);
+	}
+
+	j = _commandGroupVector.size();
+	for (i=0; i<j; i++) {
+	    _commandGroupVector.elementAt(i).acceptVisitor(visitor);
+	}
+    }
+
+    // Standard methods to effect double dispatch.
+    public void beforeChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+    public void afterChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+
 }
 

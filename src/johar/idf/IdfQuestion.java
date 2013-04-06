@@ -36,5 +36,13 @@ public class IdfQuestion extends IdfParameter {
 	fieldToString("AskIfMethod", _askIfMethod);
     }
 
+    // Standard methods to effect double dispatch.
+    public void beforeChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+    public void afterChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+
 }
 

@@ -281,4 +281,23 @@ public class IdfElement {
 	return 0;
     }
 
+    // Visitor pattern.
+    public void acceptVisitor(VisitorOfIdfElement visitor) {
+	beforeChildren(visitor);
+	passVisitorToChildren(visitor);
+	afterChildren(visitor);
+    }
+
+    // Subclasses may override.
+    public void passVisitorToChildren(VisitorOfIdfElement visitor) {
+    }
+
+    // Subclasses must override to effect double dispatch.
+    public void beforeChildren(VisitorOfIdfElement visitor) {
+    }
+
+    // Subclasses must override to effect double dispatch.
+    public void afterChildren(VisitorOfIdfElement visitor) {
+    }
+
 }

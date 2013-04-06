@@ -104,5 +104,27 @@ public class IdfStage extends IdfElement {
 	elementVectorToString(_questionVector);
     }
 
+    public void passVisitorToChildren(VisitorOfIdfElement visitor) {
+	int i, j;
+
+	j = _parameterVector.size();
+	for (i=0; i<j; i++) {
+	    _parameterVector.elementAt(i).acceptVisitor(visitor);
+	}
+
+	j = _questionVector.size();
+	for (i=0; i<j; i++) {
+	    _questionVector.elementAt(i).acceptVisitor(visitor);
+	}
+    }
+
+    // Standard methods to effect double dispatch.
+    public void beforeChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+    public void afterChildren(VisitorOfIdfElement visitor) {
+	visitor.beforeChildren(this, _eh);
+    }
+
 }
 
