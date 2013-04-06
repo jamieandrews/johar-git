@@ -38,9 +38,14 @@ public class Idf extends IdfElement {
     private String _application;
     private String _applicationEngine;
     private String _idfVersion;
+    private String _initializationMethod;
 
     public Idf(Element domElement, ErrorHandler eh) {
 	super(domElement, eh, "JoharIdf");
+
+	NodeList nodeList;
+	int n;
+
 	_commandVector = new Vector<IdfCommand>();
 	_tableVector = new Vector<IdfTable>();
 	_commandGroupVector = new Vector<IdfCommandGroup>();
@@ -50,26 +55,17 @@ public class Idf extends IdfElement {
 	String ccConvertedName =
 	    TextInputValidator.titleCaseTranslation(_application);
 
-	// Confirm counts of attributes
-	complainIfMoreThanOne("ApplicationEngine");
-	complainIfMoreThanOne("IdfVersion");
-
-	// Must have application name.
+	// Application (exactly 1)
 	_application = 
 	    extractAttrIf(true,
 		"Application", 1, 1, 1, 1, "", "");
 
-	// Must also have IDF version.
-	_idfVersion =
-	    extractAttrIf(true,
-		"IdfVersion", 1, 1, 1, 1, "", "");
-
+	// ApplicationEngine (0 or 1)
+	// Default value is application name
+	complainIfMoreThanOne("ApplicationEngine");
 	_applicationEngine = extractAttr("ApplicationEngine", _application);
 
-	NodeList nodeList;
-	int n;
-
-	// Process any Command declarations.
+	// Command (0 or more)
 	nodeList = _domElement.getElementsByTagName("Command");
 	n = nodeList.getLength();
 	for (int i=0; i<n; i++) {
@@ -78,16 +74,7 @@ public class Idf extends IdfElement {
 	    _commandVector.add(c);
 	}
 
-	// Process any Table declarations.
-	nodeList = _domElement.getElementsByTagName("Table");
-	n = nodeList.getLength();
-	for (int i=0; i<n; i++) {
-	    Element e = (Element) nodeList.item(i);
-	    IdfTable t = new IdfTable(e, _eh);
-	    _tableVector.add(t);
-	}
-
-	// Process any CommandGroup declarations.
+	// CommandGroup (0 or more)
 	nodeList = _domElement.getElementsByTagName("CommandGroup");
 	n = nodeList.getLength();
 	for (int i=0; i<n; i++) {
@@ -101,9 +88,36 @@ public class Idf extends IdfElement {
 	    _commandGroupVector.add(cg);
 	}
 
+	// IdfVersion (exactly 1)
+	_idfVersion =
+	    extractAttrIf(true,
+		"IdfVersion", 1, 1, 1, 1, "", "");
+
+	// InitializationMethod (0 or 1)
+	// Default value is "applicationEngineInitialize"
+	complainIfMoreThanOne("InitializationMethod");
+	_initializationMethod =
+	    extractAttr("InitializationMethod",
+		"applicationEngineInitialize");
+
+	// Table (0 or more)
+	nodeList = _domElement.getElementsByTagName("Table");
+	n = nodeList.getLength();
+	for (int i=0; i<n; i++) {
+	    Element e = (Element) nodeList.item(i);
+	    IdfTable t = new IdfTable(e, _eh);
+	    _tableVector.add(t);
+	}
+
+	runVisitors();
+
 	// Release document and error handler for eventual GC
 	_domElement = null;
 	_eh = null;
+    }
+
+    public void runVisitors() {
+	acceptVisitor(new Visitors.CommandNamesUnique());
     }
 
     public static Idf idfFromFile(String filename) {
@@ -173,6 +187,10 @@ public class Idf extends IdfElement {
 
     public String getIdfVersion() {
 	return _idfVersion;
+    }
+
+    public String getInitializationMethod() {
+	return _initializationMethod;
     }
 
     public int getNumCommands() {
