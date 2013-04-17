@@ -15,8 +15,6 @@ import johar.utilities.TextInputValidator;
 
 public class IdfStage extends IdfElement {
     // The attributes of Stage (or Command, if only one stage)
-    private String _commandMethod;
-    private String _label;
     private String _parameterCheckMethod;
     private Vector<IdfParameter> _parameterVector;
     private Vector<IdfQuestion> _questionVector;
@@ -31,12 +29,8 @@ public class IdfStage extends IdfElement {
 	_questionVector = new Vector<IdfQuestion>();
 
 	// Confirm counts of attributes
-	complainIfMoreThanOne("CommandMethod");
-	complainIfMoreThanOne("Label");
 	complainIfMoreThanOne("ParameterCheckMethod");
 
-	_commandMethod = extractAttr("CommandMethod", commandLabel);
-	_label = extractAttr("Label", commandLabel);
 	_parameterCheckMethod = extractAttr("parameterCheckMethod", "");
 
 	nodeList = domElement.getElementsByTagName("Parameter");
@@ -61,14 +55,6 @@ public class IdfStage extends IdfElement {
     }
 
     // Getters.
-
-    public String getCommandMethod() {
-	return _commandMethod;
-    }
-
-    public String getLabel() {
-	return _label;
-    }
 
     public String getParameterCheckMethod() {
 	return _parameterCheckMethod;
@@ -97,8 +83,6 @@ public class IdfStage extends IdfElement {
     }
 
     public void contentsToString() {
-	fieldToString("CommandMethod", _commandMethod);
-	fieldToString("Label", _label);
 	fieldToString("ParameterCheckMethod", _parameterCheckMethod);
 	elementVectorToString(_parameterVector);
 	elementVectorToString(_questionVector);

@@ -34,6 +34,7 @@ public class IdfCommand extends IdfElement {
     // The attributes of Command
     private String _commandName;
     private String _activeIfMethod;
+    private String _commandMethod;
     private String _label;
     private String _briefHelp;
     private String _oneLineHelp;
@@ -56,6 +57,7 @@ public class IdfCommand extends IdfElement {
 
 	// Confirm counts of attributes
 	complainIfMoreThanOne("ActiveIfMethod");
+	complainIfMoreThanOne("CommandMethod");
 	complainIfMoreThanOne("Label");
 	complainIfMoreThanOne("BriefHelp");
 	complainIfMoreThanOne("OneLineHelp");
@@ -63,13 +65,16 @@ public class IdfCommand extends IdfElement {
 	complainIfMoreThanOne("Prominence");
 	complainIfMoreThanOne("QuitAfter");
 
-	// Extract attributes
-	_activeIfMethod = extractAttr("ActiveIfMethod", "");
+	// Extract help attributes in order
 	_label = extractAttr("Label", ccConvertedName);
 	_briefHelp = extractAttr("BriefHelp", _label);
 	_oneLineHelp = extractAttr("OneLineHelp", _briefHelp);
 	_multiLineHelp = extractAttr("MultiLineHelp", _oneLineHelp);
-	_prominence = extractAttr("Prominence", 1000);
+
+	// Extract other attributes
+	_activeIfMethod = extractAttr("ActiveIfMethod", "");
+	_commandMethod = extractAttr("CommandMethod", _commandName);
+	_prominence = extractAttr("Prominence", 2000);
 	_quitAfter = extractAttr("QuitAfter", false);
 
 	// QuitAfterIfMethod only if QuitAfter not defined
@@ -143,6 +148,10 @@ public class IdfCommand extends IdfElement {
 
     public String getActiveIfMethod() {
 	return _activeIfMethod;
+    }
+
+    public String getCommandMethod() {
+	return _commandMethod;
     }
 
     public String getLabel() {

@@ -189,4 +189,21 @@ public class TextInputValidator {
 	}
 	return false;
     }
+
+    /**
+     * @return returns true if the string has length less than or equal
+     *   to maxLength, and contains a carriage return iff crPermitted.
+     */
+    public static boolean respectsConstraints(String s, int maxLength,
+	     boolean crPermitted) {
+	if (!crPermitted && s.contains("\n")) {
+	    return false;
+	}
+	if (s.length() > maxLength) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
 }
