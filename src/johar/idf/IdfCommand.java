@@ -29,6 +29,7 @@ import johar.utilities.TextInputValidator;
 public class IdfCommand extends IdfElement {
     // The command stages (there is at least one)
     private Vector<IdfStage> _stageVector;
+    private Vector<IdfQuestion> _questionVector;
     private int _numStages;
 
     // The attributes of Command
@@ -49,6 +50,7 @@ public class IdfCommand extends IdfElement {
 	super(domElement, eh, "Command");
 	_stageVector = new Vector<IdfStage>();
 	_numStages = 0;
+	_questionVector = new Vector<IdfQuestion>();
 
 	_commandName = domElement.getAttribute("name");
 	setElementName(_commandName);
@@ -57,11 +59,11 @@ public class IdfCommand extends IdfElement {
 
 	// Confirm counts of attributes
 	complainIfMoreThanOne("ActiveIfMethod");
+	complainIfMoreThanOne("BriefHelp");
 	complainIfMoreThanOne("CommandMethod");
 	complainIfMoreThanOne("Label");
-	complainIfMoreThanOne("BriefHelp");
-	complainIfMoreThanOne("OneLineHelp");
 	complainIfMoreThanOne("MultiLineHelp");
+	complainIfMoreThanOne("OneLineHelp");
 	complainIfMoreThanOne("Prominence");
 	complainIfMoreThanOne("QuitAfter");
 
@@ -89,6 +91,15 @@ public class IdfCommand extends IdfElement {
 	    processStages();
 	} else {
 	    processContentsWithoutStages();
+	}
+
+	// Process questions
+	nodeList = domElement.getElementsByTagName("Question");
+	n = nodeList.getLength();
+	for (int i=0; i<n; i++) {
+	    Element e = (Element) nodeList.item(i);
+	    IdfQuestion q = new IdfQuestion(e, _eh);
+	    _questionVector.add(q);
 	}
 
 	// Release document and error handler for eventual GC
@@ -122,14 +133,16 @@ public class IdfCommand extends IdfElement {
     public void contentsToString() {
 	fieldToString("CommandName", _commandName);
 	fieldToString("ActiveIfMethod", _activeIfMethod);
-	fieldToString("Label", _label);
 	fieldToString("BriefHelp", _briefHelp);
-	fieldToString("OneLineHelp", _oneLineHelp);
+	fieldToString("CommandMethod", _commandMethod);
+	fieldToString("Label", _label);
 	fieldToString("MultiLineHelp", _multiLineHelp);
+	fieldToString("OneLineHelp", _oneLineHelp);
 	fieldToString("Prominence", new Integer(_prominence).toString());
 	fieldToString("QuitAfter", new Boolean(_quitAfter).toString());
 	fieldToString("QuitAfterIfMethod", _quitAfterIfMethod);
 	elementVectorToString(_stageVector);
+	elementVectorToString(_questionVector);
     }
 
     // Getters.
@@ -140,6 +153,14 @@ public class IdfCommand extends IdfElement {
 
     public IdfStage getStageNumber(int i) {
 	return _stageVector.elementAt(i);
+    }
+
+    public int getNumQuestions() {
+	return _questionVector.size();
+    }
+
+    public IdfQuestion getQuestion(int i) {
+	return _questionVector.elementAt(i);
     }
 
     public String getCommandName() {
@@ -183,9 +204,16 @@ public class IdfCommand extends IdfElement {
     }
 
     public void passVisitorToChildren(VisitorOfIdfElement visitor) {
-	int j = _stageVector.size();
+	int j;
+
+	j = _stageVector.size();
 	for (int i=0; i<j; i++) {
 	    _stageVector.elementAt(i).acceptVisitor(visitor);
+	}
+
+	j = _questionVector.size();
+	for (i=0; i<j; i++) {
+	    _questionVector.elementAt(i).acceptVisitor(visitor);
 	}
     }
 

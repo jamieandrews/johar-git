@@ -292,26 +292,34 @@ public class IdfParameter extends IdfElement {
 
     public void contentsToString() {
 	fieldToString("ParameterName", _parameterName);
+	// Type gets prominent place because helps the user interpret
+	// the output.
 	fieldToString("Type", _type);
+
+	fieldToString("BriefHelp", _briefHelp);
 	fieldToString("Choices", _choices);
+	fieldToString("DefaultValue", _defaultValue);
+	fieldToString("DefaultValueMethod", _defaultValueMethod);
 	fieldToString("FileConstraint", _fileConstraint);
-	fieldToString("RepsModel", _repsModel);
 	fieldToString("Label", _label);
 	fieldToString("MaxNumberOfChars", Integer.toString(_maxNumberOfChars));
 	fieldToString("MaxNumberOfLines", Integer.toString(_maxNumberOfLines));
 	fieldToString("MaxNumberOfReps", Integer.toString(_maxNumberOfReps));
-	fieldToString("MinNumberOfReps", Integer.toString(_minNumberOfReps));
+	// MaxValue analyzed above into two values, int and float
 	fieldToString("MaxIntValue", Integer.toString(_maxIntValue));
-	fieldToString("MinIntValue", Integer.toString(_minIntValue));
 	fieldToString("MaxFloatValue", Float.toString(_maxFloatValue));
+	fieldToString("MinNumberOfChars", Integer.toString(_minNumberOfChars));
+	fieldToString("MinNumberOfReps", Integer.toString(_minNumberOfReps));
+	// MinValue analyzed above into two values, int and float
+	fieldToString("MinIntValue", Integer.toString(_minIntValue));
 	fieldToString("MinFloatValue", Float.toString(_minFloatValue));
+	fieldToString("MultiLineHelp", _multiLineHelp);
+	fieldToString("OneLineHelp", _oneLineHelp);
 	fieldToString("ParentParameter", _parentParameter);
 	fieldToString("ParentValue", _parentValue);
 	fieldToString("Prominence", Integer.toString(_prominence));
+	fieldToString("RepsModel", _repsModel);
 	fieldToString("SourceTable", _sourceTable);
-	fieldToString("BriefHelp", _briefHelp);
-	fieldToString("OneLineHelp", _oneLineHelp);
-	fieldToString("MultiLineHelp", _multiLineHelp);
     }
 
     // Standard methods to effect double dispatch.

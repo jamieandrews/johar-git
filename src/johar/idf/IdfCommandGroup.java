@@ -68,10 +68,10 @@ public class IdfCommandGroup extends IdfElement {
 
     // For toString.  Overrides superclass method.
     public void contentsToString() {
+	fieldToString("Label", _label);
 	for (int i=0; i<_memberVector.size(); i++) {
 	    fieldToString("Member", _memberVector.elementAt(i));
 	}
-	fieldToString("Mnemonic", _mnemonic);
     }
 
     // Getters.

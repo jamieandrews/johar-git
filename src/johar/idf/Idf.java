@@ -170,6 +170,7 @@ public class Idf extends IdfElement {
 	fieldToString("Application", _application);
 	fieldToString("ApplicationEngine", _applicationEngine);
 	fieldToString("IdfVersion", _idfVersion);
+	fieldToString("InitializationMethod", _initializationMethod);
 	elementVectorToString(_commandVector);
 	elementVectorToString(_tableVector);
 	elementVectorToString(_commandGroupVector);

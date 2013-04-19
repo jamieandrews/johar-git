@@ -63,6 +63,7 @@ public class IdfTable extends IdfElement {
     public void contentsToString() {
 	fieldToString("Browsable", (_browsable ? "true" : "false"));
 	fieldToString("DefaultHeading", _defaultHeading);
+	fieldToString("Label", _label);
     }
 
     // Standard methods to effect double dispatch.
