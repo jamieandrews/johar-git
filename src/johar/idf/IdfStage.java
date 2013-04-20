@@ -29,7 +29,7 @@ public class IdfStage extends IdfElement {
 	// Confirm counts of attributes
 	complainIfMoreThanOne("ParameterCheckMethod");
 
-	_parameterCheckMethod = extractAttr("parameterCheckMethod", "");
+	_parameterCheckMethod = extractAttr("ParameterCheckMethod", "");
 
 	nodeList = domElement.getElementsByTagName("Parameter");
 	n = nodeList.getLength();

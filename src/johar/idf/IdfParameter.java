@@ -20,18 +20,18 @@ public class IdfParameter extends IdfElement {
     private String _fileConstraint;
     private String _repsModel;
     private String _label;
-    private int _maxNumberOfChars;
-    private int _minNumberOfChars;
-    private int _maxNumberOfLines;
-    private int _maxNumberOfReps;
-    private int _minNumberOfReps;
-    private int _maxIntValue;
-    private int _minIntValue;
-    private float _maxFloatValue;
-    private float _minFloatValue;
+    private long _maxNumberOfChars;
+    private long _minNumberOfChars;
+    private long _maxNumberOfLines;
+    private long _maxNumberOfReps;
+    private long _minNumberOfReps;
+    private long _maxIntValue;
+    private long _minIntValue;
+    private double _maxFloatValue;
+    private double _minFloatValue;
     private String _parentParameter;
     private String _parentValue;
-    private int _prominence;
+    private long _prominence;
     private String _sourceTable;
     private String _briefHelp;
     private String _oneLineHelp;
@@ -42,11 +42,31 @@ public class IdfParameter extends IdfElement {
     public IdfParameter(Element domElement, ErrorHandler eh) {
 	super(domElement, eh, "Parameter/Question");
 
-	_parameterName = domElement.getAttribute("name");
+	try {
+	    extractParameters();
+	} catch (IdfFormatException e) {
+	    if (_parameterName != null) {
+		eh.error("Parameter/Question " + _parameterName +
+		    ", " + e.getMessage());
+	    } else {
+		eh.error("Parameter/Question format error");
+	    }
+	}
+
+	// Release document and error handler for eventual GC
+	_domElement = null;
+	_eh = null;
+    }
+
+    private void extractParameters() throws IdfFormatException {
+
+	// Extract parameter name and do camel-case conversion
+	_parameterName = _domElement.getAttribute("name");
 	setElementName(_parameterName);
 	String ccConvertedName =
 	    TextInputValidator.titleCaseTranslation(_parameterName);
 
+	// Extract Type first, since this determines many other things.
 	// There must be exactly one Type attribute
 	_type =
 	    extractAttrIf(true,
@@ -78,13 +98,8 @@ public class IdfParameter extends IdfElement {
 	// otherwise there must be no FileConstraint attributes.
 	_fileConstraint =
 	    extractAttrIf(_type.equals("file"),
-		"FileConstraint", 1, 1, 0, 0, _emptyString,
+		"FileConstraint", 0, 1, 0, 0, "none",
 		"Parameter/Question is not of type \"file\".");
-
-	// There can be zero or one RepsModel attributes.
-	_repsModel =
-	     extractAttrIf(true,
-		"RepsModel", 0, 1, 0, 1, _emptyString, null);
 
 	// There can be zero or one Label attributes.
 	_label =
@@ -96,7 +111,7 @@ public class IdfParameter extends IdfElement {
 	// otherwise there must be no MaxNumberOfChars attributes.
 	_maxNumberOfChars =
 	    extractAttrIf(_type.equals("text"),
-		"MaxNumberOfChars", 0, 1, 0, 0, Integer.MAX_VALUE,
+		"MaxNumberOfChars", 0, 1, 0, 0, Long.MAX_VALUE,
 		"Parameter/Question is not of type \"text\".");
 
 	// If Type is text,
@@ -105,6 +120,14 @@ public class IdfParameter extends IdfElement {
 	_minNumberOfChars =
 	    extractAttrIf(_type.equals("text"),
 		"MinNumberOfChars", 0, 1, 0, 0, 0,
+		"Parameter/Question is not of type \"text\".");
+
+	// If Type is text,
+	// then there can be zero or one MaxNumberOfLines attributes;
+	// otherwise there must be no MaxNumberOfLines attributes.
+	_maxNumberOfLines =
+	    extractAttrIf(_type.equals("text"),
+		"MaxNumberOfLines", 0, 1, 0, 0, Long.MAX_VALUE,
 		"Parameter/Question is not of type \"text\".");
 
 	// There can be zero or one MaxNumberOfReps attributes.
@@ -132,26 +155,15 @@ public class IdfParameter extends IdfElement {
 	    "Parameter/Question is not of type \"int\" or \"float\".");
 
 	if (_type.equals("float")) {
-	    _maxFloatValue = extractAttr("MaxValue", Float.MAX_VALUE);
-	    _minFloatValue = extractAttr("MinValue", Float.MIN_VALUE);
+	    _maxFloatValue = extractAttr("MaxValue", Double.MAX_VALUE);
+	    _minFloatValue = extractAttr("MinValue", Double.MIN_VALUE);
+	    _maxIntValue = Long.MAX_VALUE;
+	    _minIntValue = Long.MIN_VALUE;
 	} else if (_type.equals("int")) {
-	    _maxIntValue = extractAttr("MaxValue", Integer.MAX_VALUE);
-	    _minIntValue = extractAttr("MinValue", Integer.MIN_VALUE);
-	}
-
-	// If there is a MaxNumberOfReps or MinNumberOfReps  parameter,
-	// then there must be no Optional attribute;
-	// otherwise there can be zero or one Optional attributes.
-	checkNumInstances(countNumberOf("MaxNumberOfReps") < 1,
-	    "Optional", 0, 1, 0, 0, 
-	    "Parameter/Question has an explicit MaxNumberOfReps parameter.");
-	checkNumInstances(countNumberOf("MinNumberOfReps") < 1,
-	    "Optional", 0, 1, 0, 0, 
-	    "Parameter/Question has an explicit MinNumberOfReps parameter.");
-	boolean optional = extractAttr("Optional", false);
-	if (optional) {
-	    _maxNumberOfReps = 1;
-	    _minNumberOfReps = 0;
+	    _maxIntValue = extractAttr("MaxValue", Long.MAX_VALUE);
+	    _minIntValue = extractAttr("MinValue", Long.MIN_VALUE);
+	    _maxFloatValue = Double.MAX_VALUE;
+	    _minFloatValue = Double.MIN_VALUE;
 	}
 
 	// There can be zero or one ParentParameter attributes.
@@ -170,7 +182,12 @@ public class IdfParameter extends IdfElement {
 	// There can be zero or one Prominence attributes.
 	_prominence =
 	    extractAttrIf(true,
-		"Prominence", 0, 1, 0, 1, 1000, null);
+		"Prominence", 0, 1, 0, 1, 2000, null);
+
+	// There can be zero or one RepsModel attributes.
+	_repsModel =
+	     extractAttrIf(true,
+		"RepsModel", 0, 1, 0, 1, "set", null);
 
 	// If Type is tableEntry,
 	// then there must be exactly one SourceTable attribute;
@@ -194,10 +211,6 @@ public class IdfParameter extends IdfElement {
 	_multiLineHelp =
 	    extractAttrIf(true,
 		"MultiLineHelp", 0, 1, 0, 1, _oneLineHelp, null);
-
-	// Release document and error handler for eventual GC
-	_domElement = null;
-	_eh = null;
     }
 
     // Getters.
@@ -226,35 +239,35 @@ public class IdfParameter extends IdfElement {
 	return _label;
     }
 
-    public int getMaxNumberOfChars() {
+    public long getMaxNumberOfChars() {
 	return _maxNumberOfChars;
     }
 
-    public int getMaxNumberOfLines() {
+    public long getMaxNumberOfLines() {
 	return _maxNumberOfLines;
     }
 
-    public int getMaxNumberOfReps() {
+    public long getMaxNumberOfReps() {
 	return _maxNumberOfReps;
     }
 
-    public int getMinNumberOfReps() {
+    public long getMinNumberOfReps() {
 	return _minNumberOfReps;
     }
 
-    public int getMaxIntValue() {
+    public long getMaxIntValue() {
 	return _maxIntValue;
     }
 
-    public int getMinIntValue() {
+    public long getMinIntValue() {
 	return _minIntValue;
     }
 
-    public float getMaxFloatValue() {
+    public double getMaxFloatValue() {
 	return _maxFloatValue;
     }
 
-    public float getMinFloatValue() {
+    public double getMinFloatValue() {
 	return _minFloatValue;
     }
 
@@ -266,7 +279,7 @@ public class IdfParameter extends IdfElement {
 	return _parentValue;
     }
 
-    public int getProminence() {
+    public long getProminence() {
 	return _prominence;
     }
 
@@ -302,22 +315,22 @@ public class IdfParameter extends IdfElement {
 	fieldToString("DefaultValueMethod", _defaultValueMethod);
 	fieldToString("FileConstraint", _fileConstraint);
 	fieldToString("Label", _label);
-	fieldToString("MaxNumberOfChars", Integer.toString(_maxNumberOfChars));
-	fieldToString("MaxNumberOfLines", Integer.toString(_maxNumberOfLines));
-	fieldToString("MaxNumberOfReps", Integer.toString(_maxNumberOfReps));
+	fieldToString("MaxNumberOfChars", Long.toString(_maxNumberOfChars));
+	fieldToString("MaxNumberOfLines", Long.toString(_maxNumberOfLines));
+	fieldToString("MaxNumberOfReps", Long.toString(_maxNumberOfReps));
 	// MaxValue analyzed above into two values, int and float
-	fieldToString("MaxIntValue", Integer.toString(_maxIntValue));
-	fieldToString("MaxFloatValue", Float.toString(_maxFloatValue));
-	fieldToString("MinNumberOfChars", Integer.toString(_minNumberOfChars));
-	fieldToString("MinNumberOfReps", Integer.toString(_minNumberOfReps));
+	fieldToString("MaxIntValue", Long.toString(_maxIntValue));
+	fieldToString("MaxFloatValue", Double.toString(_maxFloatValue));
+	fieldToString("MinNumberOfChars", Long.toString(_minNumberOfChars));
+	fieldToString("MinNumberOfReps", Long.toString(_minNumberOfReps));
 	// MinValue analyzed above into two values, int and float
-	fieldToString("MinIntValue", Integer.toString(_minIntValue));
-	fieldToString("MinFloatValue", Float.toString(_minFloatValue));
+	fieldToString("MinIntValue", Long.toString(_minIntValue));
+	fieldToString("MinFloatValue", Double.toString(_minFloatValue));
 	fieldToString("MultiLineHelp", _multiLineHelp);
 	fieldToString("OneLineHelp", _oneLineHelp);
 	fieldToString("ParentParameter", _parentParameter);
 	fieldToString("ParentValue", _parentValue);
-	fieldToString("Prominence", Integer.toString(_prominence));
+	fieldToString("Prominence", Long.toString(_prominence));
 	fieldToString("RepsModel", _repsModel);
 	fieldToString("SourceTable", _sourceTable);
     }

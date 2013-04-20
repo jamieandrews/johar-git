@@ -16,6 +16,7 @@ public class IdfTable extends IdfElement {
     private String  _tableName;
     private boolean _browsable;
     private String  _defaultHeading;
+    private String  _label;
 
     public IdfTable(Element domElement, ErrorHandler eh) {
 	super(domElement, eh, "Table");
@@ -31,9 +32,11 @@ public class IdfTable extends IdfElement {
 	// Confirm counts of attributes
 	complainIfMoreThanOne("Browsable");
 	complainIfMoreThanOne("DefaultHeading");
+	complainIfMoreThanOne("Label");
 
 	_browsable = extractAttr("Browsable", true);
-	_defaultHeading = extractAttr("DefaultHeading", "");
+	_defaultHeading = extractAttr("DefaultHeading", ccConvertedName);
+	_label = extractAttr("Label", ccConvertedName);
 
 	// Release document and error handler for eventual GC
 	_domElement = null;

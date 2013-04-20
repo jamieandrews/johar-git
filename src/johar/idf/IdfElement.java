@@ -78,23 +78,47 @@ public class IdfElement {
 	}
     }
 
-    protected int extractAttr(String attrName, int defaultValue) {
+    protected long extractAttr(String attrName, long defaultValue)
+	    throws IdfFormatException {
 	NodeList nodeList = _domElement.getElementsByTagName(attrName);
 	if (nodeList.getLength() == 0) {
 	    return defaultValue;
 	} else {
 	    String contents = getContentsFirstNode(nodeList);
-	    return Integer.parseInt(contents);
+	    if (contents.equals("unlim")) {
+		return Long.MAX_VALUE;
+	    } else {
+		try {
+		    return Long.parseLong(contents);
+		} catch (NumberFormatException e) {
+		    throw new IdfFormatException(
+			"attribute " + attrName +
+			": value should be an integer"
+		    );
+		}
+	    }
 	}
     }
 
-    protected float extractAttr(String attrName, float defaultValue) {
+    protected double extractAttr(String attrName, double defaultValue)
+	    throws IdfFormatException {
 	NodeList nodeList = _domElement.getElementsByTagName(attrName);
 	if (nodeList.getLength() == 0) {
 	    return defaultValue;
 	} else {
 	    String contents = getContentsFirstNode(nodeList);
-	    return Float.parseFloat(contents);
+	    if (contents.equals("unlim")) {
+		return Double.MAX_VALUE;
+	    } else {
+		try {
+		    return Double.parseDouble(contents);
+		} catch (NumberFormatException e) {
+		    throw new IdfFormatException(
+			"attribute " + attrName +
+			": value should be a floating-point number"
+		    );
+		}
+	    }
 	}
     }
 
@@ -204,20 +228,22 @@ public class IdfElement {
     /** Similar to the other extractAttrIf methods, but
       * with int.
       */
-    protected int extractAttrIf(boolean cond, String attrName,
+    protected long extractAttrIf(boolean cond, String attrName,
 	    int minIfTrue, int maxIfTrue, int minIfFalse, int maxIfFalse, 
-	    int defaultValue, String reasonForComplaint) {
+	    long defaultValue, String reasonForComplaint)
+	    throws IdfFormatException {
 	checkNumInstances(cond, attrName, minIfTrue, maxIfTrue,
 	    minIfFalse, maxIfFalse, reasonForComplaint);
 	return extractAttr(attrName, defaultValue);
     }
 
     /** Similar to the other extractAttrIf methods, but
-      * with float.
+      * with double.
       */
-    protected float extractAttrIf(boolean cond, String attrName,
+    protected double extractAttrIf(boolean cond, String attrName,
 	    int minIfTrue, int maxIfTrue, int minIfFalse, int maxIfFalse, 
-	    float defaultValue, String reasonForComplaint) {
+	    double defaultValue, String reasonForComplaint)
+	    throws IdfFormatException {
 	checkNumInstances(cond, attrName, minIfTrue, maxIfTrue,
 	    minIfFalse, maxIfFalse, reasonForComplaint);
 	return extractAttr(attrName, defaultValue);
@@ -234,7 +260,7 @@ public class IdfElement {
 	return extractAttr(attrName, defaultValue);
     }
 
-    protected void stringLengthNoCr(String s, String name, int maxLength) {
+    protected void stringLengthNoCr(String s, String name, long maxLength) {
 	if (s.length() > maxLength) {
 	    _eh.error(
 		"Every " + name +

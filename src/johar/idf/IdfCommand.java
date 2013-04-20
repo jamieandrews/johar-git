@@ -40,11 +40,11 @@ public class IdfCommand extends IdfElement {
     private String _briefHelp;
     private String _oneLineHelp;
     private String _multiLineHelp;
-    private int _prominence;
+    private long _prominence;
     private boolean _quitAfter;
     private String _quitAfterIfMethod;
-    public static final int BRIEF_HELP_LENGTH = 30;
-    public static final int ONELINE_HELP_LENGTH = 80;
+    public static final long BRIEF_HELP_LENGTH = 30;
+    public static final long ONELINE_HELP_LENGTH = 80;
 
     public IdfCommand(Element domElement, ErrorHandler eh) {
 	super(domElement, eh, "Command");
@@ -76,7 +76,13 @@ public class IdfCommand extends IdfElement {
 	// Extract other attributes
 	_activeIfMethod = extractAttr("ActiveIfMethod", "");
 	_commandMethod = extractAttr("CommandMethod", _commandName);
-	_prominence = extractAttr("Prominence", 2000);
+	try {
+	    _prominence = extractAttr("Prominence", 2000);
+	} catch (IdfFormatException e) {
+	    _eh.error("Command " + _commandName +
+		": value of Prominence must be an integer"
+	    );
+	}
 	_quitAfter = extractAttr("QuitAfter", false);
 
 	// QuitAfterIfMethod only if QuitAfter not defined
@@ -94,10 +100,10 @@ public class IdfCommand extends IdfElement {
 	}
 
 	// Process questions
-	nodeList = domElement.getElementsByTagName("Question");
-	n = nodeList.getLength();
+	NodeList questionList = domElement.getElementsByTagName("Question");
+	int n = questionList.getLength();
 	for (int i=0; i<n; i++) {
-	    Element e = (Element) nodeList.item(i);
+	    Element e = (Element) questionList.item(i);
 	    IdfQuestion q = new IdfQuestion(e, _eh);
 	    _questionVector.add(q);
 	}
@@ -138,7 +144,7 @@ public class IdfCommand extends IdfElement {
 	fieldToString("Label", _label);
 	fieldToString("MultiLineHelp", _multiLineHelp);
 	fieldToString("OneLineHelp", _oneLineHelp);
-	fieldToString("Prominence", new Integer(_prominence).toString());
+	fieldToString("Prominence", new Long(_prominence).toString());
 	fieldToString("QuitAfter", new Boolean(_quitAfter).toString());
 	fieldToString("QuitAfterIfMethod", _quitAfterIfMethod);
 	elementVectorToString(_stageVector);
@@ -191,7 +197,7 @@ public class IdfCommand extends IdfElement {
 	return _multiLineHelp;
     }
 
-    public int getProminence() {
+    public long getProminence() {
 	return _prominence;
     }
 
@@ -204,10 +210,10 @@ public class IdfCommand extends IdfElement {
     }
 
     public void passVisitorToChildren(VisitorOfIdfElement visitor) {
-	int j;
+	int i, j;
 
 	j = _stageVector.size();
-	for (int i=0; i<j; i++) {
+	for (i=0; i<j; i++) {
 	    _stageVector.elementAt(i).acceptVisitor(visitor);
 	}
 

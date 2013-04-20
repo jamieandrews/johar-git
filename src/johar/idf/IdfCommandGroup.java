@@ -18,7 +18,7 @@ import johar.utilities.TextInputValidator;
 public class IdfCommandGroup extends IdfElement {
     private Vector<String> _memberVector;
     private String _commandGroupName;
-    private String _mnemonic;
+    private String _label;
 
     public IdfCommandGroup(Element domElement, ErrorHandler eh) {
 	super(domElement, eh, "CommandGroup");
@@ -29,8 +29,8 @@ public class IdfCommandGroup extends IdfElement {
 	String ccConvertedName =
 	    TextInputValidator.titleCaseTranslation(_commandGroupName);
 
-	complainIfMoreThanOne("Mnemonic");
-	_mnemonic = extractAttr("Mnemonic", "");
+	complainIfMoreThanOne("Label");
+	_label = extractAttr("Label", ccConvertedName);
 
 	NodeList memberList = _domElement.getElementsByTagName("Member");
 	int n = memberList.getLength();
@@ -58,7 +58,7 @@ public class IdfCommandGroup extends IdfElement {
 	    String member = c.getCommandName();
 	    _memberVector.add(member);
 	}
-	_mnemonic = "C";
+	_label = "Commands";
     }
 
     // For toString.
@@ -84,8 +84,8 @@ public class IdfCommandGroup extends IdfElement {
 	return _memberVector.elementAt(i);
     }
 
-    public String getMnemonic() {
-	return _mnemonic;
+    public String getLabel() {
+	return _label;
     }
 
     // Standard methods to effect double dispatch.

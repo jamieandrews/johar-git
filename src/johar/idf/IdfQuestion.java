@@ -15,9 +15,14 @@ public class IdfQuestion extends IdfParameter {
     private String _askIfMethod;
 
     public IdfQuestion(Element domElement, ErrorHandler eh) {
+	// There are attributes that cannot appear in Questions.
+	// However, the XSD should have made sure that they already
+	// are not appearing in the Question.  Thus it is safe to
+	// call the superclass constructor to extract all other
+	// attributes.
 	super(domElement, eh);
 
-	// Restore doc and error handler
+	// Restore doc and error handler (nulled by superclass ctor)
 	_domElement = domElement;
 	_eh = eh;
 
