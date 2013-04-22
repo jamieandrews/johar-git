@@ -118,6 +118,10 @@ public class Idf extends IdfElement {
 
     public void runVisitors() {
 	acceptVisitor(new Visitors.CommandNamesUnique());
+	acceptVisitor(new Visitors.HelpMessageConstraints());
+	acceptVisitor(new Visitors.ParameterNamesUniqueInCommand());
+	acceptVisitor(new Visitors.MinRepsLeqMaxReps());
+	acceptVisitor(new Visitors.MinValueLeqMaxValue());
     }
 
     public static Idf idfFromFile(String filename) {

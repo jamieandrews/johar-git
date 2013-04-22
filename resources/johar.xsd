@@ -30,7 +30,7 @@
     </xs:element>
 
 
-    <!-- ---------- BEGIN declarations relevant to Commands ---------- -->
+    <!-- ========== BEGIN declarations relevant to Commands ========== -->
 
     <!-- What can go inside a Command declaration -->
     <xs:complexType name="CommandType">
@@ -61,7 +61,7 @@
     <!-- Things that can go inside a Command declaration if there
 	are no Stages -->
     <xs:group name="CommandContentsNoStages">
-	<xs:choice minOccurs="0" maxOccurs="unbounded">
+	<xs:choice>
 
 	    <xs:element name="Parameter" type="paramType"/>
 	    <xs:element name="ParameterCheckMethod" type="lowerIdentifier"/>
@@ -71,7 +71,7 @@
 
     <!-- One sequence of Stages -->
     <xs:group name="CommandStages">
-	<xs:choice minOccurs="0" maxOccurs="unbounded">
+	<xs:choice>
 
 	    <xs:element name="Stage" type="StageContents"/>
 
@@ -88,7 +88,7 @@
 	</xs:choice>
     </xs:complexType>
 
-    <!-- ---------- END declarations relevant to Commands ---------- -->
+    <!-- ========== END declarations relevant to Commands ========== -->
 
 
     <!-- BEGIN declarations relevant to Parameters and Questions -->
@@ -103,7 +103,7 @@
 	    <xs:element name="DefaultValue" type="xs:string"/>
 	    <xs:element name="DefaultValueMethod" type="lowerIdentifier"/>
 
-	    <xs:element name="FileConstraint"/>
+	    <xs:element name="FileConstraint">
 		<xs:simpleType>
 		    <xs:restriction base="xs:string">
     			<xs:enumeration value="mustBeReadable"/>
@@ -156,7 +156,7 @@
 		    <xs:element name="ParentParameter" type="lowerIdentifier"/>
 		    <xs:element name="ParentValue"/>
 
-		    <xs:element name="RepsModel"/>
+		    <xs:element name="RepsModel">
 			<xs:simpleType>
 			    <xs:restriction base="xs:string">
 				<xs:enumeration value="set"/>

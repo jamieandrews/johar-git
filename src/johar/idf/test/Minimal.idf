@@ -1,0 +1,5 @@
+Application = Minimal
+IdfVersion = "1.0"
+Command quit = {
+    QuitAfter = yes
+}

@@ -1,0 +1,10 @@
+<Johar
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="johar.xsd">
+
+<Application>Minimal</Application>
+<IdfVersion>1.0</IdfVersion>
+<Command name="quit">
+  <QuitAfter>yes</QuitAfter>
+</Command>
+</Johar>
