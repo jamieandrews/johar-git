@@ -13,10 +13,15 @@ public class Visitors {
 	}
 
 	public void beforeChildren(IdfCommand idfCommand, ErrorHandler eh) {
+	    // System.out.println("CNU.beforeChildren 1");
 	    String name = idfCommand.getCommandName();
+	    // System.out.println("CNU.beforeChildren 2");
 	    if (_commandNames.contains(name)) {
+		// System.out.println("CNU.beforeChildren 3a");
 		eh.error("Duplicate command name \"" + name + "\"");
+		// System.out.println("CNU.beforeChildren 3b");
 	    } else {
+		// System.out.println("CNU.beforeChildren 4");
 		_commandNames.add(name);
 	    }
 	}
@@ -58,6 +63,9 @@ public class Visitors {
 
 	public void checkHelpMessage(String elementDesc, String attrName,
 		String helpMessage, int maxLength, ErrorHandler eh) {
+	    // System.out.println("cHM a elementDesc=\"" + elementDesc +
+		// "\", attrName=\"" + attrName +
+		// "\", helpMessage=\"" + helpMessage + "\"");
 	    boolean respectsConstraints =
 		johar.utilities.TextInputValidator.respectsConstraints(
 		    helpMessage, maxLength, false

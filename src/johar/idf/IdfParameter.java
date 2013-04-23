@@ -52,10 +52,6 @@ public class IdfParameter extends IdfElement {
 		eh.error("Parameter/Question format error");
 	    }
 	}
-
-	// Release document and error handler for eventual GC
-	_domElement = null;
-	_eh = null;
     }
 
     private void extractParameters() throws IdfFormatException {
@@ -340,7 +336,7 @@ public class IdfParameter extends IdfElement {
 	visitor.beforeChildren(this, _eh);
     }
     public void afterChildren(VisitorOfIdfElement visitor) {
-	visitor.beforeChildren(this, _eh);
+	visitor.afterChildren(this, _eh);
     }
 
 }

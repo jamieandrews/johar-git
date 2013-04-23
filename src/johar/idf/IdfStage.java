@@ -38,10 +38,6 @@ public class IdfStage extends IdfElement {
 	    IdfParameter p = new IdfParameter(e, _eh);
 	    _parameterVector.add(p);
 	}
-
-	// Release document and error handler for eventual GC
-	_domElement = null;
-	_eh = null;
     }
 
     // Getters.
@@ -83,7 +79,7 @@ public class IdfStage extends IdfElement {
 	visitor.beforeChildren(this, _eh);
     }
     public void afterChildren(VisitorOfIdfElement visitor) {
-	visitor.beforeChildren(this, _eh);
+	visitor.afterChildren(this, _eh);
     }
 
 }

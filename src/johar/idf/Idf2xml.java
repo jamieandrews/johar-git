@@ -132,10 +132,18 @@ public class Idf2xml {
 	Tokenizer t = new Tokenizer(_in, _err);
 	boolean eof = false;
 
+	// xsi:noNamespaceSchemaLocation doesn't seem to work anymore
+	// for some reason.
+
+	// _out.write(
+	//     "<Johar\n" +
+	//     "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+	//     "    xsi:noNamespaceSchemaLocation=\"johar.xsd\">\n\n"
+	//     );
+
 	_out.write(
 	    "<Johar\n" +
-	    "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-	    "    xsi:noNamespaceSchemaLocation=\"johar.xsd\">\n\n"
+	    "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n\n"
 	    );
 	eof = transduceAVP(t, 0);
 	while (!eof) {

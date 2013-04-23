@@ -110,10 +110,6 @@ public class Idf extends IdfElement {
 	}
 
 	runVisitors();
-
-	// Release document and error handler for eventual GC
-	_domElement = null;
-	_eh = null;
     }
 
     public void runVisitors() {
@@ -240,7 +236,9 @@ public class Idf extends IdfElement {
 
 	j = _commandVector.size();
 	for (i=0; i<j; i++) {
+	    // System.out.println("Idf.pVTC a size = " + j);
 	    _commandVector.elementAt(i).acceptVisitor(visitor);
+	    // System.out.println("Idf.pVTC b size = " + j);
 	}
 
 	j = _tableVector.size();
@@ -259,7 +257,7 @@ public class Idf extends IdfElement {
 	visitor.beforeChildren(this, _eh);
     }
     public void afterChildren(VisitorOfIdfElement visitor) {
-	visitor.beforeChildren(this, _eh);
+	visitor.afterChildren(this, _eh);
     }
 
 }

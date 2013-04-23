@@ -30,10 +30,6 @@ public class IdfQuestion extends IdfParameter {
 	_askIfMethod =
 	    extractAttrIf(true,
 		"AskIfMethod", 1, 1, 1, 1, "", null);
-
-	// Release document and error handler for eventual GC
-	_domElement = null;
-	_eh = null;
     }
 
     public void contentsToString() {
@@ -46,7 +42,7 @@ public class IdfQuestion extends IdfParameter {
 	visitor.beforeChildren(this, _eh);
     }
     public void afterChildren(VisitorOfIdfElement visitor) {
-	visitor.beforeChildren(this, _eh);
+	visitor.afterChildren(this, _eh);
     }
 
 }

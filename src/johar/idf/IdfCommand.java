@@ -107,10 +107,6 @@ public class IdfCommand extends IdfElement {
 	    IdfQuestion q = new IdfQuestion(e, _eh);
 	    _questionVector.add(q);
 	}
-
-	// Release document and error handler for eventual GC
-	_domElement = null;
-	_eh = null;
     }
 
     public void processStages() {
@@ -228,7 +224,7 @@ public class IdfCommand extends IdfElement {
 	visitor.beforeChildren(this, _eh);
     }
     public void afterChildren(VisitorOfIdfElement visitor) {
-	visitor.beforeChildren(this, _eh);
+	visitor.afterChildren(this, _eh);
     }
 
 }

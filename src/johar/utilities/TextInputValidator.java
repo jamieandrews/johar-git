@@ -200,9 +200,9 @@ public class TextInputValidator {
 	    return false;
 	}
 	if (s.length() > maxLength) {
-	    return true;
-	} else {
 	    return false;
+	} else {
+	    return true;
 	}
     }
 

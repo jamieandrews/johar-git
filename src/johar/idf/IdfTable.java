@@ -37,10 +37,6 @@ public class IdfTable extends IdfElement {
 	_browsable = extractAttr("Browsable", true);
 	_defaultHeading = extractAttr("DefaultHeading", ccConvertedName);
 	_label = extractAttr("Label", ccConvertedName);
-
-	// Release document and error handler for eventual GC
-	_domElement = null;
-	_eh = null;
     }
 
     // Getters.
@@ -74,7 +70,7 @@ public class IdfTable extends IdfElement {
 	visitor.beforeChildren(this, _eh);
     }
     public void afterChildren(VisitorOfIdfElement visitor) {
-	visitor.beforeChildren(this, _eh);
+	visitor.afterChildren(this, _eh);
     }
 
 }

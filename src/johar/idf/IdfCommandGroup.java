@@ -40,10 +40,6 @@ public class IdfCommandGroup extends IdfElement {
 		e.getChildNodes().item(0).getNodeValue().trim();
 	    _memberVector.add(member);
 	}
-
-	// Release document and error handler for eventual GC
-	_domElement = null;
-	_eh = null;
     }
 
     // Constructor for when no explicit command groups are given.
@@ -93,7 +89,7 @@ public class IdfCommandGroup extends IdfElement {
 	visitor.beforeChildren(this, _eh);
     }
     public void afterChildren(VisitorOfIdfElement visitor) {
-	visitor.beforeChildren(this, _eh);
+	visitor.afterChildren(this, _eh);
     }
 
 }
