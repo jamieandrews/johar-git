@@ -7,7 +7,8 @@
 package johar.idf;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,9 +32,9 @@ import johar.utilities.TextInputValidator;
  * @version 2.0
  */
 public class Idf extends IdfElement {
-    private Vector<IdfCommand> _commandVector;
-    private Vector<IdfTable> _tableVector;
-    private Vector<IdfCommandGroup> _commandGroupVector;
+    private List<IdfCommand> _commandList;
+    private List<IdfTable> _tableList;
+    private List<IdfCommandGroup> _commandGroupList;
 
     private String _application;
     private String _applicationEngine;
@@ -46,9 +47,9 @@ public class Idf extends IdfElement {
 	NodeList nodeList;
 	int n;
 
-	_commandVector = new Vector<IdfCommand>();
-	_tableVector = new Vector<IdfTable>();
-	_commandGroupVector = new Vector<IdfCommandGroup>();
+	_commandList = new ArrayList<IdfCommand>();
+	_tableList = new ArrayList<IdfTable>();
+	_commandGroupList = new ArrayList<IdfCommandGroup>();
 
 	_application = domElement.getAttribute("name");
 	setElementName(_application);
@@ -71,7 +72,7 @@ public class Idf extends IdfElement {
 	for (int i=0; i<n; i++) {
 	    Element e = (Element) nodeList.item(i);
 	    IdfCommand c = new IdfCommand(e, _eh);
-	    _commandVector.add(c);
+	    _commandList.add(c);
 	}
 
 	// CommandGroup (0 or more)
@@ -80,12 +81,12 @@ public class Idf extends IdfElement {
 	for (int i=0; i<n; i++) {
 	    Element e = (Element) nodeList.item(i);
 	    IdfCommandGroup cg = new IdfCommandGroup(e, _eh);
-	    _commandGroupVector.add(cg);
+	    _commandGroupList.add(cg);
 	}
 	// If there are no explicit CommandGroups, put everything into one.
 	if (n == 0) {
-	    IdfCommandGroup cg = new IdfCommandGroup(_commandVector);
-	    _commandGroupVector.add(cg);
+	    IdfCommandGroup cg = new IdfCommandGroup(_commandList);
+	    _commandGroupList.add(cg);
 	}
 
 	// IdfVersion (exactly 1)
@@ -106,7 +107,7 @@ public class Idf extends IdfElement {
 	for (int i=0; i<n; i++) {
 	    Element e = (Element) nodeList.item(i);
 	    IdfTable t = new IdfTable(e, _eh);
-	    _tableVector.add(t);
+	    _tableList.add(t);
 	}
 
 	runVisitors();
@@ -171,9 +172,9 @@ public class Idf extends IdfElement {
 	fieldToString("ApplicationEngine", _applicationEngine);
 	fieldToString("IdfVersion", _idfVersion);
 	fieldToString("InitializationMethod", _initializationMethod);
-	elementVectorToString(_commandVector);
-	elementVectorToString(_tableVector);
-	elementVectorToString(_commandGroupVector);
+	elementListToString(_commandList);
+	elementListToString(_tableList);
+	elementListToString(_commandGroupList);
     }
 
     // Getters.
@@ -195,27 +196,27 @@ public class Idf extends IdfElement {
     }
 
     public int getNumCommands() {
-	return _commandVector.size();
+	return _commandList.size();
     }
 
     public IdfCommand getCommandNumber(int i) {
-	return _commandVector.elementAt(i);
+	return _commandList.get(i);
     }
 
     public int getNumTables() {
-	return _tableVector.size();
+	return _tableList.size();
     }
 
     public IdfTable getTableNumber(int i) {
-	return _tableVector.elementAt(i);
+	return _tableList.get(i);
     }
 
     public int getNumCommandGroups() {
-	return _commandGroupVector.size();
+	return _commandGroupList.size();
     }
 
     public IdfCommandGroup getCommandGroupNumber(int i) {
-	return _commandGroupVector.elementAt(i);
+	return _commandGroupList.get(i);
     }
 
     public static void main(String[] args) {
@@ -234,21 +235,21 @@ public class Idf extends IdfElement {
     public void passVisitorToChildren(VisitorOfIdfElement visitor) {
 	int i, j;
 
-	j = _commandVector.size();
+	j = _commandList.size();
 	for (i=0; i<j; i++) {
 	    // System.out.println("Idf.pVTC a size = " + j);
-	    _commandVector.elementAt(i).acceptVisitor(visitor);
+	    _commandList.get(i).acceptVisitor(visitor);
 	    // System.out.println("Idf.pVTC b size = " + j);
 	}
 
-	j = _tableVector.size();
+	j = _tableList.size();
 	for (i=0; i<j; i++) {
-	    _tableVector.elementAt(i).acceptVisitor(visitor);
+	    _tableList.get(i).acceptVisitor(visitor);
 	}
 
-	j = _commandGroupVector.size();
+	j = _commandGroupList.size();
 	for (i=0; i<j; i++) {
-	    _commandGroupVector.elementAt(i).acceptVisitor(visitor);
+	    _commandGroupList.get(i).acceptVisitor(visitor);
 	}
     }
 

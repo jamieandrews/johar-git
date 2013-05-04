@@ -223,6 +223,14 @@ public class IdfParameter extends IdfElement {
 	return _choices;
     }
 
+    public String getDefaultValue() {
+	return _defaultValue;
+    }
+
+    public String getDefaultValueMethod() {
+	return _defaultValueMethod;
+    }
+
     public String getFileConstraint() {
 	return _fileConstraint;
     }

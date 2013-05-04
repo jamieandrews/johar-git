@@ -5,7 +5,8 @@
 
 package johar.idf;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,7 +17,7 @@ import johar.utilities.TextInputValidator;
 public class IdfStage extends IdfElement {
     // The attributes of Stage (or Command, if only one stage)
     private String _parameterCheckMethod;
-    private Vector<IdfParameter> _parameterVector;
+    private List<IdfParameter> _parameterList;
 
     public IdfStage(Element domElement, ErrorHandler eh, String commandLabel) {
 	super(domElement, eh, "Stage");
@@ -24,7 +25,7 @@ public class IdfStage extends IdfElement {
 	NodeList nodeList;
 	int n;
 
-	_parameterVector = new Vector<IdfParameter>();
+	_parameterList = new ArrayList<IdfParameter>();
 
 	// Confirm counts of attributes
 	complainIfMoreThanOne("ParameterCheckMethod");
@@ -36,7 +37,7 @@ public class IdfStage extends IdfElement {
 	for (int i=0; i<n; i++) {
 	    Element e = (Element) nodeList.item(i);
 	    IdfParameter p = new IdfParameter(e, _eh);
-	    _parameterVector.add(p);
+	    _parameterList.add(p);
 	}
     }
 
@@ -47,11 +48,11 @@ public class IdfStage extends IdfElement {
     }
 
     public int getNumParameters() {
-	return _parameterVector.size();
+	return _parameterList.size();
     }
 
     public IdfParameter getParameter(int i) {
-	return _parameterVector.elementAt(i);
+	return _parameterList.get(i);
     }
 
     // For displaying.
@@ -62,15 +63,15 @@ public class IdfStage extends IdfElement {
 
     public void contentsToString() {
 	fieldToString("ParameterCheckMethod", _parameterCheckMethod);
-	elementVectorToString(_parameterVector);
+	elementListToString(_parameterList);
     }
 
     public void passVisitorToChildren(VisitorOfIdfElement visitor) {
 	int i, j;
 
-	j = _parameterVector.size();
+	j = _parameterList.size();
 	for (i=0; i<j; i++) {
-	    _parameterVector.elementAt(i).acceptVisitor(visitor);
+	    _parameterList.get(i).acceptVisitor(visitor);
 	}
     }
 

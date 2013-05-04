@@ -4,7 +4,7 @@
 
 package johar.idf;
 
-class ErrorHandler {
+public class ErrorHandler {
     StringBuffer _sb;
     boolean _errorsExist;
 

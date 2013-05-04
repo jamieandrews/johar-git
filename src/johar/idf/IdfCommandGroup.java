@@ -6,7 +6,8 @@
 
 package johar.idf;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,13 +17,13 @@ import johar.utilities.TextInputValidator;
 
 
 public class IdfCommandGroup extends IdfElement {
-    private Vector<String> _memberVector;
+    private List<String> _memberList;
     private String _commandGroupName;
     private String _label;
 
     public IdfCommandGroup(Element domElement, ErrorHandler eh) {
 	super(domElement, eh, "CommandGroup");
-	_memberVector = new Vector<String>();
+	_memberList = new ArrayList<String>();
 
 	_commandGroupName = domElement.getAttribute("name");
 	setElementName(_commandGroupName);
@@ -38,21 +39,21 @@ public class IdfCommandGroup extends IdfElement {
 	    Element e = (Element) memberList.item(i);
 	    String member =
 		e.getChildNodes().item(0).getNodeValue().trim();
-	    _memberVector.add(member);
+	    _memberList.add(member);
 	}
     }
 
     // Constructor for when no explicit command groups are given.
-    public IdfCommandGroup(Vector<IdfCommand> allCommands) {
+    public IdfCommandGroup(List<IdfCommand> allCommands) {
 	super(null, null, "CommandGroup");
-	_memberVector = new Vector<String>();
+	_memberList = new ArrayList<String>();
 	_commandGroupName = "Commands";
 	setElementName(_commandGroupName);
 	String ccConvertedName =
 	    TextInputValidator.titleCaseTranslation(_commandGroupName);
 	for (IdfCommand c : allCommands) {
 	    String member = c.getCommandName();
-	    _memberVector.add(member);
+	    _memberList.add(member);
 	}
 	_label = "Commands";
     }
@@ -65,19 +66,19 @@ public class IdfCommandGroup extends IdfElement {
     // For toString.  Overrides superclass method.
     public void contentsToString() {
 	fieldToString("Label", _label);
-	for (int i=0; i<_memberVector.size(); i++) {
-	    fieldToString("Member", _memberVector.elementAt(i));
+	for (int i=0; i<_memberList.size(); i++) {
+	    fieldToString("Member", _memberList.get(i));
 	}
     }
 
     // Getters.
 
     public int getNumMembers() {
-	return _memberVector.size();
+	return _memberList.size();
     }
 
     public String getMemberNumber(int i) {
-	return _memberVector.elementAt(i);
+	return _memberList.get(i);
     }
 
     public String getLabel() {

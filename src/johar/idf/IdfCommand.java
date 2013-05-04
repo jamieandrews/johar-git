@@ -6,7 +6,8 @@
 
 package johar.idf;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -28,8 +29,8 @@ import johar.utilities.TextInputValidator;
  */
 public class IdfCommand extends IdfElement {
     // The command stages (there is at least one)
-    private Vector<IdfStage> _stageVector;
-    private Vector<IdfQuestion> _questionVector;
+    private List<IdfStage> _stageList;
+    private List<IdfQuestion> _questionList;
     private int _numStages;
 
     // The attributes of Command
@@ -48,9 +49,9 @@ public class IdfCommand extends IdfElement {
 
     public IdfCommand(Element domElement, ErrorHandler eh) {
 	super(domElement, eh, "Command");
-	_stageVector = new Vector<IdfStage>();
+	_stageList = new ArrayList<IdfStage>();
 	_numStages = 0;
-	_questionVector = new Vector<IdfQuestion>();
+	_questionList = new ArrayList<IdfQuestion>();
 
 	_commandName = domElement.getAttribute("name");
 	setElementName(_commandName);
@@ -105,7 +106,7 @@ public class IdfCommand extends IdfElement {
 	for (int i=0; i<n; i++) {
 	    Element e = (Element) questionList.item(i);
 	    IdfQuestion q = new IdfQuestion(e, _eh);
-	    _questionVector.add(q);
+	    _questionList.add(q);
 	}
     }
 
@@ -115,14 +116,14 @@ public class IdfCommand extends IdfElement {
 	for (int i=0; i<n; i++) {
 	    Element e = (Element) stageList.item(i);
 	    IdfStage stage = new IdfStage(e, _eh, _label);
-	    _stageVector.add(stage);
+	    _stageList.add(stage);
 	    _numStages += 1;
 	}
     }
 
     public void processContentsWithoutStages() {
 	IdfStage stage = new IdfStage(_domElement, _eh, _label);
-	_stageVector.add(stage);
+	_stageList.add(stage);
 	_numStages = 1;
     }
 
@@ -143,8 +144,8 @@ public class IdfCommand extends IdfElement {
 	fieldToString("Prominence", new Long(_prominence).toString());
 	fieldToString("QuitAfter", new Boolean(_quitAfter).toString());
 	fieldToString("QuitAfterIfMethod", _quitAfterIfMethod);
-	elementVectorToString(_stageVector);
-	elementVectorToString(_questionVector);
+	elementListToString(_stageList);
+	elementListToString(_questionList);
     }
 
     // Getters.
@@ -153,16 +154,16 @@ public class IdfCommand extends IdfElement {
 	return _numStages;
     }
 
-    public IdfStage getStageNumber(int i) {
-	return _stageVector.elementAt(i);
+    public IdfStage getStage(int i) {
+	return _stageList.get(i);
     }
 
     public int getNumQuestions() {
-	return _questionVector.size();
+	return _questionList.size();
     }
 
     public IdfQuestion getQuestion(int i) {
-	return _questionVector.elementAt(i);
+	return _questionList.get(i);
     }
 
     public String getCommandName() {
@@ -208,14 +209,14 @@ public class IdfCommand extends IdfElement {
     public void passVisitorToChildren(VisitorOfIdfElement visitor) {
 	int i, j;
 
-	j = _stageVector.size();
+	j = _stageList.size();
 	for (i=0; i<j; i++) {
-	    _stageVector.elementAt(i).acceptVisitor(visitor);
+	    _stageList.get(i).acceptVisitor(visitor);
 	}
 
-	j = _questionVector.size();
+	j = _questionList.size();
 	for (i=0; i<j; i++) {
-	    _questionVector.elementAt(i).acceptVisitor(visitor);
+	    _questionList.get(i).acceptVisitor(visitor);
 	}
     }
 

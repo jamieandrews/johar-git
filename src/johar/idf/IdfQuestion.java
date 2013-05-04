@@ -32,6 +32,10 @@ public class IdfQuestion extends IdfParameter {
 		"AskIfMethod", 1, 1, 1, 1, "", null);
     }
 
+    public String getAskIfMethod() {
+	return _askIfMethod;
+    }
+
     public void contentsToString() {
 	super.contentsToString();
 	fieldToString("AskIfMethod", _askIfMethod);

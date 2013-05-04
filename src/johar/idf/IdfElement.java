@@ -309,10 +309,10 @@ public class IdfElement {
 	_toStringSb.append("\n");
     }
 
-    protected void elementVectorToString(Vector<? extends IdfElement> v) {
+    protected void elementListToString(List<? extends IdfElement> v) {
 	int n = v.size();
 	for (int i=0; i<n; i++) {
-	    _toStringSb.append(v.elementAt(i).toString());
+	    _toStringSb.append(v.get(i).toString());
 	}
     }
 
