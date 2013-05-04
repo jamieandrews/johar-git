@@ -1,0 +1,64 @@
+Application = TestFile			   	   //Required
+ApplicationEngine = TestFile           //Optional
+IdfVersion = "1.0"                     //Required
+Table tab1							   //Required
+Table tab2                             //Required
+
+Table days = {							
+    Browsable = yes						//Optional
+    DefaultHeading = "Days"				//Optional
+}
+
+CommandGroup appointment = {			
+    Member = addAppointment				//Optional
+    Member = cancel						//Optional
+    Member = reminders					//Optional
+    Member = exit						//Optional
+    Mnemonic = M						//Optional
+}
+
+Command addAppointment = {
+    Label = "Add Appointment"			//Optional
+
+    BriefHelp =     "Add an appointment"		//Optional
+    MultiLineHelp = "Add an appointment on the current day"		//Optional
+    OneLineHelp =   "Add an appointment on the current day"		//Optional
+        
+    Parameter description = {
+        Type = text								//Required
+        MaxNumberOfChars = 240					//Optional
+        MaxNumberOfLines = 3					//Optional
+    }
+}
+
+Command cancel = {
+    BriefHelp     = "Cancel appointment"							//Optional
+	OneLineHelp   = "Cancel the selected appointment"			   //Optional
+
+    Parameter appt = {
+        Type = tableEntry							//Required
+        SourceTable = appointments					//Required
+    }
+}
+
+Command reminders = {
+    Parameter kind = {
+        Type = choice					//Required
+        Choices = "popup|email|off"			//Required
+        DefaultValue = off							//Optional
+        Label = "How you want to be reminded"		//Optional
+        BriefHelp     = "How you want to be reminded"		//Optional
+        OneLineHelp   = "How you want to be reminded"			//Optional
+    }
+}
+
+Command previousMonth = {
+    BriefHelp     = "Go to previous month"			//Optional
+    MultiLineHelp = "Go to previous month"			//Optional
+    OneLineHelp   = "Go to previous month"			//Optional
+}
+
+Command exit = {
+    QuitAfter = yes						//Optional
+}
+
