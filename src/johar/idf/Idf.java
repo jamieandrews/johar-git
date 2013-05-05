@@ -41,6 +41,8 @@ public class Idf extends IdfElement {
     private String _idfVersion;
     private String _initializationMethod;
 
+    private static String _lastErrorMessages = "";
+
     public Idf(Element domElement, ErrorHandler eh) {
 	super(domElement, eh, "JoharIdf");
 
@@ -133,13 +135,14 @@ public class Idf extends IdfElement {
 	    // DocumentBuilder.parse() does also take an InputStream as
 	    // parameter.
 	    DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+	    ErrorHandler eh = new ErrorHandler();
+	    docBuilder.setErrorHandler(eh);
 	    Document doc = docBuilder.parse( new File(filename) );
 	    doc.getDocumentElement().normalize();
 	    Element e = doc.getDocumentElement();
-	    ErrorHandler eh = new ErrorHandler();
 	    Idf newIdf = new Idf(e, eh);
+	    _lastErrorMessages = eh.getErrorMessages();
 	    if (eh.errorsExist()) {
-		System.out.println(eh.getErrorMessages());
 		return null;
 	    } else {
 		return newIdf;
@@ -159,6 +162,10 @@ public class Idf extends IdfElement {
 	}
 
 	return null;
+    }
+
+    public static String getErrorMsgs() {
+	return _lastErrorMessages;
     }
 
     // For toString.  Overrides superclass method.
