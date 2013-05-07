@@ -1,64 +1,236 @@
-Application = TestFile			   	   //Required
-ApplicationEngine = TestFile           //Optional
-IdfVersion = "1.0"                     //Required
-Table tab1							   //Required
-Table tab2                             //Required
+Application = ContactsManager					//Required
+ApplicationEngine = ContactsManager				//Optional
+IdfVersion = "1.0"								//Required
+InitializationMethod = initContactsManager		//Optional
 
-Table days = {							
-    Browsable = yes						//Optional
-    DefaultHeading = "Days"				//Optional
+CommandGroup personalProfile = {
+	Label = "Create Personal Profile"			//Optional
+	Member = profile							//Required
+	Member = changePassCode						//Required
+	Member = quit								//Required
 }
 
-CommandGroup appointment = {			
-    Member = addAppointment				//Optional
-    Member = cancel						//Optional
-    Member = reminders					//Optional
-    Member = exit						//Optional
-    Mnemonic = M						//Optional
+CommandGroup contacts = {
+	Label = "Create Contacts"					//Optional
+	Member = addContact							//Required
+	Member = deleteContact						//Required
+	Member = exportContacts						//Required
 }
 
-Command addAppointment = {
-    Label = "Add Appointment"			//Optional
-
-    BriefHelp =     "Add an appointment"		//Optional
-    MultiLineHelp = "Add an appointment on the current day"		//Optional
-    OneLineHelp =   "Add an appointment on the current day"		//Optional
-        
-    Parameter description = {
-        Type = text								//Required
-        MaxNumberOfChars = 240					//Optional
-        MaxNumberOfLines = 3					//Optional
-    }
+Command profile = {
+	Label = "Personal Profile"					//Optional
+	CommandMethod = editProfile					//Required
+	ActiveIfMethod = checkAccountStatus			//Optional
+	BriefHelp = "Enter your personal data"			//Optional
+	OneLineHelp = "Helps you update your personal data, so you can have an up-to-date profile"	//Optional
+	MultiLineHelp = "Your personal profile consists of your name, mobile number, home phone number, office phone number, email address, city, state/province, country, and so on. Kindly fill the profile form appropriately. Your personal information is private and will be treated with absolute confidentiality."    //Optional
+	
+	Parameter fullName = {
+		Label = "Your Full Name"					//Optional
+		BriefHelp = "Please Enter Your Full Name"		//Optional
+		Type = text									//Required
+		MaxNumberOfChars = 100						//Optional
+		MaxNumberOfReps = 1							//Optional
+		Prominence = 2000							//Optional
+	}
+	Parameter address = {
+		Label = "Your Contact Address"				//Optional
+		BriefHelp = "Enter Your Contact Address"	//Optional
+		Type = text									//Required
+		MaxNumberOfChars = 200						//Optional
+		MaxNumberOfLines = 2						//Optional
+		MaxNumberOfReps = 1							//Optional
+	}
+	Parameter city = {
+		Label = "Your City"							//Optional
+		BriefHelp = "Enter Your City"				//Optional
+		Type = text									//Required
+		MaxNumberOfChars = 50						//Optional
+	}
+	Parameter province = {
+		Label = "Your Province/State"				//Optional
+		BriefHelp = "Enter Your Province/State"		//Optional
+		Type = text									//Required
+		MaxNumberOfChars = 50						//Optional
+	}
+	Parameter country = {
+		Label = "Your Country"						//Optional
+		BriefHelp = "Enter Your Country"		//Optional
+		Type = text					//Required
+		MaxNumberOfChars = 50				//Optional
+	}
+	Parameter gender = {
+		Label = "Your Gender"				//Optional
+		BriefHelp = "Select Your Gender"		//Optional
+		Type = choice					//Required
+		Choices = "Male|Female"				//Required
+	}
+	Parameter phone = {
+		Label = "Your Phone Number(s)"			//Optional
+		BriefHelp = "Enter Your Phone Number(s)"	//Optional
+		Type = text					//Required
+		MaxNumberOfReps = 3				//Optional
+		MaxNumberOfChars = 15				//Optional
+		RepsModel = set					//Optional
+	}
+	Parameter email = {
+		Label = "Your Email Address"			//Optional
+		BriefHelp = "Enter Your Email Address"		//Optional
+		Type = text					//Required
+		MaxNumberOfChars = 100				//Optional
+	}
+	ParameterCheckMethod = validateProfileInputs	//Optional
+	QuitAfter = no							//Optional
 }
 
-Command cancel = {
-    BriefHelp     = "Cancel appointment"							//Optional
-	OneLineHelp   = "Cancel the selected appointment"			   //Optional
-
-    Parameter appt = {
-        Type = tableEntry							//Required
-        SourceTable = appointments					//Required
-    }
+Command addContacts = {
+	Label = "Create your Contacts"					//Optional
+	CommandMethod = addContacts					//Optional
+	ActiveIfMethod = checkAccountStatus				//Optional
+	Stage profileStage = {
+		Parameter fullName = {
+			Label = "Contact's Full Name"			//Optional
+			BriefHelp = "Please Enter Contact's Name"	//Optional
+			Type = text					//Required
+			MaxNumberOfChars = 100				//Optional
+			MaxNumberOfReps = 1				//Optional
+			Prominence = 2000				//Optional
+		}
+		Parameter city = {
+			Label = "Contact's City"			//Optional
+			BriefHelp = "Enter Contact's City"		//Optional
+			Type = text					//Required
+			MaxNumberOfChars = 50				//Optional
+		}
+		Parameter province = {
+			Label = "Contact's Province/State"		//Optional
+			BriefHelp = "Enter Contact's Province/State"	//Optional
+			Type = text					//Required
+			MaxNumberOfChars = 50				//Optional
+			DefaultValue = "Ontario"			//Optional
+		}
+		Parameter country = {
+			Label = "Contact's Country"			//Optional
+			BriefHelp = "Enter Contact's Country"		//Optional
+			Type = text					//Required
+			MaxNumberOfChars = 50				//Optional
+			DefaultValueMethod = defaultCountry		//Optional
+		}
+		Parameter email = {
+			Label = "Contact's Email Address"		//Optional
+			BriefHelp = "Enter Contact's Email Address"	//Optional
+			Type = text					//Required
+			MaxNumberOfChars = 100				//Optional
+		}
+		Parameter phone = {
+			Label = "Contact's Phone Number(s)"		//Optional
+			BriefHelp = "Contact's Phone Number(s)"		//Optional
+			Type = text					//Required
+			MaxNumberOfReps = 3				//Optional
+			MaxNumberOfChars = 15				//Optional
+			RepsModel = set					//Optional
+		}
+		ParameterCheckMethod = validateContactsMainProfile	//Optional
+	}
+	Stage moreContactsDetails = {
+		Parameter addToCategory = {
+			Label = "Contact's Category"				//Optional
+			BriefHelp = "Select a category for Contact"		//Optional
+			Type = choice						//Required
+			Choices = "Friend|Family|Business|Other"		//Required
+			MaxNumberOfReps = 1					//Optional			
+		}
+		Parameter businessName = {
+			Label = "Name of Business/Firm/Company"			//Optional
+			Type = text						//Required
+			ParentParameter = addToCategory				//Required
+			ParentValue = "Business"				//Required
+			MaxNumberOfChars = 100					//Optional
+			MaxNumberOfReps = 1					//Optional
+		}
+		Parameter officeAddress = {
+			Label = "Contact's Office Address"			//Optional
+			BriefHelp = "Enter Contact Office's Address"	//Optional
+			Type = text						//Required
+			ParentParameter = addToCategory				//Required
+			ParentValue = "Business"				//Required
+			MaxNumberOfChars = 200					//Optional
+			MaxNumberOfReps = 1					//Optional
+		}
+		Parameter officeEmail = {
+			Label = "Contact's Email Address"			//Optional
+			BriefHelp = "Enter Contact's Email Address"		//Optional
+			Type = text						//Required
+			ParentParameter = addToCategory				//Required
+			ParentValue = "Business"				//Required
+			MaxNumberOfChars = 100					//Optional
+		}
+		Parameter officePhone = {
+			Label = "Office Phone Number(s)"		//Optional
+			Type = text						//Required
+			ParentParameter = addToCategory				//Required
+			ParentValue = "Business"				//Required
+			MaxNumberOfReps = 3					//Optional
+			MaxNumberOfChars = 15					//Optional
+			RepsModel = set						//Optional
+		}
+		ParameterCheckMethod = validateContactsOtherProfile		//Optional
+	}
 }
 
-Command reminders = {
-    Parameter kind = {
-        Type = choice					//Required
-        Choices = "popup|email|off"			//Required
-        DefaultValue = off							//Optional
-        Label = "How you want to be reminded"		//Optional
-        BriefHelp     = "How you want to be reminded"		//Optional
-        OneLineHelp   = "How you want to be reminded"			//Optional
-    }
+Table contactsList = {
+	Label = "Contacts List"				//Optional
+	Browsable = yes					//Optional
+	DefaultHeading = "List of Contacts"		//Optional
 }
 
-Command previousMonth = {
-    BriefHelp     = "Go to previous month"			//Optional
-    MultiLineHelp = "Go to previous month"			//Optional
-    OneLineHelp   = "Go to previous month"			//Optional
+Command deleteContact = {
+	Label = "Delete Contact"				//Optional
+	BriefHelp = "Select a contact to delete."		//Optional
+	OneLineHelp = "Select a contact you wish to remove from the Contacts List."	//Optional
+	Parameter contactToDelete = {	
+		Label = "Contact to Delete"			//Optional
+		OneLineHelp = "The Contact you want to remove from your Contacts List."		//Optional
+		Type = tableEntry					//Required
+		SourceTable = contactsList				//Required
+	}	
 }
 
-Command exit = {
-    QuitAfter = yes						//Optional
+Command exportContacts = {
+	Label = "Export Contacts as a CSV file"		//Optional
+	MultiLineHelp = "You might want to export your Contacts List as a CSV file to your computer. This command does exactly that. You can access your contacts offline or even transfer the file to another computer or even print from there."		//Optional
+	
+	Parameter fileName = {
+		Label = "File Name"						//Optional
+		Type = file							//Required
+		FileConstraint = mustNotExistYet				//Optional
+	}
+	ParameterCheckMethod = validateFilePath					//Optional
 }
 
+Command changePassCode = {
+	Label = "Change Your PassCode"						//Optional
+	OneLineHelp = "Your PassCode must be between 5 and 8 digits."		//Optional
+	Parameter passCode = {
+	    Type = int								//Required
+	    MinValue = 5								//Optional
+	    MaxValue = 8									//Optional
+	    MaxNumberOfReps = 1								//Optional
+	}
+	Parameter passCodeConfirm = {
+	    Type = int								//Required
+	    MinValue = 5								//Optional
+	    MaxValue = 8									//Optional
+	    MaxNumberOfReps = 1								//Optional
+	}
+	ParameterCheckMethod = validatePassCode				//Optional
+}
+
+Command quit = {
+	Question quitApplication = {
+		Type = boolean									//Required
+		Label = "Are you sure you want to quit?"				//Optional
+		AskIfMethod = quitApp									//Required
+	}
+	QuitAfterIfMethod = quitApp									//Optional
+}
