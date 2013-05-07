@@ -36,8 +36,27 @@ public class IdfElement {
 	_elementName = " " + elementName;
     }
 
+    // getElementsByTagName returns all elements at any depth in the
+    // document.  We must instead return just the children with the
+    // appropriate tag names.  Hence the helper class IdfNodeList and
+    // this method.
+    protected NodeList getChildrenByTagName(String tagName) {
+        NodeList nodeList = _domElement.getChildNodes();
+        int length = nodeList.getLength();
+
+        IdfNodeList children = new IdfNodeList();
+
+        for (int i=0; i<length; i++) {
+            if (nodeList.item(i).getNodeName().equals(tagName)) {
+                children.add(nodeList.item(i));
+            }
+        }
+
+	return children;
+    }
+
     protected void complainIfMoreThanOne(String tagName) {
-	NodeList nodeList = _domElement.getElementsByTagName(tagName);
+	NodeList nodeList = getChildrenByTagName(tagName);
 	if (nodeList.getLength() > 1) {
 	    _eh.error(
 		_elementKind + _elementName +
@@ -48,7 +67,7 @@ public class IdfElement {
 
     protected void complainIfMoreThanZero(String tagName,
 	     String reason) {
-	NodeList nodeList = _domElement.getElementsByTagName(tagName);
+	NodeList nodeList = getChildrenByTagName(tagName);
 	if (nodeList.getLength() > 1) {
 	    _eh.error(
 		_elementKind + _elementName +
@@ -59,7 +78,7 @@ public class IdfElement {
     }
 
     protected int countNumberOf(String tagName) {
-	NodeList nodeList = _domElement.getElementsByTagName(tagName);
+	NodeList nodeList = getChildrenByTagName(tagName);
 	return nodeList.getLength();
     }
 
@@ -69,7 +88,7 @@ public class IdfElement {
     }
 
     protected String extractAttr(String attrName, String defaultValue) {
-	NodeList nodeList = _domElement.getElementsByTagName(attrName);
+	NodeList nodeList = getChildrenByTagName(attrName);
 	if (nodeList.getLength() == 0) {
 	    return defaultValue;
 	} else {
@@ -80,7 +99,7 @@ public class IdfElement {
 
     protected long extractAttr(String attrName, long defaultValue)
 	    throws IdfFormatException {
-	NodeList nodeList = _domElement.getElementsByTagName(attrName);
+	NodeList nodeList = getChildrenByTagName(attrName);
 	if (nodeList.getLength() == 0) {
 	    return defaultValue;
 	} else {
@@ -102,7 +121,7 @@ public class IdfElement {
 
     protected double extractAttr(String attrName, double defaultValue)
 	    throws IdfFormatException {
-	NodeList nodeList = _domElement.getElementsByTagName(attrName);
+	NodeList nodeList = getChildrenByTagName(attrName);
 	if (nodeList.getLength() == 0) {
 	    return defaultValue;
 	} else {
@@ -123,7 +142,7 @@ public class IdfElement {
     }
 
     protected boolean extractAttr(String attrName, boolean defaultValue) {
-	NodeList nodeList = _domElement.getElementsByTagName(attrName);
+	NodeList nodeList = getChildrenByTagName(attrName);
 	if (nodeList.getLength() == 0) {
 	    return defaultValue;
 	} else {
@@ -155,7 +174,7 @@ public class IdfElement {
     protected void checkNumInstances(boolean cond, String attrName,
 	    int minIfTrue, int maxIfTrue, int minIfFalse, int maxIfFalse, 
 	    String reasonForComplaint) {
-	NodeList nodeList = _domElement.getElementsByTagName(attrName);
+	NodeList nodeList = getChildrenByTagName(attrName);
 	int count = nodeList.getLength();
 	if (cond) {
 	    if ((count != minIfTrue) && (minIfTrue == maxIfTrue)) {

@@ -109,6 +109,7 @@
 		<xs:simpleType>
 		    <xs:restriction base="xs:string">
     			<xs:enumeration value="mustBeReadable"/>
+    			<xs:enumeration value="mustExist"/>
 			<xs:enumeration value="mustNotExistYet"/>
 			<xs:enumeration value="none"/>
 		    </xs:restriction>
