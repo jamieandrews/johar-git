@@ -86,6 +86,8 @@
 	    <xs:element name="ParameterCheckMethod" type="lowerIdentifier"/>
 
 	</xs:choice>
+
+	<xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
 
     <!-- ========== END declarations relevant to Commands ========== -->
@@ -93,10 +95,79 @@
 
     <!-- BEGIN declarations relevant to Parameters and Questions -->
 
-    <!-- What can go inside either a Parameter or Question declaration -->
-    <xs:complexType name="paramOrQuestionType">
+    <!-- What can go inside a Parameter declaration -->
+    <xs:complexType name="paramType">
 
 	<xs:choice minOccurs="0" maxOccurs="unbounded">
+
+	    <xs:element ref="BriefHelp"/>
+	    <xs:element name="Choices" type="xs:string"/>
+	    <xs:element name="DefaultValue" type="xs:string"/>
+	    <xs:element name="DefaultValueMethod" type="lowerIdentifier"/>
+
+	    <xs:element name="FileConstraint">
+		<xs:simpleType>
+		    <xs:restriction base="xs:string">
+    			<xs:enumeration value="mustBeReadable"/>
+			<xs:enumeration value="mustNotExistYet"/>
+			<xs:enumeration value="none"/>
+		    </xs:restriction>
+		</xs:simpleType>
+	    </xs:element>
+
+	    <xs:element name="Label" type="xs:string"/>
+	    <xs:element name="MaxNumberOfChars" type="positiveInt"/>
+	    <xs:element name="MaxNumberOfLines" type="positiveInt"/>
+	    <xs:element name="MaxNumberOfReps" type="positiveInt"/>
+	    <xs:element name="MaxValue" type="xs:decimal"/>
+	    <xs:element name="MinNumberOfChars" type="nonNegativeInt"/>
+	    <xs:element name="MinNumberOfReps" type="nonNegativeInt"/>
+	    <xs:element name="MinValue" type="xs:decimal"/>
+	    <xs:element name="MultiLineHelp" type="xs:string"/>
+	    <xs:element ref="OneLineHelp"/>
+	    <xs:element name="ParentParameter" type="lowerIdentifier"/>
+	    <xs:element name="ParentValue"/>
+	    <xs:element name="Prominence" type="nonNegativeInt"/>
+
+	    <xs:element name="RepsModel">
+		<xs:simpleType>
+		    <xs:restriction base="xs:string">
+			<xs:enumeration value="set"/>
+    			<xs:enumeration value="multiset"/>
+			<xs:enumeration value="sequence"/>
+		    </xs:restriction>
+		</xs:simpleType>
+	    </xs:element>
+
+	    <xs:element name="SourceTable" type="lowerIdentifier"/>
+
+	    <xs:element name="Type">
+		<xs:simpleType>
+		    <xs:restriction base="xs:string">
+			<xs:enumeration value="boolean"/>
+			<xs:enumeration value="choice"/>
+			<xs:enumeration value="date"/>
+			<xs:enumeration value="file"/>
+			<xs:enumeration value="float"/>
+			<xs:enumeration value="int"/>
+			<xs:enumeration value="text"/>
+			<xs:enumeration value="tableEntry"/>
+			<xs:enumeration value="timeOfDay"/>
+		    </xs:restriction>
+		</xs:simpleType>
+	    </xs:element>
+
+	</xs:choice>
+
+	<xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- What can go inside a Question declaration -->
+    <xs:complexType name="questionType">
+
+	<xs:choice minOccurs="0" maxOccurs="unbounded">
+
+	    <xs:element name="AskIfMethod" type="lowerIdentifier"/>
 
 	    <xs:element ref="BriefHelp"/>
 	    <xs:element name="Choices" type="xs:string"/>
@@ -143,45 +214,6 @@
 	</xs:choice>
 
 	<xs:attribute name="name" type="xs:string"/>
-    </xs:complexType>
-
-    <!-- What else can go inside a Parameter declaration -->
-    <xs:complexType name="paramType">
-	<xs:complexContent>
-	    <xs:extension base="paramOrQuestionType">
-		<xs:choice minOccurs="0" maxOccurs="unbounded">
-
-		    <xs:element name="MaxNumberOfReps" type="positiveInt"/>
-		    <xs:element name="MinNumberOfReps" type="nonNegativeInt"/>
-		    <xs:element name="ParentParameter" type="lowerIdentifier"/>
-		    <xs:element name="ParentValue"/>
-
-		    <xs:element name="RepsModel">
-			<xs:simpleType>
-			    <xs:restriction base="xs:string">
-				<xs:enumeration value="set"/>
-    				<xs:enumeration value="multiset"/>
-				<xs:enumeration value="sequence"/>
-			    </xs:restriction>
-			</xs:simpleType>
-		    </xs:element>
-
-		</xs:choice>
-	    </xs:extension>
-	</xs:complexContent>
-    </xs:complexType>
-
-    <!-- What else can go inside a Question declaration -->
-    <xs:complexType name="questionType">
-	<xs:complexContent>
-	    <xs:extension base="paramOrQuestionType">
-		<xs:choice minOccurs="0" maxOccurs="unbounded">
-
-		    <xs:element name="AskIfMethod" type="lowerIdentifier"/>
-
-		</xs:choice>
-	    </xs:extension>
-	</xs:complexContent>
     </xs:complexType>
 
     <!--  END declarations relevant to Parameters and Questions -->
