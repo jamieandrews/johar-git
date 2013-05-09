@@ -1,60 +1,65 @@
 Application = ContactsManager					//Required
 ApplicationEngine = ContactsManager				//Optional
-IdfVersion = "1.0"								//Required
-InitializationMethod = initContactsManager		//Optional
+IdfVersion = "1.0"						//Required
+InitializationMethod = initContactsManager			//Optional
 
 CommandGroup personalProfile = {
 	Label = "Create Personal Profile"			//Optional
-	Member = profile							//Required
-	Member = changePassCode						//Required
-	Member = quit								//Required
+	Member = profile					//Optional
+	Member = changePassCode					//Optional
+	Member = quit						//Optional
 }
 
 CommandGroup contacts = {
-	Label = "Create Contacts"					//Optional
-	Member = addContact							//Required
-	Member = deleteContact						//Required
-	Member = exportContacts						//Required
+	Label = "Create Contacts"				//Optional
+	Member = addContact					//Optional
+	Member = deleteContact					//Optional
+	Member = exportContacts					//Optional
 }
 
 Command profile = {
-	Label = "Personal Profile"					//Optional
-	CommandMethod = editProfile					//Required
+	Label = "Personal Profile"				//Optional
+	Label = "Your Personal Profile"				//Forbidden
+	CommandMethod = editProfile				//Optional
 	ActiveIfMethod = checkAccountStatus			//Optional
 	BriefHelp = "Enter your personal data"			//Optional
 	OneLineHelp = "Helps you update your personal data, so you can have an up-to-date profile"	//Optional
-	MultiLineHelp = "Your personal profile consists of your name, mobile number, home phone number, office phone number, email address, city, state/province, country, and so on. Kindly fill the profile form appropriately. Your personal information is private and will be treated with absolute confidentiality."    //Optional
+	MultiLineHelp = {{     //Optional
+Your personal profile consists of your name, mobile number, home phone number, office phone number, email address, city, state/province, country, and so on. Kindly fill the profile form appropriately. Your personal information is private and will be treated with absolute confidentiality.
+}}
 	
 	Parameter fullName = {
-		Label = "Your Full Name"					//Optional
+		Label = "Your Full Name"				//Optional
 		BriefHelp = "Please Enter Your Full Name"		//Optional
-		Type = text									//Required
-		MaxNumberOfChars = 100						//Optional
-		MaxNumberOfReps = 1							//Optional
-		Prominence = 2000							//Optional
+		Type = text						//Required
+		Type = boolean						//Forbidden
+		MaxNumberOfChars = 100					//Optional
+		MaxNumberOfReps = 1					//Optional
+		Prominence = 2000					//Optional
 	}
 	Parameter address = {
 		Label = "Your Contact Address"				//Optional
-		BriefHelp = "Enter Your Contact Address"	//Optional
-		Type = text									//Required
-		MaxNumberOfChars = 200						//Optional
-		MaxNumberOfLines = 2						//Optional
-		MaxNumberOfReps = 1							//Optional
+		BriefHelp = "Enter Your Contact Address"		//Optional
+		Type = text						//Required
+		MaxNumberOfChars = 200					//Optional
+		MaxNumberOfLines = 2					//Optional
+		MaxNumberOfReps = 1					//Optional
+		MinNumberOfReps = 10					//Forbidden
 	}
 	Parameter city = {
-		Label = "Your City"							//Optional
+		Label = "Your City"					//Optional
 		BriefHelp = "Enter Your City"				//Optional
-		Type = text									//Required
-		MaxNumberOfChars = 50						//Optional
+		Type = text						//Required
+		MaxNumberOfChars = 50					//Optional
 	}
 	Parameter province = {
 		Label = "Your Province/State"				//Optional
-		BriefHelp = "Enter Your Province/State"		//Optional
-		Type = text									//Required
-		MaxNumberOfChars = 50						//Optional
+		BriefHelp = "Enter Your Province/State"			//Optional
+		Type = text						//Required
+		MaxNumberOfChars = 50					//Optional
 	}
 	Parameter country = {
-		Label = "Your Country"						//Optional
+		Label = "Your Country"				//Optional
 		BriefHelp = "Enter Your Country"		//Optional
 		Type = text					//Required
 		MaxNumberOfChars = 50				//Optional
@@ -64,6 +69,7 @@ Command profile = {
 		BriefHelp = "Select Your Gender"		//Optional
 		Type = choice					//Required
 		Choices = "Male|Female"				//Required
+		Choices = "Male||Female"			//Forbidden
 	}
 	Parameter phone = {
 		Label = "Your Phone Number(s)"			//Optional
@@ -101,6 +107,7 @@ Command addContacts = {
 			BriefHelp = "Enter Contact's City"		//Optional
 			Type = text					//Required
 			MaxNumberOfChars = 50				//Optional
+			MinNumberOfChars = 60				//Forbidden
 		}
 		Parameter province = {
 			Label = "Contact's Province/State"		//Optional
@@ -108,6 +115,7 @@ Command addContacts = {
 			Type = text					//Required
 			MaxNumberOfChars = 50				//Optional
 			DefaultValue = "Ontario"			//Optional
+			DefaultValue = Ontario				//Forbidden
 		}
 		Parameter country = {
 			Label = "Contact's Country"			//Optional
@@ -129,6 +137,7 @@ Command addContacts = {
 			MaxNumberOfReps = 3				//Optional
 			MaxNumberOfChars = 15				//Optional
 			RepsModel = set					//Optional
+			RepsModel = multiset				//Forbidden
 		}
 		ParameterCheckMethod = validateContactsMainProfile	//Optional
 	}
@@ -144,13 +153,14 @@ Command addContacts = {
 			Label = "Name of Business/Firm/Company"			//Optional
 			Type = text						//Required
 			ParentParameter = addToCategory				//Required
+			ParentParameter = officeAddress				//Forbidden
 			ParentValue = "Business"				//Required
 			MaxNumberOfChars = 100					//Optional
 			MaxNumberOfReps = 1					//Optional
 		}
 		Parameter officeAddress = {
 			Label = "Contact's Office Address"			//Optional
-			BriefHelp = "Enter Contact Office's Address"	//Optional
+			BriefHelp = "Enter Contact Office's Address"		//Optional
 			Type = text						//Required
 			ParentParameter = addToCategory				//Required
 			ParentValue = "Business"				//Required
@@ -166,7 +176,7 @@ Command addContacts = {
 			MaxNumberOfChars = 100					//Optional
 		}
 		Parameter officePhone = {
-			Label = "Office Phone Number(s)"		//Optional
+			Label = "Office Phone Number(s)"			//Optional
 			Type = text						//Required
 			ParentParameter = addToCategory				//Required
 			ParentValue = "Business"				//Required
@@ -198,8 +208,10 @@ Command deleteContact = {
 
 Command exportContacts = {
 	Label = "Export Contacts as a CSV file"		//Optional
-	MultiLineHelp = "You might want to export your Contacts List as a CSV file to your computer. This command does exactly that. You can access your contacts offline or even transfer the file to another computer or even print from there."		//Optional
 	
+	MultiLineHelp = {{	//Optional
+		You might want to export your Contacts List as a CSV file to your computer. This command does exactly that. You can access 			your contacts offline or even transfer the file to another computer or even print from there.
+}}
 	Parameter fileName = {
 		Label = "File Name"						//Optional
 		Type = file							//Required
@@ -213,24 +225,25 @@ Command changePassCode = {
 	OneLineHelp = "Your PassCode must be between 5 and 8 digits."		//Optional
 	Parameter passCode = {
 	    Type = int								//Required
-	    MinValue = 5								//Optional
-	    MaxValue = 8									//Optional
-	    MaxNumberOfReps = 1								//Optional
+	    MinValue = 5							//Optional
+	    MaxValue = 8							//Optional
+	    MaxNumberOfReps = 1							//Optional
+	    MaxNumberOfChars = 10						//Forbidden
 	}
 	Parameter passCodeConfirm = {
 	    Type = int								//Required
-	    MinValue = 5								//Optional
-	    MaxValue = 8									//Optional
-	    MaxNumberOfReps = 1								//Optional
+	    MinValue = 5							//Optional
+	    MaxValue = 8							//Optional
+	    MaxNumberOfReps = 1							//Optional
 	}
-	ParameterCheckMethod = validatePassCode				//Optional
+	ParameterCheckMethod = validatePassCode					//Optional
 }
 
 Command quit = {
 	Question quitApplication = {
-		Type = boolean									//Required
-		Label = "Are you sure you want to quit?"				//Optional
-		AskIfMethod = quitApp									//Required
+		Type = boolean							//Required
+		Label = "Are you sure you want to quit?"			//Optional
+		AskIfMethod = quitApp						//Required
 	}
-	QuitAfterIfMethod = quitApp									//Optional
+	QuitAfterIfMethod = quitApp						//Optional
 }
