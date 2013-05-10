@@ -68,13 +68,9 @@ public class TCGenerator {
             PrintWriter writer = new PrintWriter(new File(FILE_PATH+fileName.substring(0, fileName.indexOf(".idf")) +"_Main.idf"));
             String currentLine = idfBuffer.readLine();
             int index = -1;
-	    boolean handleMultiLine = false;
 		
             while (currentLine != null){
-                if (currentLine.contains("//Forbidden")){
-		    if (currentLine.contains("MultiLineHelp"))
-		        handleMultiLine = true;
-		}
+                if (currentLine.contains("//Forbidden")){}
 		else{
 		    if (currentLine.contains("//")){
                         index = currentLine.indexOf("//");
@@ -82,15 +78,8 @@ public class TCGenerator {
                         writer.append("\n");
                     }
                     else {
-			if (!handleMultiLine){
-			    writer.append(currentLine);
-                            writer.append("\n");
-			}
-			else{
-			    if (currentLine.contains("}}")){
-				handleMultiLine = false;
-			    }
-			}
+			writer.append(currentLine);
+                        writer.append("\n");
                     }
 		}		  
                 currentLine = idfBuffer.readLine();
@@ -119,7 +108,6 @@ public class TCGenerator {
             String currentLine2 = "";
             int index = -1;
             int counter = 1;
-	    boolean handleMultiLine = false;
 
             while (currentLine != null){                
                 idfBuffer2 = new BufferedReader(new FileReader(ROOT_PATH+idfFilePath));
@@ -128,31 +116,17 @@ public class TCGenerator {
                     writer = new PrintWriter(new File(FILE_PATH2+fileName.substring(0, fileName.indexOf(".idf")) +"_Valid_" +counter+ ".idf"));
                     while (currentLine2 != null) {
                         if (!(currentLine.equals(currentLine2))){   
-                            if (currentLine2.contains("//Forbidden")){
-				if (currentLine2.contains("MultiLineHelp"))
-		        	     handleMultiLine = true;
-			    }
+                            if (currentLine2.contains("//Forbidden")){}
 			    else if (currentLine2.contains("//")){
                                 index = currentLine2.indexOf("//");
                                 writer.append(currentLine2.substring(0, index));
                                 writer.append("\n");
                             }
                             else {
-                                if (!handleMultiLine){
-				    writer.append(currentLine2);
-		                    writer.append("\n");
-				}
-				else{
-				    if (currentLine2.contains("}}")){
-					handleMultiLine = false;
-				    }
-				}
+				writer.append(currentLine2);
+		                writer.append("\n");
                             }
                         }
-			else{
-			     if (currentLine2.contains("MultiLineHelp"))
-		        	 handleMultiLine = true;
-			}
                         currentLine2 = idfBuffer2.readLine();
                     }
                     writer.close();
@@ -185,7 +159,6 @@ public class TCGenerator {
             String currentLine2 = "";
             int index = -1;
             int counter = 1;
-	    boolean handleMultiLine = false;
 
             while (currentLine != null){                
                 idfBuffer2 = new BufferedReader(new FileReader(ROOT_PATH+idfFilePath));
@@ -194,31 +167,17 @@ public class TCGenerator {
                     writer = new PrintWriter(new File(FILE_PATH3+fileName.substring(0, fileName.indexOf(".idf")) +"_Invalid_" +counter+ ".idf"));
                     while (currentLine2 != null) {
                         if (!(currentLine.equals(currentLine2))){   
-                            if (currentLine2.contains("//Forbidden")){
-				if (currentLine2.contains("MultiLineHelp"))
-		        	     handleMultiLine = true;
-			    }
+                            if (currentLine2.contains("//Forbidden")){}
 			    else if (currentLine2.contains("//")){
                                 index = currentLine2.indexOf("//");
                                 writer.append(currentLine2.substring(0, index));
                                 writer.append("\n");
                             }
                             else {
-                                if (!handleMultiLine){
-				    writer.append(currentLine2);
-		                    writer.append("\n");
-				}
-				else{
-				    if (currentLine2.contains("}}")){
-					handleMultiLine = false;
-				    }
-				}
+				writer.append(currentLine2);
+		                writer.append("\n");
                             }
                         }
-			else{
-			     if (currentLine2.contains("MultiLineHelp"))
-		        	 handleMultiLine = true;
-			}
                         currentLine2 = idfBuffer2.readLine();
                     }
                     writer.close();
@@ -249,7 +208,7 @@ public class TCGenerator {
             String currentLine2 = "";
             int index = -1;
             int counter = 1;
-	    boolean handleMultiLine = false;
+
             while (currentLine != null){                
                 idfBuffer2 = new BufferedReader(new FileReader(ROOT_PATH+idfFilePath));
                 currentLine2 = idfBuffer2.readLine();
@@ -263,21 +222,10 @@ public class TCGenerator {
                                 writer.append("\n");
                             }
                             else {
-                                if (!handleMultiLine){
-				    writer.append(currentLine2);
-		                    writer.append("\n");
-				}
-				else{
-				    if (currentLine2.contains("}}")){
-					handleMultiLine = false;
-				    }
-				}
+				writer.append(currentLine2);
+		                writer.append("\n");
                             }
                         }
-			else{
-			     if (currentLine2.contains("MultiLineHelp"))
-		        	 handleMultiLine = true;
-			}
                         currentLine2 = idfBuffer2.readLine();
                     }
                     writer.close();
