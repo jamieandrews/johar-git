@@ -1,0 +1,14 @@
+Application = WordProcessor			//Required
+
+Command open = {
+    OneLineHelp = "OneLine"		//Optional
+    MultiLineHelp = {{			//Optional
+	Multi Line
+	Multi Line
+	Multi Line
+	Multi Line
+    }}
+}
+
+IdfVersion = "1.0"				//Required
+

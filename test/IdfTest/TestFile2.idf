@@ -1,0 +1,99 @@
+Application = WordProcessor			//Required
+
+ApplicationEngine = WordProcessorEngine		//Optional
+
+Command open = {
+    ActiveIfMethod = openActive			//Optional
+    BriefHelp = openBriefHelp			//Optional
+    CommandMethod = openMethod			//Optional
+    Label = openLabel				//Optional
+    MultiLineHelp = openMultiLineHelp		//Optional
+    OneLineHelp = openOneLineHelp		//Optional
+    Prominence = 3000				//Optional
+    Question saveQuestion = {
+	Type = boolean
+	AskIfMethod = askSaveQuestion		//Required
+    }
+    QuitAfter = yes				//Optional
+
+    Parameter booleanParam = {
+	Type = boolean				//Required
+
+	BriefHelp = boolParamBriefHelp		//Optional
+	DefaultValue = true			//Optional
+	Label = boolParamLabel			//Optional
+	MaxNumberOfReps = 5			//Optional
+	MinNumberOfReps	= 2			//Optional
+	MultiLineHelp = boolParamMultiLineHelp	//Optional
+	OneLineHelp = boolParamOneLineHelp	//Optional
+	Prominence = 3000			//Optional
+	RepsModel = sequence			//Optional
+    }
+
+    Parameter choiceParam = {
+	Type = choice					//Required
+	Choices = "red|green|blue"			//Required
+	DefaultValueMethod = choiceParamDVMethod	//Optional
+    }
+
+    Parameter dateParam = {
+	Type = date				//Required
+	ParentParameter = choiceParam		//Required
+	ParentValue = green			//Required
+    }
+
+    Parameter fileParam = {
+	Type = file				//Required
+	FileConstraint = mustExist		//Optional
+    }
+
+    Parameter floatParam = {
+	Type = float				//Required
+    }
+
+    Parameter intParam = {
+	Type = int				//Required
+
+	MaxValue = 1000				//Optional
+	MinValue = 23				//Optional
+    }
+
+    Parameter textParam = {
+	Type = text				//Required
+	MaxNumberOfChars = 100			//Optional
+	MaxNumberOfLines = 2			//Optional
+    }
+
+    Parameter tableEntryParam = {
+	Type = tableEntry			//Required
+	SourceTable = sections			//Required
+    }
+
+    Parameter timeOfDayParam = {
+	Type = date				//Required
+    }
+
+    ParameterCheckMethod = openParamCheck	//Optional
+}
+
+Command quitMaybe = {
+    QuitAfterIfMethod = quitMaybeMethod		//Optional
+    Stage stageOne = { }			//Optional
+}
+
+CommandGroup file = {
+    Label = fileCommandGroupLabel		//Optional
+    Member = open				//Required
+}
+
+IdfVersion = "1.0"				//Required
+
+InitializationMethod = wpInitialize		//Optional
+
+Table sections = {
+    Browsable = yes				//Optional
+    DefaultHeading = sectionsDefaultHeading	//Optional
+    Label = sectionsTableLabel			//Optional
+}
+
+
