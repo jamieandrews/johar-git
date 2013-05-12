@@ -63,7 +63,8 @@ public class TCGenerator {
             File newFile = new File(ROOT_PATH+idfFilePath);
             String fileName = newFile.getName();
             String newIdfFile = "";
-            
+            String actionTaken = "Removed all Forbidden lines";
+
             BufferedReader idfBuffer = new BufferedReader(new FileReader(ROOT_PATH+idfFilePath));
             PrintWriter writer = new PrintWriter(new File(FILE_PATH+fileName.substring(0, fileName.indexOf(".idf")) +"_Main.idf"));
             String currentLine = idfBuffer.readLine();
@@ -89,7 +90,7 @@ public class TCGenerator {
             idfBuffer.close(); 
 
             newIdfFile = FILE_PATH+fileName.substring(0, fileName.indexOf(".idf"))+"_Main.idf";
-	    validateIdf(newIdfFile);
+	    validateIdf(newIdfFile, actionTaken);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
@@ -100,6 +101,7 @@ public class TCGenerator {
             File newFile = new File(ROOT_PATH+idfFilePath);
             String fileName = newFile.getName();
             String newIdfFile = "";
+	    String actionTaken = "";
             
             BufferedReader idfBuffer = new BufferedReader(new FileReader(ROOT_PATH+idfFilePath));
             BufferedReader idfBuffer2;
@@ -127,12 +129,15 @@ public class TCGenerator {
 		                writer.append("\n");
                             }
                         }
+			else{
+			     actionTaken = "Removed the Optional line \"" + currentLine.substring(0,currentLine.indexOf("//")).trim() + "\" from the IDF";
+			}
                         currentLine2 = idfBuffer2.readLine();
                     }
                     writer.close();
 
                     newIdfFile = FILE_PATH2+fileName.substring(0, fileName.indexOf(".idf")) +"_Valid_" +counter+ ".idf";
-                    validateIdf(newIdfFile);
+                    validateIdf(newIdfFile, actionTaken);
                     
                     counter++;
                 }
@@ -151,6 +156,7 @@ public class TCGenerator {
             File newFile = new File(ROOT_PATH+idfFilePath);
             String fileName = newFile.getName();
             String newIdfFile = "";
+	    String actionTaken = "";
             
             BufferedReader idfBuffer = new BufferedReader(new FileReader(ROOT_PATH+idfFilePath));
             BufferedReader idfBuffer2;
@@ -178,12 +184,15 @@ public class TCGenerator {
 		                writer.append("\n");
                             }
                         }
+			else{
+			     actionTaken = "Removed the Required line \"" + currentLine.substring(0,currentLine.indexOf("//")).trim() + "\" from the IDF";
+			}
                         currentLine2 = idfBuffer2.readLine();
                     }
                     writer.close();
 
                     newIdfFile = FILE_PATH3+fileName.substring(0, fileName.indexOf(".idf")) +"_Invalid_" +counter+ ".idf";
-                    validateIdf(newIdfFile);
+                    validateIdf(newIdfFile, actionTaken);
                     counter++;
                 }
                 currentLine = idfBuffer.readLine();
@@ -200,7 +209,8 @@ public class TCGenerator {
             File newFile = new File(ROOT_PATH+idfFilePath);
             String fileName = newFile.getName();
             String newIdfFile = "";
-            
+            String actionTaken = "";
+
             BufferedReader idfBuffer = new BufferedReader(new FileReader(ROOT_PATH+idfFilePath));
             BufferedReader idfBuffer2;
             PrintWriter writer;
@@ -216,7 +226,8 @@ public class TCGenerator {
                     writer = new PrintWriter(new File(FILE_PATH4+fileName.substring(0, fileName.indexOf(".idf")) +"_Invalid2_" +counter+ ".idf"));
                     while (currentLine2 != null) {
                         if (!(currentLine.equals(currentLine2))){
-                           if (currentLine2.contains("//")){
+			   if (currentLine2.contains("//Forbidden")){}
+                           else if (currentLine2.contains("//")){
                                 index = currentLine2.indexOf("//");
                                 writer.append(currentLine2.substring(0, index));
                                 writer.append("\n");
@@ -226,12 +237,18 @@ public class TCGenerator {
 		                writer.append("\n");
                             }
                         }
+			else{
+			     index = currentLine2.indexOf("//");
+                             writer.append(currentLine2.substring(0, index));
+                             writer.append("\n");
+		             actionTaken = "Removed all Forbidden lines, except \"" + currentLine.substring(0,currentLine.indexOf("//")).trim() + "\", from the IDF";
+			}
                         currentLine2 = idfBuffer2.readLine();
                     }
                     writer.close();
 
                     newIdfFile = FILE_PATH4+fileName.substring(0, fileName.indexOf(".idf")) +"_Invalid2_" +counter+ ".idf";
-                    validateIdf(newIdfFile);
+                    validateIdf(newIdfFile, actionTaken);
                     counter++;
                 }
                 currentLine = idfBuffer.readLine();
@@ -243,9 +260,9 @@ public class TCGenerator {
         }
     }
     
-    public void validateIdf(String idfFile){
+    public void validateIdf(String idfFile, String actionTaken){
     	try{    	
-    		boolean status = convertToXML(idfFile);
+    		boolean status = convertToXML(idfFile, actionTaken);
     		if (status){
     		    Idf idf = Idf.idfFromFile(idfFile.replace(".idf", ".xml"));
     		    String errorMsg = "";
@@ -265,14 +282,20 @@ public class TCGenerator {
     	}
     }
     
-    public boolean convertToXML(String idfFile){
+    public boolean convertToXML(String idfFile, String actionTaken){
     	Reader reader = null;
     	PrintWriter writerXML = null;
     	try {
 		reader = new InputStreamReader(new FileInputStream(new File(idfFile)));
 		writerXML = new PrintWriter(new File(idfFile.replace(".idf", ".xml")));
 	    	writerError = new PrintWriter(new File(idfFile.replace(".idf", ".log")));
-	    	writerError.write("*****BEGIN: IDF to XML Conversion errors");
+	    	writerError.write("*****BEGIN: Action Taken on the IDF");
+	    	writerError.write("\n");
+	    	writerError.write(actionTaken);
+		writerError.write("\n");
+		writerError.write("*****END: Action Taken on the IDF");
+		writerError.write("\n\n");
+		writerError.write("*****BEGIN: IDF to XML Conversion errors");
 	    	writerError.write("\n");
 	    	Idf2xml convertToXML = new Idf2xml(reader,writerXML,writerError);
 	    	convertToXML.convert();
