@@ -33,6 +33,10 @@ public class IdfCommandGroup extends IdfElement {
 	complainIfMoreThanOne("Label");
 	_label = extractAttr("Label", ccConvertedName);
 
+	checkNumInstances(true, "Member",
+	    1, Integer.MAX_VALUE,
+	    1, Integer.MAX_VALUE, "");
+
 	NodeList memberList = _domElement.getElementsByTagName("Member");
 	int n = memberList.getLength();
 	for (int i=0; i<n; i++) {
