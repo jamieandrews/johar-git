@@ -2,7 +2,7 @@ Application = WordProcessor			//Required
 
 Command open = {
     OneLineHelp = "OneLine"		//Optional
-    MultiLineHelp = {{			//Optional
+    MultiLineHelp = {{
 	Multi Line
 	Multi Line
 	Multi Line

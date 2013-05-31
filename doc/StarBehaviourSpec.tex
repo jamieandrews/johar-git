@@ -32,9 +32,17 @@ Requirements Specification -- Behaviour
 \begin{enumerate}
 \item Read the IDF.
 \item Create the Main Panel.
+  \begin{enumerate}
+  \item Every {\tt CommandGroup} should correspond to a menu on the
+    menu bar.
+  \item The menu item for a command should be the {\tt Label}
+    of the command, followed by ``{\tt ...}'' if selecting the 
+    command will result in a Command Window being created (see below).
+  \end{enumerate}
 \item Initialize the Text Area to empty.
-\item Create the GemSetting.
+\item Create the GemSetting and validate it.
 \item Call the application engine's initialization method.
+\item Refresh the tables (see below).
 \item Append a horizontal line (this could be just a line of minus
   characters) to the bottom of the Text Area.  (This will separate any
   initial message from the application engine from the messages that are
@@ -43,6 +51,8 @@ Requirements Specification -- Behaviour
   item of each menu active or inactive (greyed out) according to the
   result of the {\it isActive} method of the command.
 \end{enumerate}
+
+\section{Selecting a Command from a Menu}
 
 When the user selects a command from a menu:
 \begin{enumerate}
@@ -53,9 +63,12 @@ When the user selects a command from a menu:
 \item Otherwise, if no stage in the command has a queryable parameter
   (i.e., there are no parameters to any of the stages of the command, or all
   parameters in all stages of the command are
-  {\tt tableEntry} parameters):
+  {\tt tableEntry} parameters corresponding to browsable tables):
   \begin{enumerate}
-  \item Load the parameter values into the {\tt GemSetting}.
+  \item Call {\tt gemSetting.selectCurrentCommand(cmdName)}.
+  \item Call {\tt gemSetting.selectCurrentStage(0)}.
+  \item For each stage \verb/i/ in the command, perform the Stage Loop
+    from the IntI Specification document.
   \item Call the application engine method.
   \item Execute the Command Wrapup Procedure with parameter {\tt false}
     (indicating command was not cancelled).
@@ -63,25 +76,27 @@ When the user selects a command from a menu:
 \item Otherwise (i.e., if no table selection is incomplete for
   the command, but there are queryable parameters):
   \begin{enumerate}
+  \item Call {\tt gemSetting.selectCurrentCommand(cmdName)}.
   \item Create the Command Dialog for the command.
     (The Command Dialog will take over the rest of the processing
     of the command.)
   \end{enumerate}
-\item A table selection is {\it incomplete for a given command}
-  if it contains at least one stage with a parameter of type
-  {\tt tableEntry}, such that the {\tt MinNumberOfReps} for that
-  parameter is greater than the number of rows that are selected
-  in the {\tt SourceTable} of the parameter.
 \end{enumerate}
+A table selection is {\it incomplete for a given command}
+if it contains at least one stage with a parameter of type
+{\tt tableEntry}, such that the {\tt MinNumberOfReps} for that
+parameter is greater than the number of rows that are selected
+in the {\tt SourceTable} of the parameter, and the parameter
+does not have a {\tt ParentParameter}.
 
 \section{Command Wrapup Procedure}
 
 The Command Wrapup Procedure is called after the user selects a
 command from the menu and some processing has been done.  It takes
-one parameter, called {\tt commandCancelled}.
+one parameter, called {\tt commandWasCancelled}.
 \begin{enumerate}
 \item If there is a Command Dialog, delete it.
-\item If {\tt commandCancelled} is false (i.e., the application
+\item If {\tt commandWasCancelled} is false (i.e., the application
   engine method corresponding to the command has been called):
   \begin{enumerate}
   \item Determine whether the application should quit, by checking
@@ -100,15 +115,7 @@ one parameter, called {\tt commandCancelled}.
     \item Append a horizontal line to the Text Display Area, in order to
       separate the last command's output from the output of any
       future commands.
-    \item For each table currently being displayed in the Table Area
-      that is now hidden, delete the corresponding tab.
-    \item For each table not currently being displayed in the Table
-      Area that is now non-hidden, create a tab in the Table Area.
-      (After this happens, it should be the case that the only tables
-      with tabs in the Table Area are non-hidden tables.)
-    \item For each non-hidden table which has been updated since the
-      last command execution terminated, update the data on the tab
-      to reflect the contents of the table.
+    \item Refresh the tables (see below).
     \end{enumerate}
   \end{enumerate}
 \item Call the {\it isActive} method of every command, and make each
@@ -116,7 +123,21 @@ one parameter, called {\tt commandCancelled}.
   the result of the {\it isActive} method of the command.
 \end{enumerate}
 
+\section{Refreshing the Tables}
 
+To refresh the tables:
+\begin{enumerate}
+\item For each table currently being displayed in the Table Area
+  that is now hidden, delete the corresponding tab.
+\item For each table not currently being displayed in the Table
+  Area that is now non-hidden, create a tab in the Table Area.
+  (After this happens, it should be the case that the only tables
+  with tabs in the Table Area are non-hidden tables.)
+\item For each non-hidden table which has been updated since the
+  last command execution terminated, update the data on the tab
+  to reflect the contents of the table.
+\item If there is a top table now, place that table's tab on top.
+\end{enumerate}
 
 \section{The {\tt ShowTextHandler}}
 
@@ -137,6 +158,129 @@ the text.
   ``OK'' button, and display it.  When the user clicks the ``OK'' button,
   the box should be deleted.
 \end{enumerate}
+
+\section{The Command Dialog Box}
+
+\paragraph{Creating the command dialog box:}
+\begin{enumerate}
+\item Call {\tt gemSetting.selectCurrentStage(0)}.
+\item Perform an Initialize Stage procedure.
+\item While the current stage has no queryable parameters, perform
+  a Next Stage procedure (see below).
+\item Update the dialog box to reflect the current stage, as described
+  in the Star GUI Specification document.
+\end{enumerate}
+
+\paragraph{When the user presses the Cancel button:}
+\begin{enumerate}
+\item Perform the Command Wrapup procedure, with the parameter {\tt true}.
+\end{enumerate}
+
+\paragraph{When the user presses the Previous button (if it is not greyed out):}
+\begin{enumerate}
+\item Perform a Previous Stage procedure (see below).
+\item While the current stage has no queryable parameters, perform
+  a Previous Stage procedure (see below).
+\item Update the dialog box to reflect the current stage, as described
+  in the Star GUI Specification document.
+\end{enumerate}
+
+\paragraph{When the user presses the Next button (if it is not greyed out):}
+\begin{enumerate}
+\item Perform a Next Stage procedure (see below).
+\item While the current stage has no queryable parameters, perform
+  a Next Stage procedure (see below).
+\item Update the dialog box to reflect the current stage, as described
+  in the Star GUI Specification document.
+\end{enumerate}
+
+\paragraph{When the user presses the OK button (if it is not greyed out):}
+\begin{enumerate}
+\item Perform the Wrap Up Stage procedure.
+\item For each stage \verb/i/ in the current command, from stage 0 to the
+  last stage:
+  \begin{enumerate}
+  \item Call {\tt gemSetting.selectCurrentStage(i)}.
+  \item Perform the Initialize Stage procedure.
+  \item Perform the Wrap Up Stage procedure.
+  \item If the Wrap Up Stage procedure returns false, then return.
+  \end{enumerate}
+  (Rationale:  there may have been some previous stages which have
+  become invalid as a result of the current stage; also, there may be
+  stages with non-queryable parameters whose parameter values have never
+  been loaded.)
+\item Call the command method.
+\item Perform the Command Wrapup procedure, with the parameter false
+  (indicating the command was not cancelled).
+\end{enumerate}
+
+\paragraph{Previous Stage procedure:}
+\begin{enumerate}
+\item Perform a Wrap Up Stage procedure.
+\item If the Wrap Up Stage procedure returns true:
+  \begin{enumerate}
+  \item If the current stage is \verb/i/, set the current stage to \verb/i-1/.
+  \item Call {\tt gemSetting.selectCurrentStage(i)}.
+  \item Perform an Initialize Stage procedure (see below).
+  \end{enumerate}
+\end{enumerate}
+
+\paragraph{Next Stage procedure:}
+\begin{enumerate}
+\item Perform a Wrap Up Stage procedure.
+\item If the Wrap Up Stage procedure returns true:
+  \begin{enumerate}
+  \item If the current stage is \verb/i/, set the current stage to \verb/i+1/.
+  \item Call {\tt gemSetting.selectCurrentStage(i)}.
+  \item Perform an Initialize Stage procedure (see below).
+  \end{enumerate}
+\end{enumerate}
+
+\paragraph{Initialize Stage procedure:}
+\begin{enumerate}
+\item If the current is a stage that has never been initialized yet, then
+  for each parameter in the current stage:
+  \begin{enumerate}
+  \item If the parameter has a default value, set the value of the
+    parameter in the CommandModel to the default value.
+  \item Otherwise, if the parameter has a DefaultValueMethod, then call it
+    and set the value of the parameter in the CommandModel to the default
+    value.
+  \end{enumerate}
+\end{enumerate}
+
+\paragraph{Wrap Up Stage procedure:}
+\begin{enumerate}
+\item Validate the current values of the current repetitions of the
+  parameters, as indicated in requirements 26-51 of the IntI
+  specification.
+\item Load the current values of the current repetitions of the parameters
+  for the current stage into the Gem.
+\item Call the ParameterCheckMethod of the current stage, if it has one.
+\item If the ParameterCheckMethod exists and returns a non-null, non-empty
+  string:
+  \begin{enumerate}
+  \item Show the user the string in a popup with an ``OK'' button.
+  \item When the user clicks OK, if the current stage has no queryable
+    parameters, then perform the Command Wrapup procedure, with the
+    parameter {\tt true}.  (Rationale:  This might happen in some obscure
+    situations, such as when a {\tt tableEntry} parameter has a parent
+    parameter in another stage which gets set to the parent value.  In
+    these situations, there is nothing we can do but cancel the command.)
+  \item Return false.
+  \end{enumerate}
+\item Otherwise, return true.
+\end{enumerate}
+
+\section{The Parameter Section}
+
+\paragraph{When the user clicks Add Another:}
+
+\paragraph{When the user clicks Move Up:}
+
+\paragraph{When the user clicks Move Down:}
+
+\paragraph{When the user clicks Delete:}
 
 \section{The Main Panel}
 

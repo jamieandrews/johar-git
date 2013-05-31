@@ -35,6 +35,10 @@ public class IdfCommandGroup extends IdfElement {
 
 	NodeList memberList = _domElement.getElementsByTagName("Member");
 	int n = memberList.getLength();
+	if (n == 0){
+	    _eh.error("CommandGroup " + _commandGroupName +
+		": must have at least one Member");
+	}
 	for (int i=0; i<n; i++) {
 	    Element e = (Element) memberList.item(i);
 	    String member =
