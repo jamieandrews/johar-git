@@ -27,6 +27,9 @@ public class Visitors {
 	}
     }
 
+    // Checks that the help messages BriefHelp and OneLineHelp have no
+    // newlines, and are the right number of characters, for both
+    // Commands and Parameters.
     public static class HelpMessageConstraints extends VisitorOfIdfElement {
 	public static final int briefHelpMaxLength = 30;
 	public static final int oneLineHelpMaxLength = 80;
@@ -81,6 +84,8 @@ public class Visitors {
 
     }
 
+    // Checks that all parameters in all stages of a given command
+    // have names that are unique to that command.
     public static class ParameterNamesUniqueInCommand extends VisitorOfIdfElement {
 	String _currentCommandName;
 	Set<String> _parameterNamesSoFar;
@@ -103,6 +108,8 @@ public class Visitors {
 	}
     }
 
+    // Checks that the value for MinNumberOfReps is <= the value for
+    // MaxNumberOfReps for a parameter.
     public static class MinRepsLeqMaxReps extends VisitorOfIdfElement {
 	String _currentCommandName;
 
@@ -125,6 +132,9 @@ public class Visitors {
 	    }
 	}
     }
+
+    // Checks that the value for MinValue is <= the value for
+    // MaxValue for a parameter.
     public static class MinValueLeqMaxValue extends VisitorOfIdfElement {
 	String _currentCommandName;
 
@@ -144,6 +154,33 @@ public class Visitors {
 		eh.error("Command " + _currentCommandName +
 		    ", parameter " + idfParameter.getParameterName() +
 		    ": MinValue should be less than or equal to MaxValue"
+		);
+	    }
+	}
+    }
+
+    // Checks that the value for MinNumberOfChars is <= the value for
+    // MaxNumberOfChars for a "text" parameter.
+    public static class MinCharsLeqMaxChars extends VisitorOfIdfElement {
+	String _currentCommandName;
+
+	public void beforeChildren(IdfCommand idfCommand, ErrorHandler eh) {
+	    _currentCommandName = idfCommand.getCommandName();
+	}
+
+	public void beforeChildren(IdfParameter idfParameter, ErrorHandler eh) {
+	    if (!idfParameter.getType().equals("text"))
+		return;
+
+	    boolean ok = (
+		idfParameter.getMinNumberOfChars()
+		<= idfParameter.getMaxNumberOfChars()
+	    );
+
+	    if (!ok) {
+		eh.error("Command " + _currentCommandName +
+		    ", parameter " + idfParameter.getParameterName() +
+		    ": MinNumberOfChars should be less than or equal to MaxNumberOfChars"
 		);
 	    }
 	}

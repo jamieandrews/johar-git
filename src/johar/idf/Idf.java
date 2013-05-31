@@ -6,7 +6,7 @@
 
 package johar.idf;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,6 +121,60 @@ public class Idf extends IdfElement {
 	acceptVisitor(new Visitors.ParameterNamesUniqueInCommand());
 	acceptVisitor(new Visitors.MinRepsLeqMaxReps());
 	acceptVisitor(new Visitors.MinValueLeqMaxValue());
+	acceptVisitor(new Visitors.MinCharsLeqMaxChars());
+    }
+
+    /**
+     * Return an InputStream containing an XML file.
+     * @parameter filename The name of an .idf or .xml file.
+     * @returns An InputStream containing just the file, if it is
+     *   already an XML file.
+     * @returns An InputStream containing the IDF translated to XML,
+     *   if filename is an IDF file.
+     */
+    private InputStream fileToXmlInputStream(String filename)
+	    throws IOException {
+	InputStream returnValue = null;
+
+	if (filename.endsWith(".xml")) {
+	    // It's already an XML file
+
+	    File f = new File(filename);
+	    returnValue = new FileInputStream(f);
+
+	} else if (filename.endsWith(".idf")) {
+	    // Set up "stdin" Reader for idf2xml
+	    File f = new File(filename);
+	    FileInputStream fis = new FileInputStream(f);
+	    Reader in = new InputStreamReader(fis);
+
+	    // Set up "stdout" PrintWriter
+	    ByteArrayOutputStream baosOut = new ByteArrayOutputStream();
+	    PrintWriter out = new PrintWriter(baosOut);
+
+	    // Set up "stderr" PrintWriter
+	    ByteArrayOutputStream baosErr = new ByteArrayOutputStream();
+	    PrintWriter err = new PrintWriter(baosErr);
+
+	    // Convert IDF to XML
+	    Idf2xml idf2xml = new Idf2xml(in, out, err);
+
+	    // Check for errors
+	    byte[] errByteArray = baosErr.toByteArray();
+	    if (errByteArray.length > 0) {
+	       // Can't continue
+	       throw new IOException(new String(errByteArray));
+	    }
+
+	    // Get XML file as byte array
+	    byte[] xmlByteArray = baosOut.toByteArray();
+
+	    returnValue = new ByteArrayInputStream(xmlByteArray);
+	} else {
+	    throw new IOException("File " + filename + " is neither an .xml nor an .idf file");
+	}
+
+	return returnValue;
     }
 
     public static Idf idfFromFile(String filename) {
@@ -157,6 +211,9 @@ public class Idf extends IdfElement {
 	} catch (SAXException e) {
 	    Exception x = e.getException();
 	    ( (x == null) ? e : x ).printStackTrace();
+	} catch (IOException e) {
+	    System.out.println("Problem with file " + filename +
+		 ": " + e.getMessage());
 	} catch (Throwable t) {
 	    t.printStackTrace();
 	}

@@ -33,12 +33,16 @@ public class IdfCommandGroup extends IdfElement {
 	complainIfMoreThanOne("Label");
 	_label = extractAttr("Label", ccConvertedName);
 
+	checkNumInstances(true, "Member",
+	    1, Integer.MAX_VALUE,
+	    1, Integer.MAX_VALUE, "");
+
 	NodeList memberList = _domElement.getElementsByTagName("Member");
 	int n = memberList.getLength();
-	if (n == 0){
-	    _eh.error("CommandGroup " + _commandGroupName +
-		": must have at least one Member");
-	}
+	//if (n == 0){
+	//    _eh.error("CommandGroup " + _commandGroupName +
+	//	": must have at least one Member");
+	//}
 	for (int i=0; i<n; i++) {
 	    Element e = (Element) memberList.item(i);
 	    String member =

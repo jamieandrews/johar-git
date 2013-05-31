@@ -255,6 +255,10 @@ public class IdfParameter extends IdfElement {
 	return _maxNumberOfReps;
     }
 
+    public long getMinNumberOfChars() {
+	return _minNumberOfChars;
+    }
+
     public long getMinNumberOfReps() {
 	return _minNumberOfReps;
     }
