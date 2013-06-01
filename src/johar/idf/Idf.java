@@ -132,17 +132,19 @@ public class Idf extends IdfElement {
      * @returns An InputStream containing the IDF translated to XML,
      *   if filename is an IDF file.
      */
-    private InputStream fileToXmlInputStream(String filename)
+    private static InputStream fileToXmlInputStream(String filename)
 	    throws IOException {
 	InputStream returnValue = null;
 
 	if (filename.endsWith(".xml")) {
 	    // It's already an XML file
+	    System.out.println("Already XML");
 
 	    File f = new File(filename);
 	    returnValue = new FileInputStream(f);
 
 	} else if (filename.endsWith(".idf")) {
+	    System.out.println("Converting");
 	    // Set up "stdin" Reader for idf2xml
 	    File f = new File(filename);
 	    FileInputStream fis = new FileInputStream(f);
@@ -158,6 +160,7 @@ public class Idf extends IdfElement {
 
 	    // Convert IDF to XML
 	    Idf2xml idf2xml = new Idf2xml(in, out, err);
+	    idf2xml.convert();
 
 	    // Check for errors
 	    byte[] errByteArray = baosErr.toByteArray();
@@ -168,6 +171,7 @@ public class Idf extends IdfElement {
 
 	    // Get XML file as byte array
 	    byte[] xmlByteArray = baosOut.toByteArray();
+	    System.out.println("Byte array: [" + new String(xmlByteArray) + "]");
 
 	    returnValue = new ByteArrayInputStream(xmlByteArray);
 	} else {
@@ -191,7 +195,8 @@ public class Idf extends IdfElement {
 	    DocumentBuilder docBuilder = dbf.newDocumentBuilder();
 	    ErrorHandler eh = new ErrorHandler();
 	    docBuilder.setErrorHandler(eh);
-	    Document doc = docBuilder.parse( new File(filename) );
+	    // Document doc = docBuilder.parse( new File(filename) );
+	    Document doc = docBuilder.parse( fileToXmlInputStream(filename) );
 	    doc.getDocumentElement().normalize();
 	    Element e = doc.getDocumentElement();
 	    Idf newIdf = new Idf(e, eh);

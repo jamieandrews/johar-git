@@ -1,0 +1,4 @@
+texput.log
+*.dvi
+*.log
+*.aux

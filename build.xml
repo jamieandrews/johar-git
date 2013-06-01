@@ -1,4 +1,6 @@
 <project name="Johar" basedir=".">
-<javac srcdir="src" destdir="classes"/>
+<javac includeAntRuntime="no" srcdir="src"  destdir="classes"/>
+<javac includeAntRuntime="no" srcdir="test" destdir="."
+  classpath=".:classes"/>
+<exec executable="make" dir="doc"/>
 </project>
-

@@ -1,0 +1,228 @@
+Application = TestForbidden
+Application = TestForbiddenDup			//Forbidden
+
+ApplicationEngine = TfEngine
+ApplicationEngine = TfEngineDup			//Forbidden
+
+IdfVersion = "1.0"
+IdfVersion = "1.0"				//Forbidden
+
+InitializationMethod = tfMethod
+InitializationMethod = tfMethodDup		//Forbidden
+
+Command edit = {
+
+    ActiveIfMethod = editAI
+    ActiveIfMethod = editAIDup			//Forbidden
+
+    BriefHelp = editBH
+    BriefHelp = editBHDup			//Forbidden
+
+    CommandMethod = editCM
+    CommandMethod = editCM			//Forbidden
+
+    Label = editLabel
+    Label = editLabelDup			//Forbidden
+
+    MultiLineHelp = editMLH
+    MultiLineHelp = editMLHDup			//Forbidden
+
+    OneLineHelp = editOLH
+    OneLineHelp = editOLHDup			//Forbidden
+
+    Prominence = 3000
+    Prominence = 3000Dup			//Forbidden
+
+    QuitAfter = yes
+    QuitAfter = no				//Forbidden
+
+    Stage stageOne = {
+	ParameterCheckMethod = stageOneCheck
+	ParameterCheckMethod = stageOneCheckDup	//Forbidden
+
+	Parameter stageOneParam = {
+
+	    Type = boolean
+	    Type = boolean			//Forbidden
+
+	    BriefHelp = sopBh
+	    BriefHelp = sopBhDup		//Forbidden
+
+	    Choices = "any"			//Forbidden
+
+	    DefaultValue = true
+	    DefaultValue = false		//Forbidden
+	    DefaultValueMethod = sopDVM		//Forbidden
+
+	    FileConstraint = mustExist		//Forbidden
+
+	    Label = sopLabel
+	    Label = sopLabelDup			//Forbidden
+
+	    MaxNumberOfChars = 200		//Forbidden
+
+	    MaxNumberOfLines = 10		//Forbidden
+
+	    MaxNumberOfReps = 5
+	    MaxNumberOfReps = 5			//Forbidden
+
+	    MaxValue = 20			//Forbidden
+
+	    MinNumberOfReps = 2
+	    MinNumberOfReps = 2			//Forbidden
+
+	    MinValue = 20			//Forbidden
+
+	    MultiLineHelp = sopMLH
+	    MultiLineHelp = sopMLHDup		//Forbidden
+
+	    OneLineHelp = sopOLH
+	    OneLineHelp = sopOLHDup		//Forbidden
+
+	    Prominence = 3000
+	    Prominence = 2000			//Forbidden
+
+	    RepsModel = set
+	    RepsModel = set			//Forbidden
+
+	    SourceTable = editTable		//Forbidden
+
+	}
+
+	Question stageOneQuestion = {
+	    Type = boolean
+
+	    AskIfMethod = soqAim
+	    AskIfMethod = soqAimDup		//Forbidden
+
+	    MaxNumberOfReps = 5			//Forbidden
+	    MinNumberOfReps = 5			//Forbidden
+	    ParentParameter = stageOneParam	//Forbidden
+	    ParentValue = true			//Forbidden
+	    RepsModel = set			//Forbidden
+	}
+
+	Parameter paramWithParentA = {
+	    Type = int
+	    ParentParameter = stageOneParam	//Forbidden
+	    ParentValue = true			//Forbidden
+	}
+
+	Parameter choiceParam = {
+	    Type = choice
+
+	    Choices = "A|B"
+	    FileConstraint = mustExist		//Forbidden
+	    MaxNumberOfChars = 200		//Forbidden
+	    MaxNumberOfLines = 10		//Forbidden
+	    MaxValue = 20			//Forbidden
+	    MinValue = 20			//Forbidden
+	    SourceTable = editTable		//Forbidden
+	}
+
+	Parameter dateParam = {
+	    Type = date
+
+	    Choices = "A|B"			//Forbidden
+	    FileConstraint = mustExist		//Forbidden
+	    MaxNumberOfChars = 200		//Forbidden
+	    MaxNumberOfLines = 10		//Forbidden
+	    MaxValue = 20			//Forbidden
+	    MinValue = 20			//Forbidden
+	    SourceTable = editTable		//Forbidden
+	}
+
+	Parameter fileParam = {
+	    Type = file
+
+	    Choices = "A|B"			//Forbidden
+	    FileConstraint = mustExist
+	    MaxNumberOfChars = 200		//Forbidden
+	    MaxNumberOfLines = 10		//Forbidden
+	    MaxValue = 20			//Forbidden
+	    MinValue = 20			//Forbidden
+	    SourceTable = editTable		//Forbidden
+	}
+
+	Parameter floatParam = {
+	    Type = float
+
+	    Choices = "A|B"			//Forbidden
+	    FileConstraint = mustExist		//Forbidden
+	    MaxNumberOfChars = 200		//Forbidden
+	    MaxNumberOfLines = 10		//Forbidden
+	    MaxValue = 20.0
+	    MinValue = 2.0
+	    SourceTable = editTable		//Forbidden
+	}
+
+	Parameter intParam = {
+	    Type = int
+
+	    Choices = "A|B"			//Forbidden
+	    FileConstraint = mustExist		//Forbidden
+	    MaxNumberOfChars = 200		//Forbidden
+	    MaxNumberOfLines = 10		//Forbidden
+	    MaxValue = 20
+	    MinValue = 2
+	    SourceTable = editTable		//Forbidden
+	}
+
+	Parameter textParam = {
+	    Type = text
+
+	    Choices = "A|B"			//Forbidden
+	    FileConstraint = mustExist		//Forbidden
+	    MaxNumberOfChars = 200
+	    MaxNumberOfLines = 10
+	    MaxValue = 20			//Forbidden
+	    MinValue = 2			//Forbidden
+	    SourceTable = editTable		//Forbidden
+	}
+
+	Parameter tableEntryParam = {
+	    Type = tableEntry
+
+	    Choices = "A|B"			//Forbidden
+	    FileConstraint = mustExist		//Forbidden
+	    MaxNumberOfChars = 200		//Forbidden
+	    MaxNumberOfLines = 10		//Forbidden
+	    MaxValue = 20			//Forbidden
+	    MinValue = 2			//Forbidden
+	    SourceTable = editTable
+	}
+
+	Parameter timeOfDayParam = {
+	    Type = timeOfDay
+
+	    Choices = "A|B"			//Forbidden
+	    FileConstraint = mustExist		//Forbidden
+	    MaxNumberOfChars = 200		//Forbidden
+	    MaxNumberOfLines = 10		//Forbidden
+	    MaxValue = 20			//Forbidden
+	    MinValue = 2			//Forbidden
+	    SourceTable = editTable		//Forbidden
+	}
+
+    }
+
+}
+
+CommandGroup file = {
+    Label = fileLabel
+    Label = fileLabelDup			//Forbidden
+
+    Member = edit
+}
+
+Table editTable = {
+    Browsable = yes
+    Browsable = no				//Forbidden
+
+    DefaultHeading = editTableDH
+    DefaultHeading = editTableDHDup		//Forbidden
+
+    Label = editTable
+    Label = editTableDup			//Forbidden
+}
+

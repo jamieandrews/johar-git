@@ -37,7 +37,7 @@ Requirements Specification -- Behaviour
     menu bar.
   \item The menu item for a command should be the {\tt Label}
     of the command, followed by ``{\tt ...}'' if selecting the 
-    command will result in a Command Window being created (see below).
+    command will result in a Command Dialog Box being created (see below).
   \end{enumerate}
 \item Initialize the Text Area to empty.
 \item Create the GemSetting and validate it.
@@ -56,10 +56,14 @@ Requirements Specification -- Behaviour
 
 When the user selects a command from a menu:
 \begin{enumerate}
-\item If any table selection is incomplete for the command,
+\item Set a String field {\tt lastDisplayedString} to the empty string.
+  (Rationale:  this will for displaying the last text that the program
+  shows the user.)
+\item If any table selection is {\it incomplete} (see below) for the command,
   then pop up a dialog box with an ``OK'' button telling the user
   which tables they have to select rows in in order to issue the
-  command.
+  command, and a description of the bounds of the number of rows to
+  select (e.g., ``at least 2'', ``between 1 and 5'').
 \item Otherwise, if no stage in the command has a queryable parameter
   (i.e., there are no parameters to any of the stages of the command, or all
   parameters in all stages of the command are
@@ -70,8 +74,8 @@ When the user selects a command from a menu:
   \item For each stage \verb/i/ in the command, perform the Stage Loop
     from the IntI Specification document.
   \item Call the application engine method.
-  \item Execute the Command Wrapup Procedure with parameter {\tt false}
-    (indicating command was not cancelled).
+  \item Execute the Command Wrapup Procedure (see below) with parameter
+    {\tt false} (indicating command was not cancelled).
   \end{enumerate}
 \item Otherwise (i.e., if no table selection is incomplete for
   the command, but there are queryable parameters):
@@ -104,10 +108,13 @@ one parameter, called {\tt commandWasCancelled}.
     method of the command.
   \item If the application should quit:
     \begin{enumerate}
-    \item If {\tt lastDisplayedText} is not the empty string, then
-      create a dialog box containing {\tt lastDisplayedText} and
+    \item If {\tt lastDisplayedText} is non-null and not the empty string,
+      then create a dialog box containing {\tt lastDisplayedText} and
       an ``OK'' button, and display it.  Wait for the user to
       click ``OK'', and then delete the dialog box.
+      (Rationale:  if the command executed a {\tt showText} method and
+      then Star exits, it may exit before the user has had time to
+      read the text.)
     \item Exit the application, e.g. using {\tt System.exit(0)}.
     \end{enumerate}
   \item Otherwise:
@@ -136,7 +143,8 @@ To refresh the tables:
 \item For each non-hidden table which has been updated since the
   last command execution terminated, update the data on the tab
   to reflect the contents of the table.
-\item If there is a top table now, place that table's tab on top.
+\item If there is a top table now, place that table's tab on top
+  in the tab pane.
 \end{enumerate}
 
 \section{The {\tt ShowTextHandler}}
@@ -147,6 +155,9 @@ the text.
 \item 0-1999:  For each line of text in the message:
   \begin{enumerate}
   \item Truncate the line of text, if necessary, to fit in the Status Bar.
+    (Rationale:  it should fit all right, but just in case it doesn't, we
+    can show part of it.  Because it is low-priority, it seems OK to
+    just show part of it.)
   \item Set the Status Bar to the text.
   \end{enumerate}
   [Note: This will cause the last line of the most recent message to
@@ -171,18 +182,75 @@ the text.
   in the Star GUI Specification document.
 \end{enumerate}
 
-\paragraph{When the user presses the Cancel button:}
+\paragraph{Initialize Stage procedure:}
 \begin{enumerate}
-\item Perform the Command Wrapup procedure, with the parameter {\tt true}.
+\item If the current stage is a stage that has never been initialized so far,
+  then for each parameter in the current stage:
+  \begin{enumerate}
+  \item If the parameter has a default value, set the value of the
+    parameter in the CommandModel to the default value.
+    (Rationale:  since the GUI widgets are linked to the CommandModel,
+    this should have the effect of updating the value in the GUI.)
+  \item Otherwise, if the parameter has a DefaultValueMethod, then call it
+    and set the value of the parameter in the CommandModel to the default
+    value.
+  \end{enumerate}
 \end{enumerate}
 
-\paragraph{When the user presses the Previous button (if it is not greyed out):}
+\paragraph{Next Stage procedure:}
 \begin{enumerate}
-\item Perform a Previous Stage procedure (see below).
-\item While the current stage has no queryable parameters, perform
-  a Previous Stage procedure (see below).
-\item Update the dialog box to reflect the current stage, as described
-  in the Star GUI Specification document.
+\item Perform a Wrap Up Stage procedure.
+\item If the Wrap Up Stage procedure returns true, then (assuming
+  that the current stage is in the variable {\tt currentStage}):
+  \begin{enumerate}
+  \item Set the current stage to \verb/currentStage+1/.
+  \item Call {\tt gemSetting.selectCurrentStage(currentStage)}.
+  \item Perform an Initialize Stage procedure (see below).
+  \end{enumerate}
+\end{enumerate}
+
+\paragraph{Previous Stage procedure:}
+\begin{enumerate}
+\item Perform a Wrap Up Stage procedure.
+\item If the Wrap Up Stage procedure returns true, then (assuming
+  that the current stage is in the variable {\tt currentStage}):
+  \begin{enumerate}
+  \item Set the current stage to \verb/currentStage-1/.
+  \item Call {\tt gemSetting.selectCurrentStage(currentStage)}.
+  \item Perform an Initialize Stage procedure (see below).
+  \end{enumerate}
+\end{enumerate}
+
+\paragraph{Wrap Up Stage procedure:}
+\begin{enumerate}
+\item Validate the current values of the current repetitions of the
+  parameters, as indicated in requirements 26-51 of the IntI
+  specification.
+\item If any parameter or parameter repetition does not pass validation,
+  then:
+  \begin{enumerate}
+  \item Collect information in a string about anything that does
+    not pass validation.
+  \item Present that information to the user in a dialog box.
+    The dialog box should have just an ``OK'' button.
+  \item When the user presses OK, return false.
+  \end{enumerate}
+\item Load the current values of the current repetitions of the parameters
+  for the current stage into the Gem.
+\item Call the ParameterCheckMethod of the current stage, if it has one.
+\item If the ParameterCheckMethod exists and returns a non-null, non-empty
+  string:
+  \begin{enumerate}
+  \item Show the user the string in a popup with an ``OK'' button.
+  \item When the user clicks OK, if the current stage has no queryable
+    parameters, then perform the Command Wrapup procedure, with the
+    parameter {\tt true}.  (Rationale:  This might happen in some obscure
+    situations, such as when a {\tt tableEntry} parameter has a parent
+    parameter in another stage which gets set to the parent value.  In
+    these situations, there is nothing we can do but cancel the command.)
+  \item Return false.
+  \end{enumerate}
+\item Otherwise, return true.
 \end{enumerate}
 
 \paragraph{When the user presses the Next button (if it is not greyed out):}
@@ -194,7 +262,18 @@ the text.
   in the Star GUI Specification document.
 \end{enumerate}
 
-\paragraph{When the user presses the OK button (if it is not greyed out):}
+\paragraph{When the user presses the Previous button (if it exists and
+  is not greyed out):}
+\begin{enumerate}
+\item Perform a Previous Stage procedure (see below).
+\item While the current stage has no queryable parameters, perform
+  a Previous Stage procedure (see below).
+\item Update the dialog box to reflect the current stage, as described
+  in the Star GUI Specification document.
+\end{enumerate}
+
+\paragraph{When the user presses the OK button (if it exists and
+  is not greyed out):}
 \begin{enumerate}
 \item Perform the Wrap Up Stage procedure.
 \item For each stage \verb/i/ in the current command, from stage 0 to the
@@ -214,275 +293,46 @@ the text.
   (indicating the command was not cancelled).
 \end{enumerate}
 
-\paragraph{Previous Stage procedure:}
+\paragraph{When the user presses the Cancel button:}
 \begin{enumerate}
-\item Perform a Wrap Up Stage procedure.
-\item If the Wrap Up Stage procedure returns true:
-  \begin{enumerate}
-  \item If the current stage is \verb/i/, set the current stage to \verb/i-1/.
-  \item Call {\tt gemSetting.selectCurrentStage(i)}.
-  \item Perform an Initialize Stage procedure (see below).
-  \end{enumerate}
-\end{enumerate}
-
-\paragraph{Next Stage procedure:}
-\begin{enumerate}
-\item Perform a Wrap Up Stage procedure.
-\item If the Wrap Up Stage procedure returns true:
-  \begin{enumerate}
-  \item If the current stage is \verb/i/, set the current stage to \verb/i+1/.
-  \item Call {\tt gemSetting.selectCurrentStage(i)}.
-  \item Perform an Initialize Stage procedure (see below).
-  \end{enumerate}
-\end{enumerate}
-
-\paragraph{Initialize Stage procedure:}
-\begin{enumerate}
-\item If the current is a stage that has never been initialized yet, then
-  for each parameter in the current stage:
-  \begin{enumerate}
-  \item If the parameter has a default value, set the value of the
-    parameter in the CommandModel to the default value.
-  \item Otherwise, if the parameter has a DefaultValueMethod, then call it
-    and set the value of the parameter in the CommandModel to the default
-    value.
-  \end{enumerate}
-\end{enumerate}
-
-\paragraph{Wrap Up Stage procedure:}
-\begin{enumerate}
-\item Validate the current values of the current repetitions of the
-  parameters, as indicated in requirements 26-51 of the IntI
-  specification.
-\item Load the current values of the current repetitions of the parameters
-  for the current stage into the Gem.
-\item Call the ParameterCheckMethod of the current stage, if it has one.
-\item If the ParameterCheckMethod exists and returns a non-null, non-empty
-  string:
-  \begin{enumerate}
-  \item Show the user the string in a popup with an ``OK'' button.
-  \item When the user clicks OK, if the current stage has no queryable
-    parameters, then perform the Command Wrapup procedure, with the
-    parameter {\tt true}.  (Rationale:  This might happen in some obscure
-    situations, such as when a {\tt tableEntry} parameter has a parent
-    parameter in another stage which gets set to the parent value.  In
-    these situations, there is nothing we can do but cancel the command.)
-  \item Return false.
-  \end{enumerate}
-\item Otherwise, return true.
+\item Perform the Command Wrapup procedure, with the parameter {\tt true}.
 \end{enumerate}
 
 \section{The Parameter Section}
 
-\paragraph{When the user clicks Add Another:}
+\paragraph{When the user clicks the Add Another button:}
+\begin{itemize}
+\item Add another repetition section to the parameter section for the
+  parameter, at the bottom of the list.  You may need to add a repetition
+  to the model as well.
+  (Rationale:  This is safe because, if the Add Another button exists
+  and is not greyed out, then we are not at the maximum number of
+  repetitions for the parameter yet.)
+\end{itemize}
 
-\paragraph{When the user clicks Move Up:}
+\paragraph{When the user clicks the Move Up button for repetition $k$:}
+\begin{itemize}
+\item Exchange the value in repetition $k$ with the value in repetition $k-1$.
+  This should be done in the model so that the changes will be automatically
+  reflected in the GUI.
+  (Rationale:  If the Move Up button exists and is not greyed out, then
+  there is another repetition above the $k$th repetition.)
+\end{itemize}
 
-\paragraph{When the user clicks Move Down:}
+\paragraph{When the user clicks the Move Down button for repetition $k$:}
+\begin{itemize}
+\item Exchange the value in repetition $k$ with the value in repetition $k+1$.
+  This should be done in the model so that the changes will be automatically
+  reflected in the GUI.
+  (Rationale:  If the Move Down button exists and is not greyed out, then
+  there is another repetition below the $k$th repetition.)
+\end{itemize}
 
-\paragraph{When the user clicks Delete:}
-
-\section{The Main Panel}
-
-See Figure \ref{mainPanelFig}.  The Main Panel is displayed when the
-application is started, and remains visible throughout the lifetime of the
-application.
-\begin{enumerate}
-\item At the top is the {\it Menu Bar}.  This shows one menu
-  for each command group in the application.
-\item Each menu is labelled in the Menu Bar by the name of the
-  command group.
-\item The menu items in each menu are the commands that are in
-  that command group.
-\item A menu item is clickable (not greyed out) if the corresponding
-  command is {\it active}.
-\item A command is {\it active} at a given point if either it has no
-  {\tt ActiveIfMethod}, or it has an {\tt ActiveIfMethod} and that
-  method returns {\tt true}.
-\item On the left is the {\it Text Display Area}.  This shows all
-  text messages sent by the application engine using {\tt displayText}
-  that are not displayed through some other means.
-\item On the right is the {\it Table Area}.  This is a tabbed pane.
-\item In the Table Area, there is one tab corresponding to every
-  revealed Table currently in the application.
-\item The application decides which Tables to conceal and reveal.
-\item If, during the processing of a command, the application engine sets
-  the top table, then immediately after the command has finished
-  processing, the topmost table in the Table Area is the last table to
-  have been set as the top table.
-\item If, during the processing of a command, the application engine
-  does not set the top table, then immediately
-  after the command has finished processing, the topmost table in the
-  Table Area remains unchanged from the time that the command was issued.
-\item Notwithstanding the table set as the topmost table by the app
-  engine, the user can (between issuing one command and issuing the
-  next command) click on a table tab in order to move that table to
-  the top.
-\item At the bottom is the {\it Status Bar}.  This shows low-prominence
-  messages sent by the application engine using {\tt displayText}.
-\end{enumerate}
-
-\begin{figure}[t]
-
-\centerline{\epsffile{StarGui_mainPanel.eps}}
-
-\caption{
-  The main panel.
-}
-\label{mainPanelFig}
-\end{figure}
-
-
-\section{The Command Dialog Box}
-
-\begin{figure}
-
-\centerline{\epsfxsize=5.5in \epsffile{StarGui_commandDialogBox.eps}}
-
-\caption{
-  The command dialog box.
-}
-\label{commandDialogBoxFig}
-\end{figure}
-
-See Figure \ref{commandDialogBoxFig}.
-\begin{enumerate}
-\item At the top is the {\tt Label} attribute of the command.
-\item Under that is one section for every {\it queryable parameter}
-  (see below) in the current stage.
-\item Many commands have only one stage.  However, if there is
-  more than one stage, only the queryable parameters in the current stage
-  will appear in the parameter section.
-\item There is one section of the box for each queryable parameter in the
-  current stage.
-\item At the bottom are two to four buttons: {\tt Cancel}, {\tt Previous},
-  {\tt Next}, and {\tt OK}.  {\tt Cancel} and {\tt OK} always appear;
-  {\tt Previous} and {\tt Next} do not always appear.
-\item The {\it Cancel button} always appears and is always enabled.
-\item The Cancel button is on the left-hand side of the dialog box.
-\item The {\it Previous button}:
-  \begin{enumerate}
-  \item Appears if there is more than one {\it queryable stage} (see below).
-  \item Is enabled if the current stage is not the first queryable stage.
-  \end{enumerate}
-\item The {\it Next button}:
-  \begin{enumerate}
-  \item Appears if there is more than one queryable stage.
-  \item Is enabled if the current stage is not the last queryable stage.
-  \end{enumerate}
-\item The {\it OK button}:
-  \begin{enumerate}
-  \item Always appears.
-  \item Is enabled if there are no {\it incomplete stages} (see below).
-  \end{enumerate}
-\item The OK button is on the right-hand side of the dialog box.
-\item A parameter is {\it inactive} if both (a) it has a {\tt ParentParameter},
-  and (b) the current value of the {\tt ParentParameter} is not the
-  {\tt ParentValue} for this parameter.
-\item A {\it queryable parameter} is any parameter
-  that is not a {\tt tableEntry} parameter with
-  a browsable {\tt SourceTable}.
-\item A {\it queryable stage} is a stage that contains some
-  queryable parameter.
-\item An {\it incomplete stage} is a stage that contains some parameter
-  such that: (a) the parameter is not inactive, (b) there is no
-  {\tt DefaultValue} or {\tt DefaultValueMethod} for the parameter,
-  and (c) the current number of repetitions is less than the
-  {\tt MinNumberOfReps} for the parameter.
-\end{enumerate}
-
-\section{Parameter Section of the Command Dialog Box}
-
-\begin{figure}
-
-\centerline{\epsfxsize=5.5in \epsffile{StarGui_parameterSection.eps}}
-
-\caption{
-  The parameter section of the command dialog box.
-}
-\label{parameterSectionFig}
-\end{figure}
-
-Every queryable parameter in the current stage is represented by a section
-of the command dialog box.  See Figure \ref{parameterSectionFig}.
-\begin{enumerate}
-\item On the left is the {\tt Label} attribute of the parameter,
-  at the top of the left-hand side, followed by a colon.
-\item On the right is one subsection for each repetition of the parameter,
-  and sometimes a small {\it Add Another} button.
-\item Initially (before any user interaction), the number of repetition
-  sections will be equal to maximum(1, $m$), where $m$ is the value of
- {\tt MinNumberOfReps} for the parameter.
-\item The {\tt Add Another} button:
-  \begin{enumerate}
-  \item Has the ToolTip ``Add another''.
-  \item Is a small button with a plus sign (``{\tt +}'') in it.
-  \item Appears only if {\tt MinNumberOfReps} is not equal to
-    {\tt MaxNumberOfReps} for this parameter.
-  \item Is enabled only if the current number of repetitions of the
-    parameter is less than {\tt MaxNumberOfReps} for this parameter.
-  \item Is on the left-hand side of the right-hand half of the parameter
-    section.
-  \end{enumerate}
-\item The entire section corresponding to the parameter is greyed out
-  if the parameter is inactive.
-\end{enumerate}
-
-\section{Repetition Section of the Parameter Section}
-
-\begin{figure}
-
-\centerline{\epsfxsize=5.5in \epsffile{StarGui_repetitionSection.eps}}
-
-\caption{
-  The repetition section of the parameter section.
-}
-\label{repetitionSectionFig}
-\end{figure}
-
-Every repetition of a queryable parameter in the current stage is
-represented by a section of the command dialog box.  See Figure
-\ref{repetitionSectionFig}.
-\begin{enumerate}
-\item On the left is a widget which the user can use to select the
-  value of the repetition.  This widget will be different for different
-  types of parameters.  For instance, for a {\tt boolean} parameter,
-  it may be a widget consisting of two radio buttons labelled ``Yes''
-  and ``No'', whereas for a {\tt string} parameter it may be a
-  text area.
-\item On the right of the section is zero to three small buttons
-  with icons in them.
-\item The {\tt Move Up} button:
-  \begin{enumerate}
-  \item Is a small button with an up-arrow in it.
-  \item Has the ToolTip ``Move up''.
-  \item Appears only if
-    {\tt MaxNumberOfReps} is not equal to 1 for this parameter, and
-    {\tt RepsModel} for this parameter is {\tt sequence}.
-  \item Is enabled only if this is not the first repetition (the topmost
-    repetition).
-  \end{enumerate}
-\item The {\tt Move Down} button:
-  \begin{enumerate}
-  \item Is a small button with an down-arrow in it.
-  \item Has the ToolTip ``Move down''.
-  \item Appears only if
-    {\tt MaxNumberOfReps} is not equal to 1 for this parameter, and
-    {\tt RepsModel} for this parameter is {\tt sequence}.
-  \item Is enabled only if this is not the last repetition (the bottommost
-    repetition).
-  \end{enumerate}
-\item The {\tt Delete} button:
-  \begin{enumerate}
-  \item Is a small button with an X (``\verb/x/'') in it.
-  \item Has the ToolTip ``Delete''.
-  \item Appears only if {\tt MinNumberOfReps} is not equal to
-    {\tt MaxNumberOfReps} for this parameter.
-  \item Is enabled only if the current number of repetitions of the
-    parameter is more than maximum(1, $m$), where $m$ is the value
-    of {\tt MinNumberOfReps} for this parameter.
-  \end{enumerate}
-\end{enumerate}
-
+\paragraph{When the user clicks the Delete button for repetition $k$:}
+\begin{itemize}
+\item Delete repetition $k$.  This should be done in the model as well.
+  (Rationale:  If the Delete button exists and is not greyed out, then
+  we are not at the minimum number of repetitions for the parameter yet.)
+\end{itemize}
 
 \end{document}
