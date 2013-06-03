@@ -229,5 +229,126 @@ represented by a section of the command dialog box.  See Figure
   \end{enumerate}
 \end{enumerate}
 
+\section{Question Dialog Box}
+
+\begin{figure}
+
+\centerline{\epsfxsize=3in \epsffile{StarGui_questionDialogBox.eps}}
+
+\caption{
+  The question dialog box.
+}
+\label{questionDialogBoxFig}
+\end{figure}
+
+See Figure \ref{questionDialogBoxFig}.  The Question Dialog Box
+is used to ask {\tt Question}s.
+\begin{enumerate}
+\item On the top is the {\tt Label} attribute of the question.
+\item Below that is a parameter occurrence selection widget, such as
+  would appear in the Command Dialog Box for one repetition of a parameter.
+\item On the lower left is a {\tt Cancel} button.
+\item On the lower right is an {\tt OK} button.
+\end{enumerate}
+
+\section{Help Box}
+
+\begin{figure}
+
+\centerline{\epsfxsize=4in \epsffile{StarGui_helpBox01.eps}}
+
+\caption{
+  The help box, in the Top-Level state.
+}
+\label{helpBox01Fig}
+\end{figure}
+
+The Help Box has three states: the Top-Level state, the Command state, and
+the Parameter state.  It may be wise to put the contents of the window
+into a JScrollPane, since the size of the contents will sometimes depend
+on the size of the {\tt MultiLineHelp} attributes of given commands and
+parameters.
+
+\subsection{Top-Level State}
+
+The Help Box begins in the Top-Level state.
+See Figure \ref{helpBox01Fig}.
+\begin{enumerate}
+\item At the top is the word Commands.
+\item Below that is a table (perhaps a JTable) with one row
+  for every command in the application.  The table has two columns.
+\item Each row of the table contains the {\tt Label} attribute of
+  the command in the first column.  This should be displayed in a
+  way that makes it clear that it is ``clickable''.
+\item Each row of the table contains the {\tt OneLineHelp} attribute of
+  the command in the second column.
+\item At the bottom right is a button labelled OK.  If the user
+  clicks this, the box should be disposed.
+\end{enumerate}
+
+\begin{figure}
+
+\centerline{\epsfxsize=4in \epsffile{StarGui_helpBox02.eps}}
+
+\caption{
+  The help box, in the Command state.
+}
+\label{helpBox02Fig}
+\end{figure}
+
+\subsection{Command State}
+
+If a user selects a command label when the help box is in the
+Top-Level state, it moves to the Command state.
+See Figure \ref{helpBox02Fig}.
+\begin{enumerate}
+\item At the top is the {\tt Label} attribute of the {\tt CommandGroup}
+  that the command is in, an arrow, and the {\tt Label} attribute of the
+  command.  (This gives an indication of where to find the command
+  on the menus.)
+\item Below that is a section containing the {\tt MultiLineHelp} attribute
+  of the command.
+\item Below that is a table (perhaps a JTable) with one row for each
+  parameter in the command.  The table has two columns.
+\item Each row of the table contains the {\tt Label} attribute of
+  the parameter in the first column.  This should be displayed in a
+  way that makes it clear that it is ``clickable''.
+\item Each row of the table contains the {\tt OneLineHelp} attribute of
+  the parameter in the second column.
+\item At the bottom left is a button labelled Back.  If the user
+  clicks this, the box should go back to the Top-Level state.
+\item At the bottom right is a button labelled OK.  If the user
+  clicks this, the box should be disposed.
+\end{enumerate}
+
+\begin{figure}
+
+\centerline{\epsfxsize=4in \epsffile{StarGui_helpBox03.eps}}
+
+\caption{
+  The help box, in the Parameter state.
+}
+\label{helpBox03Fig}
+\end{figure}
+
+\subsection{Parameter State}
+
+If a user selects a parameter label when the help box is in the
+Command state, it moves to the Parameter state.
+See Figure \ref{helpBox03Fig}.
+\begin{enumerate}
+\item At the top is the {\tt Label} attribute of the {\tt CommandGroup}
+  that the command is in, an arrow, and the {\tt Label} attribute of the
+  command.  (This provides continuity with the Command state.)
+\item Below that is a section containing the text ``Parameter:'',
+  followed by the {\tt Label} attribute of the parameter
+\item Below that is a section containing the {\tt MultiLineHelp} attribute
+  of the parameter.
+\item At the bottom left is a button labelled Back.  If the user
+  clicks this, the box should go back to the Command state with the
+  selected command.
+\item At the bottom right is a button labelled OK.  If the user
+  clicks this, the box should be disposed.
+\end{enumerate}
 
 \end{document}
