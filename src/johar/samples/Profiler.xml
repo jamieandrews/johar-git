@@ -1,0 +1,103 @@
+<Johar
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<Application>ProfileManager</Application>
+<ApplicationEngine>ProfileManager</ApplicationEngine>
+<IdfVersion>1.0</IdfVersion>
+<InitializationMethod>initProfileManager</InitializationMethod>
+<CommandGroup name="file">
+  <Label>File</Label>
+  <Member>createProfile</Member>
+  <Member>exit</Member>
+</CommandGroup>
+<CommandGroup name="edit">
+  <Label>Edit</Label>
+  <Member>editProfile</Member>
+</CommandGroup>
+<CommandGroup name="help">
+  <Label>Help</Label>
+  <Member>help</Member>
+  <Member>aboutProfileManager</Member>
+</CommandGroup>
+<Command name="exit">
+  <QuitAfter>true</QuitAfter>
+</Command>
+<Command name="createProfile">
+  <ActiveIfMethod>profilerActive</ActiveIfMethod>
+  <ParameterCheckMethod>checkInputs</ParameterCheckMethod>
+  <Stage name="profile1">
+    <Parameter name="names">
+      <Label>Names (Surname first)</Label>
+      <Type>text</Type>
+      <MinNumberOfReps>2</MinNumberOfReps>
+      <MaxNumberOfReps>3</MaxNumberOfReps>
+      <RepsModel>sequence</RepsModel>
+    </Parameter>
+    <Parameter name="address">
+      <Label>Address</Label>
+      <Type>text</Type>
+      <MaxNumberOfLines>2</MaxNumberOfLines>
+    </Parameter>
+    <Parameter name="city">
+      <Type>text</Type>
+      <MaxNumberOfLines>1</MaxNumberOfLines>
+    </Parameter>
+    <Parameter name="province">
+      <Type>text</Type>
+      <MaxNumberOfChars>20</MaxNumberOfChars>
+    </Parameter>
+    <Parameter name="country">
+      <Type>text</Type>
+      <MaxNumberOfChars>50</MaxNumberOfChars>
+    </Parameter>
+    <Parameter name="phone">
+      <Type>text</Type>
+      <Label>Phone Number</Label>
+      <MaxNumberOfChars>15</MaxNumberOfChars>
+    </Parameter>
+    <Parameter name="email">
+      <Type>text</Type>
+      <Label>Email Address</Label>
+      <MaxNumberOfChars>80</MaxNumberOfChars>
+    </Parameter>
+    <Parameter name="age">
+      <Type>int</Type>
+      <Label>Age (years)</Label>
+      <MinValue>1</MinValue>
+      <MaxValue>150</MaxValue>
+    </Parameter>
+    <Parameter name="employed">
+      <Label>Are you employed?</Label>
+      <Type>boolean</Type>
+    </Parameter>
+    <Parameter name="sex">
+      <Label>Gender</Label>
+      <Type>choice</Type>
+      <Choices>Male|Female</Choices>
+    </Parameter>
+    <Parameter name="maritalStatus">
+      <Type>choice</Type>
+      <Choices>Single|Married|Divorced</Choices>
+      <DefaultValue>Single</DefaultValue>
+      <MinNumberOfReps>1</MinNumberOfReps>
+      <MaxNumberOfReps>1</MaxNumberOfReps>
+      <RepsModel>set</RepsModel>
+    </Parameter>
+    <Parameter name="upload">
+      <Label>Upload File(s)</Label>
+      <Type>file</Type>
+      <MinNumberOfReps>1</MinNumberOfReps>
+      <MaxNumberOfReps>4</MaxNumberOfReps>
+      <RepsModel>set</RepsModel>
+    </Parameter>
+  </Stage>
+  <Stage name="profile1">
+  </Stage>
+</Command>
+<Command name="editProfile">
+</Command>
+<Command name="aboutProfileManager">
+</Command>
+<Command name="help">
+</Command>
+</Johar>

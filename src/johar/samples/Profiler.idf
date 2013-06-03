@@ -1,0 +1,103 @@
+Application = ProfileManager
+ApplicationEngine = ProfileManager
+IdfVersion = "1.0"
+InitializationMethod = initProfileManager
+
+CommandGroup file = {
+	Label = "File"
+	Member = createProfile
+}
+
+CommandGroup edit = {
+	Label = "Edit"
+	Member = editProfile
+}
+
+Command createProfile = {
+	ActiveIfMethod = profilerActive
+	ParameterCheckMethod = checkInputs
+	Stage profile1 = {
+		Parameter names = {
+			Label = "Names (Surname first)"
+			Type = text
+			MinNumberOfReps = 2	
+			MaxNumberOfReps = 3
+			RepsModel = sequence		
+		}
+	
+		Parameter address = {
+			Label = "Address"
+			Type = text
+			MaxNumberOfLines = 2
+		}
+		
+		Parameter city = {
+			Type = text
+			MaxNumberOfLines = 1
+			MaxNumberOfChars = 20
+		}
+		
+		Parameter province = {
+			Type = text
+			MaxNumberOfChars = 20
+		}
+		
+		Parameter country = {
+			Type = text
+			MaxNumberOfChars = 20
+		}
+		
+		Parameter phone = {
+			Type = text
+			Label = "Phone Number"
+			MaxNumberOfChars = 20
+		}
+		
+		Parameter email = {
+			Type = text
+			Label = "Email Address"
+			MaxNumberOfChars = 50
+		}
+		
+		Parameter age = {
+			Type = int
+			Label = "Age (years)"
+			MinValue = 1
+			MaxValue = 150
+		}
+		
+		Parameter employed = {
+			Label = "Are you employed?"
+			Type = boolean
+		}
+		
+		Parameter sex = {
+			Label = "Gender"
+			Type = choice
+			Choices = "Male|Female"
+		}
+		
+		Parameter maritalStatus = {		
+			Type = choice
+			Choices = "Single|Married|Divorced"
+			DefaultValue = "Single"
+			MinNumberOfReps = 1	
+			MaxNumberOfReps = 1	
+			RepsModel = set
+		}	
+		
+		Parameter upload = {
+			Label = "Upload File(s)"
+			Type = file
+			MinNumberOfReps = 1	
+			MaxNumberOfReps = 4
+			RepsModel = set
+		}
+	}
+	Stage profile1 = {
+	
+	}		
+}
+
+Command editProfile = {
+}
