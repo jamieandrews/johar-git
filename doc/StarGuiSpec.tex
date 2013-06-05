@@ -34,12 +34,15 @@ application is started, and remains visible throughout the lifetime of the
 application.
 \begin{enumerate}
 \item At the top is the {\it Menu Bar}.  This shows one menu
-  for each command group in the application.
-\item Each menu is labelled in the Menu Bar by the name of the
+  for each command group in the application, and one menu named
+  ``Star'' (for services provided by the Star interpreter for all
+  Johar applications).  We refer to the non-Star menus as ``application
+  menus''.
+\item Each application menu is labelled in the Menu Bar by the name of the
   command group.
-\item The menu items in each menu are the commands that are in
+\item The menu items in each application menu are the commands that are in
   that command group.
-\item A menu item is clickable (not greyed out) if the corresponding
+\item An application menu item is clickable (not greyed out) if the corresponding
   command is {\it active}.
 \item A command is {\it active} at a given point if either it has no
   {\tt ActiveIfMethod}, or it has an {\tt ActiveIfMethod} and that
@@ -65,6 +68,9 @@ application.
   the top.
 \item At the bottom is the {\it Status Bar}.  This shows low-prominence
   messages sent by the application engine using {\tt displayText}.
+\item On the Star menu, there is one menu item, ``Help''.
+\item When the ``Help'' menu item is selected, the Help Box is
+  displayed (see below).
 \end{enumerate}
 
 \begin{figure}[t]
@@ -264,7 +270,7 @@ is used to ask {\tt Question}s.
 \end{figure}
 
 The Help Box has three states: the Top-Level state, the Command state, and
-the Parameter state.  It may be wise to put the contents of the window
+the Parameter/Question state.  It may be wise to put the contents of the window
 into a JScrollPane, since the size of the contents will sometimes depend
 on the size of the {\tt MultiLineHelp} attributes of given commands and
 parameters.
@@ -280,8 +286,8 @@ See Figure \ref{helpBox01Fig}.
 \item Each row of the table contains the {\tt Label} attribute of
   the command in the first column.  This should be displayed in a
   way that makes it clear that it is ``clickable''.
-\item Each row of the table contains the {\tt OneLineHelp} attribute of
-  the command in the second column.
+\item Each row of the table contains, in the second column, the
+  {\tt OneLineHelp} attribute of the command.
 \item At the bottom right is a button labelled OK.  If the user
   clicks this, the box should be disposed.
 \end{enumerate}
@@ -309,12 +315,21 @@ See Figure \ref{helpBox02Fig}.
 \item Below that is a section containing the {\tt MultiLineHelp} attribute
   of the command.
 \item Below that is a table (perhaps a JTable) with one row for each
-  parameter in the command.  The table has two columns.
-\item Each row of the table contains the {\tt Label} attribute of
+  parameter in the command.  This parameter table has two columns.
+\item Each row of the parameter table contains the {\tt Label} attribute of
   the parameter in the first column.  This should be displayed in a
   way that makes it clear that it is ``clickable''.
-\item Each row of the table contains the {\tt OneLineHelp} attribute of
-  the parameter in the second column.
+\item Each row of the parameter table contains, in the second column, the
+  {\tt OneLineHelp} attribute of the parameter.
+\item If there are any questions in the command, then below the parameter
+  table, there is a JLabel reading ``Questions that might be asked:'',
+  and a table with one row for each question in the command.
+  This question table also has two columns.
+\item Each row of the question table contains the {\tt Label} attribute of
+  the question in the first column.  This should be displayed in a
+  way that makes it clear that it is ``clickable''.
+\item Each row of the question table contains, in the second column, the
+  {\tt OneLineHelp} attribute of the question.
 \item At the bottom left is a button labelled Back.  If the user
   clicks this, the box should go back to the Top-Level state.
 \item At the bottom right is a button labelled OK.  If the user
@@ -326,22 +341,24 @@ See Figure \ref{helpBox02Fig}.
 \centerline{\epsfxsize=4in \epsffile{StarGui_helpBox03.eps}}
 
 \caption{
-  The help box, in the Parameter state.
+  The help box, in the Parameter/Question state.
 }
 \label{helpBox03Fig}
 \end{figure}
 
-\subsection{Parameter State}
+\subsection{Parameter/Question State}
 
-If a user selects a parameter label when the help box is in the
-Command state, it moves to the Parameter state.
-See Figure \ref{helpBox03Fig}.
+If a user selects a parameter or question label when the help box is in the
+Command state, it moves to the Parameter/Question state.
+Figure \ref{helpBox03Fig} illustrates the Parameter/Question state when
+a parameter has been selected; the state when a question has been selected
+is similar.
 \begin{enumerate}
 \item At the top is the {\tt Label} attribute of the {\tt CommandGroup}
   that the command is in, an arrow, and the {\tt Label} attribute of the
   command.  (This provides continuity with the Command state.)
 \item Below that is a section containing the text ``Parameter:'',
-  followed by the {\tt Label} attribute of the parameter
+  followed by the {\tt Label} attribute of the parameter.
 \item Below that is a section containing the {\tt MultiLineHelp} attribute
   of the parameter.
 \item At the bottom left is a button labelled Back.  If the user
@@ -349,6 +366,8 @@ See Figure \ref{helpBox03Fig}.
   selected command.
 \item At the bottom right is a button labelled OK.  If the user
   clicks this, the box should be disposed.
+\item For a Question, the Help Box is identical, except that the text
+  ``Parameter:'' reads ``Question:'' instead.
 \end{enumerate}
 
 \end{document}
