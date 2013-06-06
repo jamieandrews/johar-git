@@ -103,7 +103,7 @@ characteristics:
 
 \section{Question-and-Wrapup Procedure}
 
-The Question-and-Wrapup Procedure takes two parameter: the number of the
+The Question-and-Wrapup Procedure takes two parameters: the number of the
 question ({\tt int questionNumber}), and an indication of whether the
 command should be wrapped up if a question is cancelled
 ({\tt boolean wrapUpIfCancelled}).
@@ -120,7 +120,7 @@ command should be wrapped up if a question is cancelled
   \end{enumerate}
   Otherwise, continue with the below steps.
 \item Call the {\tt AskIfMethod} for the question.
-\item If the {\tt AskIfMethod} returns false, then:
+\item If the {\tt AskIfMethod} returns {\tt false}, then:
   \begin{enumerate}
   \item Execute the Question-and-Wrapup Procedure
     (recursively), using {\tt questionNumber + 1} and {\tt wrapUpIfCancelled}
@@ -185,12 +185,12 @@ The Command Wrapup Procedure is called after the user selects a
 command from the menu and some processing has been done.  It takes
 one {\tt boolean} parameter,
 called {\tt commandWasCancelled}.  {\tt commandWasCancelled}
-should be false only if the application engine method was called before
-the command wrapup procedure was called.  If it is true, this means that
+should be {\tt false} only if the application engine method was called before
+the command wrapup procedure was called.  If it is {\tt true}, this means that
 the command was cancelled in some way by the user or by Star itself.
 \begin{enumerate}
 \item If there is a Command Dialog, dispose of it.
-\item If {\tt commandWasCancelled} is false:
+\item If {\tt commandWasCancelled} is {\tt false}:
   \begin{enumerate}
   \item Determine whether the application should quit, by checking
     the {\tt QuitAfter} attribute and/or calling the {\tt QuitAfterIf}
@@ -292,7 +292,7 @@ the text.
 
 \begin{enumerate}
 \item Perform a Wrap Up Stage procedure.
-\item If the Wrap Up Stage procedure returns true, then (assuming
+\item If the Wrap Up Stage procedure returns {\tt true}, then (assuming
   that the current stage is in the variable {\tt currentStage}):
   \begin{enumerate}
   \item Set the current stage to \verb/currentStage+1/.
@@ -305,7 +305,7 @@ the text.
 
 \begin{enumerate}
 \item Perform a Wrap Up Stage procedure.
-\item If the Wrap Up Stage procedure returns true, then (assuming
+\item If the Wrap Up Stage procedure returns {\tt true}, then (assuming
   that the current stage is in the variable {\tt currentStage}):
   \begin{enumerate}
   \item Set the current stage to \verb/currentStage-1/.
@@ -316,9 +316,9 @@ the text.
 
 \subsection{Wrap Up Stage Procedure}
 
-This procedure takes no parameters.  It returns true if all the tasks
+This procedure takes no parameters.  It returns {\tt true} if all the tasks
 that the user had to do in the current stage have been completed, and
-it returns false otherwise.
+it returns {\tt false} otherwise.
 \begin{enumerate}
 \item Validate the current values of the current repetitions of the
   parameters, as indicated in requirements 26-51 of the IntI
@@ -338,12 +338,12 @@ it returns false otherwise.
       parameters, then perform the Command Wrapup procedure, with the
       parameter {\tt true}.  (Rationale:  This might happen in some obscure
       situations, such as when a {\tt tableEntry} parameter has a parent
-      parameter in another stage which gets set to the parent value.  In
+      parameter which gets set to the parent value.  In
       these situations, there is nothing we can do but cancel the command.
-      The true parameter to the Command Wrapup procedure indicates it has
+      The {\tt true} parameter to the Command Wrapup procedure indicates it has
       been cancelled.)
     \end{enumerate}
-  \item Return false.  (Rationale:  the
+  \item Return {\tt false}.  (Rationale:  the
     user has not completed everything they have to do for this stage.)
   \end{enumerate}
 \item (Otherwise:) Load the current values of the current repetitions of
@@ -359,9 +359,9 @@ it returns false otherwise.
       parameters, then perform the Command Wrapup procedure, with the
       parameter {\tt true}.
     \end{enumerate}
-  \item Return false.
+  \item Return {\tt false}.
   \end{enumerate}
-\item Otherwise, return true.
+\item Otherwise, return {\tt true}.
 \end{enumerate}
 
 \subsection{Next Button Action}
@@ -393,19 +393,19 @@ When the user presses the OK button (if it exists and is not greyed
 out):
 \begin{enumerate}
 \item Perform the Wrap Up Stage procedure.
-\item If the Wrap Up Stage procedure returns false, then return.
+\item If the Wrap Up Stage procedure returns {\tt false}, then return.
 \item For each stage \verb/i/ in the current command, from stage 0 to the
   last stage:
   \begin{enumerate}
   \item Call {\tt gemSetting.selectCurrentStage(i)}.
   \item Perform the Initialize Stage procedure.
   \item Perform the Wrap Up Stage procedure.
-  \item If the Wrap Up Stage procedure returns false, then return.
+  \item If the Wrap Up Stage procedure returns {\tt false}, then return.
   \end{enumerate}
   (Rationale:  there may have been some previous stages which have
   become invalid as a result of the current stage; also, there may be
-  stages with non-queryable parameters whose parameter values have never
-  been loaded.)
+  stages after the current stage with parameters whose
+  values have not been loaded yet.)
 \item Perform the Question-and-Wrapup Procedure with parameters
   0 and {\tt false}.
 \end{enumerate}
