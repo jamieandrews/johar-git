@@ -138,13 +138,11 @@ public class Idf extends IdfElement {
 
 	if (filename.endsWith(".xml")) {
 	    // It's already an XML file
-	    System.out.println("Already XML");
 
 	    File f = new File(filename);
 	    returnValue = new FileInputStream(f);
 
 	} else if (filename.endsWith(".idf")) {
-	    System.out.println("Converting");
 	    // Set up "stdin" Reader for idf2xml
 	    File f = new File(filename);
 	    FileInputStream fis = new FileInputStream(f);
@@ -171,7 +169,6 @@ public class Idf extends IdfElement {
 
 	    // Get XML file as byte array
 	    byte[] xmlByteArray = baosOut.toByteArray();
-	    System.out.println("Byte array: [" + new String(xmlByteArray) + "]");
 
 	    returnValue = new ByteArrayInputStream(xmlByteArray);
 	} else {
@@ -181,49 +178,59 @@ public class Idf extends IdfElement {
 	return returnValue;
     }
 
-    public static Idf idfFromFile(String filename) {
+    public static Idf idfFromFile(String filename)
+	    throws IdfFormatException {
 	try {
 	    Schema joharSchema = JoharXsd.joharXsdSchema();
 	    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	    dbf.setSchema(joharSchema);
 
-	    // Should put in here something to check whether the
-	    // file is .idf or .xml.  If .idf, should convert to XML
-	    // InputStream using idf2xml and parse that instead. 
-	    // DocumentBuilder.parse() does also take an InputStream as
-	    // parameter.
 	    DocumentBuilder docBuilder = dbf.newDocumentBuilder();
 	    ErrorHandler eh = new ErrorHandler();
 	    docBuilder.setErrorHandler(eh);
-	    // Document doc = docBuilder.parse( new File(filename) );
-	    Document doc = docBuilder.parse( fileToXmlInputStream(filename) );
+	    InputStream is = fileToXmlInputStream(filename);
+	    Document doc = docBuilder.parse(is);
+
 	    doc.getDocumentElement().normalize();
 	    Element e = doc.getDocumentElement();
 	    Idf newIdf = new Idf(e, eh);
 	    _lastErrorMessages = eh.getErrorMessages();
 	    if (eh.errorsExist()) {
-		return null;
+		throw new IdfFormatException(_lastErrorMessages);
 	    } else {
 		return newIdf;
 	    }
-	} catch (SAXParseException err) {
-	    System.out.println(
-		"* XML parse error:  line " + err.getLineNumber() +
-		", uri " + err.getSystemId() +
-		":"
+	} catch (SAXParseException e) {
+	    e.printStackTrace();
+	    throw new IdfFormatException(
+		"* XML parse error:  line " + e.getLineNumber() +
+		", uri " + e.getSystemId() +
+		": " +
+		e.getMessage()
 	    );
-	    System.out.println("  " + err.getMessage() );
 	} catch (SAXException e) {
 	    Exception x = e.getException();
 	    ( (x == null) ? e : x ).printStackTrace();
+	    throw new IdfFormatException(
+		"* SAX Exception: " +
+		e.getMessage()
+	    );
 	} catch (IOException e) {
-	    System.out.println("Problem with file " + filename +
+	    e.printStackTrace();
+	    System.out.println("Input problem with file " + filename +
 		 ": " + e.getMessage());
+	    throw new IdfFormatException(
+		"* Input problem, file " + filename +
+		": " +
+		e.getMessage()
+	    );
 	} catch (Throwable t) {
 	    t.printStackTrace();
+	    throw new IdfFormatException(
+		"* Exception/Error thrown: " +
+		t.getMessage()
+	    );
 	}
-
-	return null;
     }
 
     public static String getErrorMsgs() {
@@ -292,7 +299,12 @@ public class Idf extends IdfElement {
 	if (args.length < 1) {
 	    System.out.println("To test:  java johar.idf.Idf inputfile");
 	} else {
-	    Idf idf = idfFromFile(args[0]);
+	    Idf idf = null;
+	    try {
+		idf = idfFromFile(args[0]);
+	    } catch (IdfFormatException e) {
+		System.out.println(e.getMessage());
+	    }
 	    if (idf == null) {
 		System.out.println("Errors in IDF file.");
 	    } else {
@@ -306,9 +318,7 @@ public class Idf extends IdfElement {
 
 	j = _commandList.size();
 	for (i=0; i<j; i++) {
-	    // System.out.println("Idf.pVTC a size = " + j);
 	    _commandList.get(i).acceptVisitor(visitor);
-	    // System.out.println("Idf.pVTC b size = " + j);
 	}
 
 	j = _tableList.size();
