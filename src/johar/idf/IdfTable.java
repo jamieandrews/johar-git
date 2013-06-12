@@ -53,6 +53,10 @@ public class IdfTable extends IdfElement {
 	return _defaultHeading;
     }
 
+    public String getLabel() {
+	return _label;
+    }
+
     // For displaying.
 
     public int indentLevel() {
