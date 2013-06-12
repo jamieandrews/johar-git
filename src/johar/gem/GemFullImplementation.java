@@ -159,9 +159,27 @@ implements johar.gem.GemSetting {
 	}
     }
 
+    private static class TableAdder extends VisitorOfIdfElement {
+	private Map<String, TableStructure> _mapStringTableStructure;
+
+	public TableAdder(Map<String,TableStructure> mapStringTableStructure) {
+	    _mapStringTableStructure = mapStringTableStructure;
+	}
+
+	public void beforeChildren(IdfTable t, ErrorHandler eh) {
+	    String name = t.getName();
+	    String defaultHeading = t.getDefaultHeading();
+	    boolean isBrowsable = t.getBrowsable();
+
+	    _mapStringTableStructure.put(name,
+		new TableStructure(defaultHeading, isBrowsable));
+	}
+    }
+
     public void initializeAppEngine() {
-	// Set up tables first
-	// TBD
+	// Set up each individual table
+	TableAdder tableAdder = new TableAdder(_mapStringTableStructure);
+	_idf.acceptVisitor(tableAdder);
 
 	// Call initialization method
 	String initializationMethodName = _idf.getInitializationMethod();
