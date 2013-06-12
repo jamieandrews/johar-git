@@ -366,19 +366,18 @@ implements johar.gem.GemSetting {
 	pvi.setParameterValue(repNumber, s);
     }
 
-    public boolean parameterCheckSucceeds()
+    public String parameterCheck()
     throws GemException {
-	boolean returnValue;
+	String returnValue;
 
 	String parameterCheckMethodName =
 	    _currentStage.getParameterCheckMethod();
 
 	if (parameterCheckMethodName.equals("")) {
-	    returnValue = true;
+	    returnValue = null;
 	} else {
 	    returnValue =
-		((Boolean) callAppEngineMethod(parameterCheckMethodName))
-		.booleanValue();
+		((String) callAppEngineMethod(parameterCheckMethodName));
 	}
 
 	return returnValue;

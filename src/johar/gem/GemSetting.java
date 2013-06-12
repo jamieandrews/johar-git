@@ -143,12 +143,12 @@ public interface GemSetting extends johar.gem.GemBase {
 
     /**
      * Calls the ParameterCheckMethod of the current stage,
-     *  if it has one, and otherwise returns {@code true}.
+     *  if it has one, and otherwise returns {@code null}.
      *
      * @return what the ParameterCheckMethod of the current
-     *  stage returns, or {@code true} if it does not have one.
+     *  stage returns, or {@code null} if it does not have one.
      */
-    public boolean parameterCheckSucceeds()
+    public String parameterCheck()
     throws GemException;
 
     /**
