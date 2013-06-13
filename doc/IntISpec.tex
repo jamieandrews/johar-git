@@ -95,7 +95,7 @@ Core steps:
     and exit.
   \item The IntI {\must} then call {\tt GemSetting.initializeAppEngine()}.
   \end{enumerate}
-\item After the initialization phase, the IntI {\it may}
+\item After the initialization phase, the IntI {\may}
   continue with the processing described below.
 \item The IntI {\may} then perform the Command Loop
   (see below) as many times as needed, until the IntI terminates.
@@ -127,13 +127,13 @@ The Command Loop consists of the following steps:
   times as needed, at least until {\tt MinNumberOfReps} repetitions of of
   every parameter of every stage of the command has been loaded into the
   {\tt GemSetting}.
-\item The IntI {\it may} continue to perform the Stage Loop
+\item The IntI {\may} continue to perform the Stage Loop
   after a value for every parameter of every stage of the command has been
   loaded.
 \item The IntI {\must} continue to perform the Stage Loop until
   every {\tt ParameterCheckMethod}, in every stage of the command that
   has one, has returned {\tt null} or the empty string.
-\item The IntI {\it must} perform the following steps
+\item The IntI {\must} perform the following steps
   for every question in the current command,
   from the first question specified to the last question specified.
   \begin{enumerate}
@@ -156,22 +156,73 @@ The Command Loop consists of the following steps:
   IntI {\must} call that method.
 \item If the command's {\tt QuitAfter} attribute is
   {\tt true}, or the command has a {\tt QuitAfterIfMethod} which has
-  returned {\tt true}, then the IntI {\it must} terminate.
+  returned {\tt true}, then the IntI {\must} terminate.
 \setcounter{coreReq}{\value{enumi}}
 \end{enumerate}
+
+\begin{figure}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+Parameter {\tt Type}	& Java type
+	& Comment \\
+\hline
+{\tt boolean}		& {\tt boolean}
+	& \\
+\hline
+{\tt choice}		& {\tt java.lang.String}
+	& One of the choices \\
+\hline
+{\tt date}		& {\tt java.util.Calendar}
+	& \\
+\hline
+{\tt file}		& {\tt java.io.File}
+	& \\
+\hline
+{\tt float}		& {\tt double}
+	& The floating-point type with the maximum \\
+ &	& range and precision in Java \\
+\hline
+{\tt int}		& {\tt long}
+	& The integer type with the maximum \\
+ &	& range and precision in Java \\
+\hline
+{\tt text}		& {\tt java.lang.String}
+	& \\
+\hline
+{\tt tableEntry}	& {\tt int}
+	& The row number (starting with 0) of one row \\
+ &	& that the user has selected \\
+\hline
+{\tt timeOfDay}		& {\tt java.util.Calendar}
+	& \\
+\hline
+\end{tabular}
+\end{center}
+
+\caption{Bindings of Johar parameter types to Java types.}
+\label{java-type-binding-figure}
+\end{figure}
+
+\noindent
+See Table \ref{java-type-binding-figure} for the Java type that a Java
+IntI {\must} load as the value of a parameter, depending on what {\tt Type}
+the parameter is.
+
+\newpage
 
 \noindent
 The Stage Loop consists of the following steps:
 \begin{enumerate}
 \setcounter{enumi}{\value{coreReq}}
-\item At any time, the IntI {\it may} call the
+\item At any time, the IntI {\may} call the
   {\tt DefaultValueMethod} of any parameter in the current
   stage.
-\item At any time, the IntI {\it may} load values for
+\item At any time, the IntI {\may} load values for
   repetitions of any parameter in the current stage.
 \item If the IntI loads a value for a repetition of a parameter
   with a {\tt DefaultValue} or {\tt DefaultValueMethod}, and the
-  value was not selected directly by the user, then the value must come
+  value was not selected directly by the user, then the value {\must} come
   from the {\tt DefaultValue} or from a call to the
   {\tt DefaultValueMethod} made since the beginning of this iteration of
   the Stage Loop.  [Rationale: the previous stage's
@@ -182,7 +233,7 @@ The Stage Loop consists of the following steps:
   the current stage's {\tt ParameterCheckMethod},
   unless the parameter has a {\tt ParentParameter} whose value is
   not the parameter's {\tt ParentValue}.
-\item At any time after that, the IntI {\it may} call the
+\item At any time after that, the IntI {\may} call the
   current stage's {\tt ParameterCheckMethod}, if it has one.
 \item If the current stage has a {\tt ParameterCheckMethod},
   then the IntI {\must} call it at least once.
@@ -190,7 +241,7 @@ The Stage Loop consists of the following steps:
   the IntI {\mustnot} load any parameter values between the time
   it last calls the {\tt ParameterCheckMethod} and the time it next
   calls {\tt GemSetting.selectCurrentStage()}.
-\item Finally, the IntI {\it may} call {\tt GemSetting.selectCurrentStage()}
+\item Finally, the IntI {\may} call {\tt GemSetting.selectCurrentStage()}
   with a parameter that is either one greater than the index number of the
   current stage, or less than the index number of the current stage.
 \setcounter{coreReq}{\value{enumi}}
