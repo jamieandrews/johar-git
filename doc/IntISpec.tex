@@ -84,8 +84,9 @@ Core steps:
   \item If the IDF's {\tt IdfVersion} is greater than that supported
     by the IntI, then the IntI {\must} show an error message
     and exit.
-  \item The IntI {\must} then call {\tt GemFactory.newGemSetting(idf)},
+  \item The IntI {\must} then call {\tt GemFactory.newGemSetting()},
     using the {\tt Idf} object returned by {\tt idfFromFile} as the
+    first parameter and a valid {\it ShowTextHandler} as the second
     parameter.
   \item The IntI {\must} then call {\tt GemSetting.validate()} on the
     {\tt GemSetting} returned by {\tt GemFactory}.
