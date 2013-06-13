@@ -82,6 +82,7 @@ public interface GemSetting extends johar.gem.GemBase {
      * @param paramName the name of the parameter getting the repetition
      * @param repNumber the sequence number of the repetition
      * @param o the {@code Object} value of the repetition
+     * @throws GemException if the parameter does not exist
      */
     public void setParameterValue(String paramName, int repNumber, Object o)
     throws GemException;
@@ -97,6 +98,7 @@ public interface GemSetting extends johar.gem.GemBase {
      * @param paramName the name of the parameter getting the repetition
      * @param repNumber the sequence number of the repetition
      * @param l the {@code int} value of the repetition
+     * @throws GemException if the parameter does not exist
      */
     public void setParameterValue(String paramName, int repNumber, long l)
     throws GemException;
@@ -109,8 +111,7 @@ public interface GemSetting extends johar.gem.GemBase {
      * @param paramName the name of the parameter getting the repetition
      * @param repNumber the sequence number of the repetition
      * @param d the {@code double} value of the repetition
-     * @throws GemException if the parameter has not been initialized
-     *	with {@code initializeParameter}
+     * @throws GemException if the parameter does not exist
      */
     public void setParameterValue(String paramName, int repNumber, double d)
     throws GemException;
@@ -121,9 +122,9 @@ public interface GemSetting extends johar.gem.GemBase {
      * as of type {@code boolean}.
      *
      * @param paramName the name of the parameter getting the repetition
+     * @param repNumber the sequence number of the repetition
      * @param b the {@code boolean} value of the repetition
-     * @throws GemException if the parameter has not been initialized
-     *	with {@code initializeParameter}
+     * @throws GemException if the parameter does not exist
      */
     public void setParameterValue(String paramName, int repNumber, boolean b)
     throws GemException;
@@ -134,11 +135,23 @@ public interface GemSetting extends johar.gem.GemBase {
      * as of type {@code text} or {@code choice}.
      *
      * @param paramName the name of the parameter getting the repetition
+     * @param repNumber the sequence number of the repetition
      * @param s the {@code String} value of the repetition
-     * @throws GemException if the parameter has not been initialized
-     *	with {@code initializeParameter}
+     * @throws GemException if the parameter does not exist
      */
     public void setParameterValue(String paramName, int repNumber, String s)
+    throws GemException;
+
+    /**
+     * Deletes a repetition of a parameter.
+     *
+     * @param paramName the name of the parameter whose repetition
+     *   is to be deleted
+     * @param repNumber the sequence number of the repetition
+     *   that is to be deleted
+     * @throws GemException if the parameter or repetition does not exist
+     */
+    public void deleteParameterRepetition(String paramName, int repNumber)
     throws GemException;
 
     /**

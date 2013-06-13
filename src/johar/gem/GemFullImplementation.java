@@ -366,6 +366,14 @@ implements johar.gem.GemSetting {
 	pvi.setParameterValue(repNumber, s);
     }
 
+    public void deleteParameterRepetition(String paramName, int repNumber)
+    throws GemException {
+	ParamValuesInfo pvi = getParamValuesInfo(
+	    paramName, new String[] {"choice","text"}, "String");
+	pvi.deleteParameterRepetition(repNumber);
+    }
+
+
     public String parameterCheck()
     throws GemException {
 	String returnValue;

@@ -33,6 +33,10 @@ public class ParamValuesInfo {
 	_paramValueList.set(repNumber, new ParamValue(paramValue));
     }
 
+    public void deleteParameterRepetition(int repNumber) {
+	_paramValueList.remove(repNumber);
+    }
+
     public Object getParameterRep(int repNumber) {
 	return _paramValueList.get(repNumber).getValue();
     }
