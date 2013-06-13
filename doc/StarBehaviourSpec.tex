@@ -129,11 +129,9 @@ command should be wrapped up if a question is cancelled
   \end{enumerate}
   Otherwise, continue with the below steps.
 \item If the question  has a {\tt DefaultValue}, set the value of
-  (the response to) the question in the CommandModel to the default value.
-  (Rationale:  since the GUI widgets are linked to the CommandModel,
-  this should have the effect of updating the value in the GUI.)
+  (the response to) the question to the default value.
 \item Otherwise, if the question has a {\tt DefaultValueMethod}, then call it
-  and set the value of (the response to) the question in the CommandModel to
+  and set the value of (the response to) the question to
   the default value.
 \item Create a question dialog box for the question.
 \end{enumerate}
@@ -279,12 +277,9 @@ the text.
   then for each parameter in the current stage:
   \begin{enumerate}
   \item If the parameter has a {\tt DefaultValue}, set the value of the
-    parameter in the CommandModel to the default value.
-    (Rationale:  since the GUI widgets are linked to the CommandModel,
-    this should have the effect of updating the value in the GUI.)
+    parameter to the default value.
   \item Otherwise, if the parameter has a {\tt DefaultValueMethod}, then call it
-    and set the value of the parameter in the CommandModel to the default
-    value.
+    and set the value of the parameter to the default value.
   \end{enumerate}
 \end{enumerate}
 
