@@ -138,7 +138,8 @@ See Figure \ref{commandDialogBoxFig}.
 \item An {\it incomplete stage} is a stage that contains some parameter
   such that: (a) the parameter is not inactive, (b) there is no
   {\tt DefaultValue} or {\tt DefaultValueMethod} for the parameter,
-  and (c) the current number of repetitions is less than the
+  and (c) the current number of repetitions for which the user has not
+  selected a value is less than the
   {\tt MinNumberOfReps} for the parameter.
 \end{enumerate}
 
@@ -199,7 +200,7 @@ represented by a section of the command dialog box.  See Figure
   value of the repetition.  This widget will be different for different
   types of parameters.  For instance, for a {\tt boolean} parameter,
   it may be a widget consisting of two radio buttons labelled ``Yes''
-  and ``No'', whereas for a {\tt string} parameter it may be a
+  and ``No'', whereas for a {\tt text} parameter it may be a
   text area.
 \item On the right of the section is zero to three small buttons
   with icons in them.

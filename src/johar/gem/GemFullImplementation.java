@@ -167,7 +167,7 @@ implements johar.gem.GemSetting {
 	}
 
 	public void beforeChildren(IdfTable t, ErrorHandler eh) {
-	    String name = t.getName();
+	    String name = t.getTableName();
 	    String defaultHeading = t.getDefaultHeading();
 	    boolean isBrowsable = t.getBrowsable();
 

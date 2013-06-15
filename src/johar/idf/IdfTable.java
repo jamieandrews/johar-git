@@ -41,7 +41,7 @@ public class IdfTable extends IdfElement {
 
     // Getters.
 
-    public String getName() {
+    public String getTableName() {
 	return _tableName;
     }
 

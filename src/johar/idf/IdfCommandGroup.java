@@ -81,6 +81,10 @@ public class IdfCommandGroup extends IdfElement {
 
     // Getters.
 
+    public String getCommandGroupName() {
+	return _commandGroupName;
+    }
+
     public int getNumMembers() {
 	return _memberList.size();
     }

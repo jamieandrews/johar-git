@@ -58,7 +58,7 @@ Requirements Specification -- Behaviour
 
 When the user selects a command from a menu:
 \begin{enumerate}
-\item Set a String field {\tt lastDisplayedString} to the empty string.
+\item Set a String field {\tt lastDisplayedText} to the empty string.
   (Rationale:  this will be for displaying the last text that the program
   shows the user.  See below.)
 \item If any table selection is {\it incomplete} (see below) for the command,
@@ -191,8 +191,8 @@ the command was cancelled in some way by the user or by Star itself.
 \item If {\tt commandWasCancelled} is {\tt false}:
   \begin{enumerate}
   \item Determine whether the application should quit, by checking
-    the {\tt QuitAfter} attribute and/or calling the {\tt QuitAfterIf}
-    method of the command.
+    the {\tt QuitAfter} attribute and/or calling the {\tt QuitAfterIfMethod}
+    of the command.
   \item If the application should quit:
     \begin{enumerate}
     \item If {\tt lastDisplayedText} is non-null and not the empty string,
