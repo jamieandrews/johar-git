@@ -138,9 +138,16 @@ See Figure \ref{commandDialogBoxFig}.
 \item An {\it incomplete stage} is a stage that contains some parameter
   such that: (a) the parameter is not inactive, (b) there is no
   {\tt DefaultValue} or {\tt DefaultValueMethod} for the parameter,
-  and (c) the current number of repetitions for which the user has not
+  and (c) the current number of repetitions for which the user has
   selected a value is less than the
   {\tt MinNumberOfReps} for the parameter.
+
+  (That is, any repetitions that the user has not filled in and that
+  do not have a default value should be interpreted as repetitions
+  that the user does not want to give to the application engine.
+  If the number of the remaining repetitions is less than the
+  {\tt MinNumberOfReps}, then the user still needs to fill in more
+  values.)
 \end{enumerate}
 
 \section{Parameter Section of the Command Dialog Box}
