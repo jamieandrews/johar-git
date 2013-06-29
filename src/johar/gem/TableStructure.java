@@ -17,13 +17,16 @@ import java.util.StringTokenizer;
 public class TableStructure {
     private List<String> _table;
     private String _tableHeading;
+    private String _columnNames;
     private boolean _isBrowsable;
     private boolean _isShown;
     private boolean _isUpdated;
 
-    public TableStructure(String initialHeading, boolean isBrowsable) {
+    public TableStructure(String initialHeading, String initialColumnNames,
+	    boolean isBrowsable) {
 	_table = new ArrayList<String>();
         _tableHeading = initialHeading;
+        _columnNames = initialColumnNames;
 	_isBrowsable = isBrowsable;
 	_isShown = false;
 	_isUpdated = false;
@@ -35,6 +38,14 @@ public class TableStructure {
 
     public void setTableHeading(String s) {
 	_tableHeading = s;
+    }
+
+    public String getColumnNames() {
+	return _columnNames;
+    }
+
+    public void setColumnNames(String s) {
+	_columnNames = s;
     }
 
     public String getRowText(int rowNumber) {

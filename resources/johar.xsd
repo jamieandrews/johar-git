@@ -42,41 +42,17 @@
 	    <xs:element name="Label" type="xs:string"/>
 	    <xs:element name="MultiLineHelp" type="xs:string"/>
 	    <xs:element ref="OneLineHelp"/>
+	    <xs:element name="Parameter" type="paramType"/>
+	    <xs:element name="ParameterCheckMethod" type="lowerIdentifier"/>
 	    <xs:element name="Prominence" type="nonNegativeInt"/>
 	    <xs:element name="Question" type="questionType"/>
 	    <xs:element name="QuitAfter" type="joharBoolean"/>
 	    <xs:element name="QuitAfterIfMethod" type="lowerIdentifier"/>
-
-	    <!-- A Command can either have stages, or Parameters and
-		 ParameterCheckMethods, but not both. -->
-	    <xs:choice minOccurs="0" maxOccurs="unbounded">
-		<xs:group ref="CommandContentsNoStages"/>
-		<xs:group ref="CommandStages"/>
-	    </xs:choice>
+	    <xs:element name="Stage" type="StageContents"/>
 
 	</xs:choice>
     	<xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
-
-    <!-- Things that can go inside a Command declaration if there
-	are no Stages -->
-    <xs:group name="CommandContentsNoStages">
-	<xs:choice>
-
-	    <xs:element name="Parameter" type="paramType"/>
-	    <xs:element name="ParameterCheckMethod" type="lowerIdentifier"/>
-
-	</xs:choice>
-    </xs:group>
-
-    <!-- One sequence of Stages -->
-    <xs:group name="CommandStages">
-	<xs:choice>
-
-	    <xs:element name="Stage" type="StageContents"/>
-
-	</xs:choice>
-    </xs:group>
 
     <!-- What can go inside a Stage declaration -->
     <xs:complexType name="StageContents">
@@ -240,6 +216,7 @@
 	    <xs:choice minOccurs="0" maxOccurs="unbounded">
 
 		<xs:element name="Browsable" type="joharBoolean"/>
+		<xs:element name="DefaultColumnNames" type="xs:string"/>
 		<xs:element name="DefaultHeading" type="xs:string"/>
 		<xs:element name="Label" type="xs:string"/>
 

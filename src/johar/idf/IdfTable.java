@@ -15,6 +15,7 @@ public class IdfTable extends IdfElement {
     // The attributes of Table
     private String  _tableName;
     private boolean _browsable;
+    private String  _defaultColumnNames;
     private String  _defaultHeading;
     private String  _label;
 
@@ -31,10 +32,12 @@ public class IdfTable extends IdfElement {
 
 	// Confirm counts of attributes
 	complainIfMoreThanOne("Browsable");
+	complainIfMoreThanOne("DefaultColumnNames");
 	complainIfMoreThanOne("DefaultHeading");
 	complainIfMoreThanOne("Label");
 
 	_browsable = extractAttr("Browsable", true);
+	_defaultColumnNames = extractAttr("DefaultColumnNames", "");
 	_defaultHeading = extractAttr("DefaultHeading", ccConvertedName);
 	_label = extractAttr("Label", ccConvertedName);
     }
@@ -47,6 +50,10 @@ public class IdfTable extends IdfElement {
 
     public boolean getBrowsable() {
 	return _browsable;
+    }
+
+    public String getDefaultColumnNames() {
+	return _defaultColumnNames;
     }
 
     public String getDefaultHeading() {
@@ -65,6 +72,7 @@ public class IdfTable extends IdfElement {
 
     public void contentsToString() {
 	fieldToString("Browsable", (_browsable ? "true" : "false"));
+	fieldToString("DefaultColumnNames", _defaultColumnNames);
 	fieldToString("DefaultHeading", _defaultHeading);
 	fieldToString("Label", _label);
     }

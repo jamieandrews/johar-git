@@ -90,11 +90,15 @@ public class IdfCommand extends IdfElement {
 	_quitAfterIfMethod =
 	    extractAttrIf(countNumberOf("QuitAfter") < 1,
 		"QuitAfterIfMethod", 0, 1, 0, 0, "",
-		"Command has QuitAfter attribute.");
+		"A Command with QuitAfter cannot have a QuitAfterIfMethod.");
 
 	// Either process stages, or else process contents without
 	int numStages = countNumberOf("Stage");
 	if (numStages > 0) {
+	    complainIfMoreThanZero("Parameter",
+		"A Command with Stages cannot have Parameters.");
+	    complainIfMoreThanZero("ParameterCheckMethod",
+		"A Command with Stages cannot have a ParameterCheckMethod.");
 	    processStages();
 	} else {
 	    processContentsWithoutStages();

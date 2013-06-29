@@ -35,6 +35,11 @@ implements johar.gem.Gem {
 	getTableStructure(tableName).setTableHeading(heading);
     }
 
+    public void setColumnNames(String tableName, String columnNames)
+    throws GemException {
+	getTableStructure(tableName).setColumnNames(columnNames);
+    }
+
     public void fillRow(String tableName, int rowNumber, String text)
     throws GemException {
 	getTableStructure(tableName).fillRow(rowNumber, text);

@@ -152,6 +152,11 @@ public class GemBaseImplementation implements johar.gem.GemBase {
 	return getTableStructure(tableName).getTableHeading();
     }
 
+    public String getColumnNames(String tableName)
+    throws GemException {
+	return getTableStructure(tableName).getColumnNames();
+    }
+
     public boolean rowIsFilled(String tableName, int rowNumber)
     throws GemException {
 	return getTableStructure(tableName).rowIsFilled(rowNumber);

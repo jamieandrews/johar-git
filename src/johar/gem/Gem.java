@@ -36,6 +36,22 @@ public interface Gem extends johar.gem.GemBase {
     throws GemException;
 
     /**
+     * Sets column names for a table.  This text is shown at the
+     * top of each column, under the heading.  Before the first call
+     * to this method for a given table name, the column names are
+     * the default column names from the IDF.
+     * <p> If the text contains unescaped "bar" characters ("|"), then
+     * the IntI may show the parts of the text between the bars as
+     * names for the separate columns.
+     *
+     * @param tableName	the name of the table to set the heading for
+     * @param columnNames the new column names
+     * @throws GemException if the named table does not exist
+     */
+    public void setColumnNames(String tableName, String columnNames)
+    throws GemException;
+
+    /**
      * Fills a row of a table with a text string.
      * <p> If the highest row filled before the call is row r, and
      * rowNumber is greater than r+1, then all of the rows between r+1

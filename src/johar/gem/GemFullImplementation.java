@@ -169,10 +169,12 @@ implements johar.gem.GemSetting {
 	public void beforeChildren(IdfTable t, ErrorHandler eh) {
 	    String name = t.getTableName();
 	    String defaultHeading = t.getDefaultHeading();
+	    String defaultColumnNames = t.getDefaultColumnNames();
 	    boolean isBrowsable = t.getBrowsable();
 
-	    _mapStringTableStructure.put(name,
-		new TableStructure(defaultHeading, isBrowsable));
+	    TableStructure ts = new TableStructure(defaultHeading,
+		defaultColumnNames, isBrowsable);
+	    _mapStringTableStructure.put(name, ts);
 	}
     }
 

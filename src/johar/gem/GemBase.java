@@ -182,6 +182,16 @@ public interface GemBase {
     throws GemException;
 
     /**
+     * Gets the current column names for a table.
+     *
+     * @param tableName the name of the table to get the heading for
+     * @return the column names of the named table
+     * @throws GemException if the named table does not exist
+     */
+    public String getColumnNames(String tableName)
+    throws GemException;
+
+    /**
      * Tells whether a row of a table is filled.
      *
      * @param tableName the name of the table
