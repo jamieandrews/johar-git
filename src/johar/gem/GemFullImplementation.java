@@ -311,26 +311,39 @@ implements johar.gem.GemSetting {
 
     private ParamValuesInfo getParamValuesInfo(String paramName,
 	String[] acceptableParamTypes, String valueTypeName)
-    throws GemException {
+	    throws GemException {
 	ParamValuesInfo pvi = null;
 
 	String paramType = getParameterType(paramName);
-	for (int i=0; i<acceptableParamTypes.length; i++) {
+	boolean acceptable;
+
+	if (acceptableParamTypes == null) {
+	    // All param types acceptable
+	    acceptable = true;
+	} else {
+	    acceptable = false;
+	}
+
+	for (int i=0; (!acceptable && i<acceptableParamTypes.length); i++) {
 	    if (paramType.equals(acceptableParamTypes[i])) {
-		pvi = _mapStringParamValuesInfo.get(paramName);
-		if (pvi==null) {
-		    pvi = new ParamValuesInfo();
-		    _mapStringParamValuesInfo.put(paramName, pvi);
-		}
-		return pvi;
+		acceptable = true;
 	    }
 	}
 
-	// If here, it's not of the right type
-	throw new GemException(
-	    "setParameterValue: parameter " + paramName +
-	    " cannot take " + valueTypeName + " as value"
-	);
+	if (acceptable) {
+	    pvi = _mapStringParamValuesInfo.get(paramName);
+	    if (pvi==null) {
+		pvi = new ParamValuesInfo();
+		_mapStringParamValuesInfo.put(paramName, pvi);
+	    }
+	    return pvi;
+	} else {
+	    // If here, it's not of the right type
+	    throw new GemException(
+		"setParameterValue: parameter " + paramName +
+		" cannot take " + valueTypeName + " as value"
+	    );
+	}
     }
 
     public void setParameterValue(String paramName, int repNumber, Object o)
@@ -343,7 +356,7 @@ implements johar.gem.GemSetting {
     public void setParameterValue(String paramName, int repNumber, long l)
     throws GemException {
 	ParamValuesInfo pvi = getParamValuesInfo(
-	    paramName, new String[] {"int"}, "long");
+	    paramName, new String[] {"int,tableEntry"}, "long");
 	pvi.setParameterValue(repNumber, l);
     }
 
@@ -370,8 +383,7 @@ implements johar.gem.GemSetting {
 
     public void deleteParameterRepetition(String paramName, int repNumber)
     throws GemException {
-	ParamValuesInfo pvi = getParamValuesInfo(
-	    paramName, new String[] {"choice","text"}, "String");
+	ParamValuesInfo pvi = getParamValuesInfo(paramName, null, "");
 	pvi.deleteParameterRepetition(repNumber);
     }
 
