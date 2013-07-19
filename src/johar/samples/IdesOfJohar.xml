@@ -1,0 +1,196 @@
+<Johar
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="johar.xsd">
+
+<Application>IdesOfJohar</Application>
+<ApplicationEngine>IdesOfJohar</ApplicationEngine>
+<IdfVersion>1.0</IdfVersion>
+<Table name="weeks">
+  <Browsable>yes</Browsable>
+  <DefaultHeading>Weeks</DefaultHeading>
+</Table>
+<Table name="days">
+  <Browsable>yes</Browsable>
+  <DefaultHeading>Days</DefaultHeading>
+</Table>
+<Table name="appointments">
+  <Browsable>yes</Browsable>
+  <DefaultHeading>Appointments</DefaultHeading>
+</Table>
+<CommandGroup name="appointment">
+  <Member>addAppointment</Member>
+  <Member>cancel</Member>
+  <Member>reminders</Member>
+  <Member>exit</Member>
+  <Mnemonic>M</Mnemonic>
+</CommandGroup>
+<CommandGroup name="previous">
+  <Member>previousMonth</Member>
+  <Member>previousWeek</Member>
+  <Member>previousDay</Member>
+  <Mnemonic>P</Mnemonic>
+</CommandGroup>
+<CommandGroup name="next">
+  <Member>nextMonth</Member>
+  <Member>nextWeek</Member>
+  <Member>nextDay</Member>
+  <Mnemonic>N</Mnemonic>
+</CommandGroup>
+<CommandGroup name="goTo">
+  <Member>goToSelectedWeek</Member>
+  <Member>goToSelectedDay</Member>
+  <Member>goToDate</Member>
+  <Mnemonic>G</Mnemonic>
+</CommandGroup>
+<Command name="addAppointment">
+  <Label>Add Appointment</Label>
+  <BriefHelp>Add an appointment</BriefHelp>
+  <MultiLineHelp>Add an appointment on the current day</MultiLineHelp>
+  <OneLineHelp>Add an appointment on the current day</OneLineHelp>
+  <Parameter name="time">
+    <Type>timeOfDay</Type>
+    <DefaultValue>9:00 am</DefaultValue>
+    <BriefHelp>Time of the appointment</BriefHelp>
+    <MultiLineHelp>
+            The time of the appointment. The format is hh:mm am.
+    </MultiLineHelp>
+    <OneLineHelp>Time of the appointment</OneLineHelp>
+  </Parameter>
+  <Parameter name="description">
+    <Type>text</Type>
+    <MaxNumberOfChars>240</MaxNumberOfChars>
+    <MaxNumberOfLines>3</MaxNumberOfLines>
+    <BriefHelp>Text description</BriefHelp>
+    <MultiLineHelp>A description of the appointment in text format.</MultiLineHelp>
+    <OneLineHelp>Text description of the appointment</OneLineHelp>
+  </Parameter>
+  <Parameter name="numReps">
+    <Type>int</Type>
+    <DefaultValue>1</DefaultValue>
+    <Label>Number of repetitions</Label>
+    <MinValue>1</MinValue>
+    <BriefHelp>Number of repetitions</BriefHelp>
+    <MultiLineHelp>
+            The number of repetitions for the appointment, to be
+            used with the &apos;Repeat Every&apos; parameter.  For example,
+            2 daily repetitions will add the appointment twice, for two
+            consecutive days.
+    </MultiLineHelp>
+    <OneLineHelp>Number of repetitions of the appointment</OneLineHelp>
+  </Parameter>
+  <Parameter name="repeatEvery">
+    <Type>choice</Type>
+    <Choices>day|week|month</Choices>
+    <DefaultValue>day</DefaultValue>
+    <BriefHelp>Repetition period</BriefHelp>
+    <MultiLineHelp>
+            The period of repetition of the appointment, which can be
+            &apos;day&apos;, &apos;week&apos; or &apos;month&apos;.  For example, 3 repetitions with
+            period &apos;day&apos; will add the appointment for 3 consecutive
+            days; 3 repetitions with period &apos;week&apos; will add the
+            appointment for 3 consecutive weeks on the same day of
+            the week.
+    </MultiLineHelp>
+    <OneLineHelp>Period of repetition of the appointment</OneLineHelp>
+  </Parameter>
+</Command>
+<Command name="cancel">
+  <BriefHelp>Cancel appointment</BriefHelp>
+  <MultiLineHelp>
+    OneLineHelp   = &quot;Cancel the selected appointment&quot;
+        Cancel the appointment that is selected from the appointment table.
+  </MultiLineHelp>
+  <Parameter name="appt">
+    <Type>tableEntry</Type>
+    <SourceTable>appointments</SourceTable>
+    <BriefHelp>Selected appointment</BriefHelp>
+    <MultiLineHelp>
+            The selected row of the appointment table for cancellation.
+    </MultiLineHelp>
+    <OneLineHelp>The appointment to be cancelled</OneLineHelp>
+  </Parameter>
+</Command>
+<Command name="reminders">
+  <Parameter name="kind">
+    <Type>choice</Type>
+    <Choices>popup|email|off</Choices>
+    <DefaultValue>off</DefaultValue>
+    <Label>How do you want to be reminded?</Label>
+    <BriefHelp>How you want to be reminded</BriefHelp>
+    <MultiLineHelp>
+            How you want to be reminded.  &apos;Popup&apos; means via a popup that
+            appears on your screen.  &apos;Email&apos; means via email.  &apos;Off&apos;
+            means that you do not want reminders.
+    </MultiLineHelp>
+    <OneLineHelp>How you want to be reminded</OneLineHelp>
+  </Parameter>
+</Command>
+<Command name="previousMonth">
+  <BriefHelp>Go to previous month</BriefHelp>
+  <MultiLineHelp>Go to previous month</MultiLineHelp>
+  <OneLineHelp>Go to previous month</OneLineHelp>
+</Command>
+<Command name="nextMonth">
+  <BriefHelp>Go to next month</BriefHelp>
+  <MultiLineHelp>Go to next month</MultiLineHelp>
+  <OneLineHelp>Go to next month</OneLineHelp>
+</Command>
+<Command name="previousWeek">
+  <BriefHelp>Go to previous week</BriefHelp>
+  <MultiLineHelp>Go to previous week</MultiLineHelp>
+  <OneLineHelp>Go to previous week</OneLineHelp>
+</Command>
+<Command name="nextWeek">
+  <BriefHelp>Go to next week</BriefHelp>
+  <MultiLineHelp>Go to next week</MultiLineHelp>
+  <OneLineHelp>Go to next week</OneLineHelp>
+</Command>
+<Command name="previousDay">
+  <BriefHelp>Go to previous day</BriefHelp>
+  <MultiLineHelp>Go to previous day</MultiLineHelp>
+  <OneLineHelp>Go to previous day</OneLineHelp>
+</Command>
+<Command name="nextDay">
+  <BriefHelp>Go to next day</BriefHelp>
+  <MultiLineHelp>Go to next day</MultiLineHelp>
+  <OneLineHelp>Go to next day</OneLineHelp>
+</Command>
+<Command name="goToSelectedWeek">
+  <BriefHelp>Go to selected week</BriefHelp>
+  <MultiLineHelp>Go to the week selected from the Weeks table.</MultiLineHelp>
+  <OneLineHelp>Go to the week selected from the Weeks table</OneLineHelp>
+  <Parameter name="week">
+    <Type>tableEntry</Type>
+    <SourceTable>weeks</SourceTable>
+    <BriefHelp>Selected week</BriefHelp>
+    <MultiLineHelp>The week to go to, selected from the Weeks table.</MultiLineHelp>
+    <OneLineHelp>The week to go to</OneLineHelp>
+  </Parameter>
+</Command>
+<Command name="goToSelectedDay">
+  <BriefHelp>Go to selected day</BriefHelp>
+  <MultiLineHelp>Go to the day selected from the Days table.</MultiLineHelp>
+  <OneLineHelp>Go to the day selected from the Days table</OneLineHelp>
+  <Parameter name="day">
+    <Type>tableEntry</Type>
+    <SourceTable>days</SourceTable>
+    <BriefHelp>Selected day</BriefHelp>
+    <MultiLineHelp>The day to go to, selected from the Days table.</MultiLineHelp>
+    <OneLineHelp>The day to go to</OneLineHelp>
+  </Parameter>
+</Command>
+<Command name="goToDate">
+  <BriefHelp>Go to specific date</BriefHelp>
+  <MultiLineHelp>Jump to an arbitrary date.</MultiLineHelp>
+  <OneLineHelp>Go to a specific date</OneLineHelp>
+  <Parameter name="dateToGoTo">
+    <Type>date</Type>
+    <BriefHelp>Date to go to</BriefHelp>
+    <MultiLineHelp>Date to go to.</MultiLineHelp>
+    <OneLineHelp>Date to go to</OneLineHelp>
+  </Parameter>
+</Command>
+<Command name="exit">
+  <QuitAfter>yes</QuitAfter>
+</Command>
+</Johar>

@@ -7,23 +7,24 @@ package johar.interfaceinterpreter.star;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
+/**
+ * The Status Bar in the Star Window.
+ *
+ */
 public class StatusBar extends JLabel {
-	private String _statusText;
-	public StatusBar(String statusText){
-		_statusText = statusText;
-		setStatusText(_statusText);
-		setBorder(BorderFactory.createEtchedBorder());
+	
+	public StatusBar(){
+		setName("status");
+		setStatusText("Welcome.");
+		//setBorder(BorderFactory.createEtchedBorder());
 	}
 	
-	public StatusBar(){		
-		setBorder(BorderFactory.createEtchedBorder());
-	}
-	
+	/**
+	 * Sets the specified text in the Status Bar.
+	 * @param statusText
+	 * text to display
+	 */
 	public void setStatusText(String statusText){
-		try {
-			setText(statusText);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		setText(statusText);
 	}
 }

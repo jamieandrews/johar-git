@@ -1,0 +1,221 @@
+Application = IdesOfJohar
+ApplicationEngine = IdesOfJohar
+IdfVersion = "1.0"
+InitializationMethod = initIdesOfJohar
+
+Table weeks = {
+    Browsable = yes
+    DefaultHeading = "Weeks"
+    DefaultColumnNames = "Sun|Mon|Tue|Wed|Thu|Fri|Sat"
+}
+
+Table days = {
+    Browsable = yes
+    DefaultHeading = "Days"
+    DefaultColumnNames = "Date|Number of Appointments"
+}
+
+Table appointments = {
+    Browsable = yes
+    DefaultHeading = "Appointments"
+    DefaultColumnNames = "Time|Description"
+}
+
+CommandGroup appointment = {
+    Member = addAppointment
+    Member = cancel
+    Member = reminders
+    Member = exit
+}
+
+CommandGroup previous = {
+    Member = previousMonth
+    Member = previousWeek
+    Member = previousDay
+}
+
+CommandGroup next = {
+    Member = nextMonth
+    Member = nextWeek
+    Member = nextDay
+}
+
+CommandGroup goTo = {
+    Member = goToSelectedWeek
+    Member = goToSelectedDay
+    Member = goToDate
+}
+
+Command addAppointment = {
+    Label = "Add Appointment"
+
+    BriefHelp =     "Add an appointment"
+    MultiLineHelp = "Add an appointment on the current day"
+    OneLineHelp =   "Add an appointment on the current day"
+      
+    Parameter time = {
+        Type = timeOfDay
+        DefaultValue = "9:00 am"
+        BriefHelp   = "Time of the appointment"
+        MultiLineHelp = {{
+            The time of the appointment. The format is hh:mm am.
+        }}
+        OneLineHelp = "Time of the appointment"
+    }
+        
+    Parameter description = {
+        Type = text
+        MaxNumberOfChars = 240
+        MaxNumberOfLines = 3
+        BriefHelp =     "Text description"
+        MultiLineHelp = "A description of the appointment in text format."
+        OneLineHelp =   "Text description of the appointment"
+    }
+
+    Parameter numReps = {
+        Type = int
+        DefaultValue = 1
+        Label = "Number of repetitions"
+        MinValue = 1
+        BriefHelp   = "Number of repetitions"
+        MultiLineHelp = {{
+            The number of repetitions for the appointment, to be
+            used with the 'Repeat Every' parameter.  For example,
+            2 daily repetitions will add the appointment twice, for two
+            consecutive days.
+        }}
+        OneLineHelp = "Number of repetitions of the appointment"
+    }
+        
+    Parameter repeatEvery = {
+        Type = choice
+        Choices = "day|week|month"
+        DefaultValue = day
+        BriefHelp   = "Repetition period"
+        MultiLineHelp = {{
+            The period of repetition of the appointment, which can be
+            'day', 'week' or 'month'.  For example, 3 repetitions with
+            period 'day' will add the appointment for 3 consecutive
+            days; 3 repetitions with period 'week' will add the
+            appointment for 3 consecutive weeks on the same day of
+            the week.
+        }}
+        OneLineHelp = "Period of repetition of the appointment"
+    }
+}
+
+Command cancel = {
+    BriefHelp     = "Cancel appointment"
+    OneLineHelp = "Cancel the selected appointment"
+    MultiLineHelp = {{
+        Cancel the appointment that is selected from the appointment table.
+    }}
+
+    Parameter appt = {
+        Type = tableEntry
+        SourceTable = appointments
+        BriefHelp     = "Selected appointment"
+        MultiLineHelp = {{
+            The selected row of the appointment table for cancellation.
+        }}
+        OneLineHelp   = "The appointment to be cancelled"
+    }
+}
+
+Command reminders = {
+    Question kind = {
+        Type = choice
+        Choices = "popup|email|off"
+        DefaultValue = off
+        Label = "How do you want to be reminded?"
+        BriefHelp     = "How you want to be reminded"
+        MultiLineHelp = {{
+            How you want to be reminded.  'Popup' means via a popup that
+            appears on your screen.  'Email' means via email.  'Off'
+            means that you do not want reminders.
+        }}
+        OneLineHelp = "How you want to be reminded"
+		AskIfMethod = askReminderQuestion
+    }
+}
+
+Command previousMonth = {
+    BriefHelp     = "Go to previous month"
+    MultiLineHelp = "Go to previous month"
+    OneLineHelp   = "Go to previous month"
+}
+
+Command nextMonth = {
+    BriefHelp     = "Go to next month"
+    MultiLineHelp = "Go to next month"
+    OneLineHelp   = "Go to next month"
+}
+
+Command previousWeek = {
+    BriefHelp     = "Go to previous week"
+    MultiLineHelp = "Go to previous week"
+    OneLineHelp   = "Go to previous week"
+}
+
+Command nextWeek = {
+    BriefHelp     = "Go to next week"
+    MultiLineHelp = "Go to next week"
+    OneLineHelp   = "Go to next week"
+}
+
+Command previousDay = {
+    BriefHelp     = "Go to previous day"
+    MultiLineHelp = "Go to previous day"
+    OneLineHelp   = "Go to previous day"
+}
+
+Command nextDay = {
+    BriefHelp     = "Go to next day"
+    MultiLineHelp = "Go to next day"
+    OneLineHelp   = "Go to next day"
+}
+
+Command goToSelectedWeek = {
+    BriefHelp     = "Go to selected week"
+    MultiLineHelp = "Go to the week selected from the Weeks table."
+    OneLineHelp   = "Go to the week selected from the Weeks table"
+
+    Parameter week = {
+        Type = tableEntry
+        SourceTable = weeks
+        BriefHelp     = "Selected week"
+        MultiLineHelp = "The week to go to, selected from the Weeks table."
+        OneLineHelp   = "The week to go to"
+    }
+}
+
+Command goToSelectedDay = {
+    BriefHelp     = "Go to selected day"
+    MultiLineHelp = "Go to the day selected from the Days table."
+    OneLineHelp   = "Go to the day selected from the Days table"
+
+    Parameter day = {
+        Type = tableEntry
+        SourceTable = days
+        BriefHelp     = "Selected day"
+        MultiLineHelp = "The day to go to, selected from the Days table."
+        OneLineHelp   = "The day to go to"
+    }
+}
+
+Command goToDate = {
+    BriefHelp      = "Go to specific date"
+    MultiLineHelp  = "Jump to an arbitrary date."
+    OneLineHelp    = "Go to a specific date"
+    Parameter dateToGoTo = {
+        Type = date
+        BriefHelp     = "Date to go to"
+        MultiLineHelp = "Date to go to."
+        OneLineHelp   = "Date to go to"
+    }
+}
+
+Command exit = {
+    QuitAfter = yes
+}
+
