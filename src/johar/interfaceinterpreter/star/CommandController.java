@@ -1142,6 +1142,9 @@ public class CommandController implements CommandControllerBase {
 			try {
 				_gem.callCommandMethod();
 			} catch (GemException e) {
+				MessageDialog.showError("An error occurred while performing the requested operation. [Error Details from App Engine: "
+						+ e.getMessage() + "]");
+				commandWrapUp(true);
 				return;
 			}
 			
