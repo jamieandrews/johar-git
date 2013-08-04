@@ -176,6 +176,7 @@ sb.append("	    <xs:element name=\"FileConstraint\">\n");
 sb.append("		<xs:simpleType>\n");
 sb.append("		    <xs:restriction base=\"xs:string\">\n");
 sb.append("    			<xs:enumeration value=\"mustBeReadable\"/>\n");
+sb.append("    			<xs:enumeration value=\"mustExist\"/>\n");
 sb.append("			<xs:enumeration value=\"mustNotExistYet\"/>\n");
 sb.append("			<xs:enumeration value=\"none\"/>\n");
 sb.append("		    </xs:restriction>\n");
