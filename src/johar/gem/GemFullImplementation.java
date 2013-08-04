@@ -9,6 +9,7 @@ package johar.gem;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
@@ -194,9 +195,17 @@ implements johar.gem.GemSetting {
 	try {
 	    Method m = _appEngineClass.getMethod(methodName, johar.gem.Gem.class);
 	    returnValue = m.invoke(_appEngineObject, this);
-	} catch (Exception e) {
+	} catch (InvocationTargetException e) {
 	    // Problem!! The app engine method has thrown an exception.
 	    // Show a high-priority text message to the user
+	    _showTextHandler.showText(
+		"Application Engine Error:  method " + methodName +
+		" threw exception.\nException message: " +
+		e.getTargetException().getMessage(),
+		3000
+	    );
+	} catch (Exception e) {
+	    // Similar, for any other possible exceptions
 	    _showTextHandler.showText(
 		"Application Engine Error:  method " + methodName +
 		" threw exception.\nException message: " +
