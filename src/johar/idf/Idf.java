@@ -201,7 +201,7 @@ public class Idf extends IdfElement {
 		return newIdf;
 	    }
 	} catch (SAXParseException e) {
-	    e.printStackTrace();
+	    // e.printStackTrace();
 	    throw new IdfFormatException(
 		"* XML parse error:  line " + e.getLineNumber() +
 		", uri " + e.getSystemId() +
@@ -210,22 +210,25 @@ public class Idf extends IdfElement {
 	    );
 	} catch (SAXException e) {
 	    Exception x = e.getException();
-	    ( (x == null) ? e : x ).printStackTrace();
+	    if (x == null) {
+		x = e;
+	    }
+	    // ( (x == null) ? e : x ).printStackTrace();
 	    throw new IdfFormatException(
 		"* SAX Exception: " +
-		e.getMessage()
+		x.getMessage()
 	    );
 	} catch (IOException e) {
-	    e.printStackTrace();
-	    System.out.println("Input problem with file " + filename +
-		 ": " + e.getMessage());
+	    // e.printStackTrace();
+	    // System.out.println("Input problem with file " + filename +
+		//  ": " + e.getMessage());
 	    throw new IdfFormatException(
 		"* Input problem, file " + filename +
 		": " +
 		e.getMessage()
 	    );
 	} catch (Throwable t) {
-	    t.printStackTrace();
+	    // t.printStackTrace();
 	    throw new IdfFormatException(
 		"* Exception/Error thrown: " +
 		t.getMessage()
