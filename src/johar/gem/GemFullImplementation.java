@@ -423,7 +423,7 @@ implements johar.gem.GemSetting {
 	Object returnValue;
 
 	IdfParameter idfParameter =
-	    (IdfQuestion) getIdfParameter(paramOrQuestionName);
+	    getIdfParameter(paramOrQuestionName);
 	String defaultValueMethodName = idfParameter.getDefaultValueMethod();
 
 	if (defaultValueMethodName.equals("")) {
