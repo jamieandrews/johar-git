@@ -356,7 +356,7 @@ implements johar.gem.GemSetting {
     public void setParameterValue(String paramName, int repNumber, long l)
     throws GemException {
 	ParamValuesInfo pvi = getParamValuesInfo(
-	    paramName, new String[] {"int,tableEntry"}, "long");
+	    paramName, new String[] {"int","tableEntry"}, "long");
 	pvi.setParameterValue(repNumber, l);
     }
 
