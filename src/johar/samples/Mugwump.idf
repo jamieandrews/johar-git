@@ -1,0 +1,28 @@
+Application = Mugwump
+IdfVersion = "1.0"
+
+Command guess = {
+  Parameter x = {
+    Type = int
+    MaxValue = 10
+    MinValue = 1
+  }
+  Parameter y = {
+    Type = int
+    MaxValue = 10
+    MinValue = 1
+  }
+}
+
+Command newGame = {
+  Question resignGame = {
+    Type = boolean
+    Label = "Do you want to resign the current game?"
+    AskIfMethod = activeGame
+  }
+}
+
+Command quit = {
+  QuitAfter = yes
+}
+
