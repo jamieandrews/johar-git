@@ -48,6 +48,8 @@ public class IdesOfJohar {
 		GregorianCalendar cal = (GregorianCalendar) currentDay.clone();
 		cal.set(Calendar.HOUR, timeCal.get(Calendar.HOUR));
 		cal.set(Calendar.MINUTE, timeCal.get(Calendar.MINUTE));
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
 		cal.set(Calendar.AM_PM, timeCal.get(Calendar.AM_PM));
 		
 		//Add appointment
@@ -86,6 +88,8 @@ public class IdesOfJohar {
 		
 		cal.set(Calendar.HOUR, timeCal.get(Calendar.HOUR));
 		cal.set(Calendar.MINUTE, timeCal.get(Calendar.MINUTE));
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
 		cal.set(Calendar.AM_PM, timeCal.get(Calendar.AM_PM));
 		
 		//Cancel appointment
