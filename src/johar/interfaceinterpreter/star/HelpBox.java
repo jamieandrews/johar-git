@@ -25,7 +25,7 @@ import johar.idf.IdfQuestion;
  * This class creates a Help Box with three states: the Top-Level state, 
  * the Command state, and the Parameter/Question state. 
  */
-public class HelpDialog extends JFrame {
+public class HelpBox extends JFrame {
 	private Container container;
 	private Idf _idf;
 	private CommandController _cc;
@@ -43,7 +43,7 @@ public class HelpDialog extends JFrame {
 	 * @param cc
 	 * the Command Controller object
 	 */
-	public HelpDialog(Idf idf, CommandController cc) {
+	public HelpBox(Idf idf, CommandController cc) {
 		_idf = idf;
 		_cc = cc;		
 		idfAnalyzer = new IdfAnalyzer(idf); /* Provides access to various information about the specified IDF 

@@ -11,8 +11,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JFrame;
+import java.awt.Dialog;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -23,7 +25,7 @@ import johar.idf.IdfQuestion;
  * The Question Dialog Box for each question attribute in the IDF.
  *
  */
-public class QuestionDialog extends JFrame {
+public class QuestionDialog extends JDialog implements WindowListener {
 	private IdfQuestion _questionObj;
 	private CommandController _cc;
 	private JPanel mainPanel;
@@ -61,10 +63,14 @@ public class QuestionDialog extends JFrame {
 		container.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		mainPanel.setLayout(new GridBagLayout());
 		constraints = new GridBagConstraints();
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
+		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setLocation(300, 90);
 		setResizable(false);
+
 		container.add(mainPanel);
+		addWindowListener(this);
 	}
 
 	/**
@@ -231,5 +237,16 @@ public class QuestionDialog extends JFrame {
 	public List<ParameterWidget> getQuestionWidget(){
 		return paramWidgetList;
 	}
+
+	public void windowClosed(WindowEvent e) {
+		dispose();		
+	}
+
+	public void windowActivated(WindowEvent e) {}
+	public void windowClosing(WindowEvent e) {}	
+	public void windowDeactivated(WindowEvent e) {}	
+	public void windowDeiconified(WindowEvent e) {}	
+	public void windowIconified(WindowEvent e) {}
+	public void windowOpened(WindowEvent e) {}
 }
 

@@ -1,0 +1,45 @@
+Application = TemperatureConverter
+ApplicationEngine = TemperatureConverter
+IdfVersion = "1.0"
+InitializationMethod = initTemperatureConverter
+
+CommandGroup convert = {
+	Member = celsiusToFahrenheit
+	Member = fahrenheitToCelsius
+	Member = exitApp
+}
+
+Command celsiusToFahrenheit = {	
+	BriefHelp = "Converts Celsius to Fahrenheit"
+	MultiLineHelp = "Use this command to convert temperatures measured in Celsius to temperatures measured in Fahrenheit."
+	Stage conversion = {
+		Parameter celsius = {
+			Type = float
+			Label = "Temperature in Celsius"
+			OneLineHelp = "Supply your temperature in Celsius (not Fahrenheit)"
+		}
+	}
+	CommandMethod = celsiusToFahrenheit
+}
+
+Command fahrenheitToCelsius = {	
+	BriefHelp = "Converts Fahrenheit to Celsius"
+	MultiLineHelp = "Use this command to convert temperatures measured in Fahrenheit to temperatures measured in Celsius."
+	Parameter fahrenheit = {
+		Type = float
+		Label = "Temperature in Fahrenheit"
+		OneLineHelp = "Supply your temperature in Fahrenheit (not Celsius)"
+	}
+}
+
+Command exitApp = {
+	Label = "Exit"
+	OneLineHelp = "Exits the Temperature Converter App"
+	Question confirmExit = {
+		Type = boolean
+		Label = "Are you sure you want to exit?"
+		OneLineHelp = "Confirms your intent to exit the app."
+		AskIfMethod = confirmAppExit
+	}
+	QuitAfterIfMethod = appShouldQuit
+}

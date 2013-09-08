@@ -17,7 +17,7 @@ import johar.idf.IdfParameter;
  * Creates parameter widgets for each queryable stage.
  * 
  */
-public class StageGUI extends JPanel {
+public class StageWidget extends JPanel {
 
 	private GemSetting _gem;
 	private CommandController _cc;
@@ -31,7 +31,7 @@ public class StageGUI extends JPanel {
 	private IdfAnalyzer idfAnalyzer;
 	
 	/**
-	 * StageGUI constructor
+	 * StageWidget constructor
 	 * @param cc
 	 * the Command Controller object
 	 * @param gem
@@ -43,7 +43,7 @@ public class StageGUI extends JPanel {
 	 * @param currentStage
 	 * the index or number of the current stage
 	 */
-	public StageGUI(CommandController cc, GemSetting gem, Idf idf, IdfCommand currentCommand, int currentStage) {
+	public StageWidget(CommandController cc, GemSetting gem, Idf idf, IdfCommand currentCommand, int currentStage) {
 		_cc = cc;
 		_currentCommand = currentCommand;
 		_currentStage = currentStage;

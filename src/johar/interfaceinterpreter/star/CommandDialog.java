@@ -4,11 +4,13 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Toolkit;
 import java.util.TreeMap;
-
+import java.awt.Dialog;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import javax.swing.JDialog;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -21,21 +23,18 @@ import johar.idf.IdfParameter;
  * The Command Dialog Box creator.
  * 
  */
-public class CommandDialog extends JFrame {
+public class CommandDialog extends JDialog implements WindowListener {
 	private Idf _idf;
 	private GemSetting _gem;
 	private CommandController _cc;
 	private IdfCommand _currentCommand;
 	private Container container;
-	private TreeMap<Integer, StageGUI> stageGUIMap;
-	private StageGUI stageGUI;
+	private TreeMap<Integer, StageWidget> stageWidgetMap;
+	private StageWidget stageWidget;
 	private JPanel buttonsPanel;
 	private int _currentStage;
 	private IdfAnalyzer idfAnalyzer;
 	private int numOfQueryableStages;
-	private int windowHeight = 0;
-	private int screenHeight;
-	private int height = 0;
 
 	/**
 	 * The CommandDialog constructor
@@ -55,7 +54,7 @@ public class CommandDialog extends JFrame {
 		_currentCommand = currentCommand;
 		_gem = gem;
 		currentCommand.getNumStages();
-		stageGUIMap = new TreeMap<Integer, StageGUI>();
+		stageWidgetMap = new TreeMap<Integer, StageWidget>();
 		idfAnalyzer = new IdfAnalyzer(_idf);
 		numOfQueryableStages = idfAnalyzer.getNumOfQueryableStages(currentCommand);
 		initialize();
@@ -65,33 +64,34 @@ public class CommandDialog extends JFrame {
 	private void initialize() {
 		container = getContentPane();
 		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-	
-		screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height - 100;
 
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setLocation(300, 30);
 		setResizable(false);
 		setTitle(_currentCommand.getLabel());
-		setName(_currentCommand.getCommandName());		
+		setName(_currentCommand.getCommandName());
+
+		addWindowListener(this);		
 	}
 
 	/**
-	 * Initializes the GUI for the specified stage
+	 * Initializes the specified stage's widget
 	 * @param stageNumber
 	 * the stage number
 	 */
-	public void initializeStageGUI(int stageNumber) {
+	public void initializeStageWidget(int stageNumber) {
 		try {
 			_currentStage = stageNumber;
 			
 			// Perform if the current stage has never been initialized so far
-			if (!stageGUIMap.containsKey(stageNumber)) {
-				stageGUI = new StageGUI(_cc, _gem, _idf, _currentCommand,
+			if (!stageWidgetMap.containsKey(stageNumber)) {
+				stageWidget = new StageWidget(_cc, _gem, _idf, _currentCommand,
 						stageNumber);
-				stageGUI.setBorder(new EmptyBorder(10, 10, 10, 10));
+				stageWidget.setBorder(new EmptyBorder(10, 10, 10, 10));
 				
-				container.add(stageGUI);			
-				stageGUIMap.put(stageNumber, stageGUI);
+				container.add(stageWidget);			
+				stageWidgetMap.put(stageNumber, stageWidget);
 
 				revalidate();
 			}
@@ -105,24 +105,14 @@ public class CommandDialog extends JFrame {
 	 * Updates the Command Dialog to reflect changes
 	 */
 	public void revalidate() {
-		if (stageGUIMap.size() > 0) {			
-			for (int stageNumber : stageGUIMap.keySet()) {
-				height = stageGUIMap.get(stageNumber).getPreferredSize().height;
-				
-				if (height > screenHeight)
-					height = screenHeight;
-				else
-					height = height + 100;
-				
-				if (height > windowHeight)
-					windowHeight = height;
-				
+		if (stageWidgetMap.size() > 0) {			
+			for (int stageNumber : stageWidgetMap.keySet()) {				
 				if (stageNumber == _currentStage) {
 					
 					//Make the current stage visible
-					stageGUIMap.get(stageNumber).setVisible(true);
+					stageWidgetMap.get(stageNumber).setVisible(true);
 				} else
-					stageGUIMap.get(stageNumber).setVisible(false);
+					stageWidgetMap.get(stageNumber).setVisible(false);
 				
 				/* Disable all inactive parameters in current stage and
 				   enable the active ones */
@@ -132,9 +122,10 @@ public class CommandDialog extends JFrame {
 
 		validateWindow();
 		repaint();
-
 		pack();
-		setVisible(true);
+		
+		if (getX() != 300 && getY() != 30)
+			setLocation(300, 30);
 	}
 
 	private void validateWindow() {
@@ -173,9 +164,9 @@ public class CommandDialog extends JFrame {
 	 * @return
 	 * the stage GUI
 	 */
-	public StageGUI getStageGUI(int stageNumber) {
-		if (stageGUIMap.containsKey(stageNumber)) {
-			return stageGUIMap.get(stageNumber);
+	public StageWidget getStageWidget(int stageNumber) {
+		if (stageWidgetMap.containsKey(stageNumber)) {
+			return stageWidgetMap.get(stageNumber);
 		} else
 			return null;
 	}
@@ -186,17 +177,17 @@ public class CommandDialog extends JFrame {
 	 * the number of initialized stages
 	 */
 	public int getStageCount(){
-		return stageGUIMap.size();
+		return stageWidgetMap.size();
 	}
 
 	//Makes parameter widgets active or inactive
 	private boolean deactivateParams(int stageNumber) {
 		boolean isDeactivated = false;
 		
-		if (stageGUIMap.containsKey(stageNumber)) {
-			JComponent stageGUI = getStageGUI(stageNumber);
+		if (stageWidgetMap.containsKey(stageNumber)) {
+			JComponent stageComp = getStageWidget(stageNumber);
 
-			for (Component c : stageGUI.getComponents()) {
+			for (Component c : stageComp.getComponents()) {
 				if (c instanceof ParameterWidget) {
 					if (isParamActive(c.getName(), stageNumber))
 						setEnabledComponents(c, true);
@@ -217,7 +208,7 @@ public class CommandDialog extends JFrame {
 		ParameterWidget pWidget = (ParameterWidget) paramWidget;
 		IdfParameter paramObj = pWidget.getParamObject();
 		int repNumber = -1;
-		// System.out.println(comp);
+		
 		for (Component c : paramWidget.getComponents()) {
 			try {
 				if (!(c instanceof MoveUpButton || c instanceof MoveDownButton || c instanceof DeleteButton))
@@ -299,12 +290,12 @@ public class CommandDialog extends JFrame {
 
 	//Get the index of a button in the buttons panel
 	private int getButtonIndex(String name){
-		return WidgetAnalyzer.getWidgetIndexInFrame(this, name);
+		return WidgetAnalyzer.getWidgetIndexInDialog(this, name);
 	}
 	
 	//Delete the buttons panel
 	private void deleteButtonPanel(){
-		int index = WidgetAnalyzer.getWidgetIndexInFrame(this, "buttonsPanel");
+		int index = WidgetAnalyzer.getWidgetIndexInDialog(this, "buttonsPanel");
 
 		if (index > -1)
 			container.remove(index);
@@ -386,4 +377,14 @@ public class CommandDialog extends JFrame {
 		return isActive;
 	}
 
+	public void windowClosed(WindowEvent e) {
+		dispose();		
+	}
+
+	public void windowActivated(WindowEvent e) {}
+	public void windowClosing(WindowEvent e) {}	
+	public void windowDeactivated(WindowEvent e) {}	
+	public void windowDeiconified(WindowEvent e) {}	
+	public void windowIconified(WindowEvent e) {}
+	public void windowOpened(WindowEvent e) {}
 }

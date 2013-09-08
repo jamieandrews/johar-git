@@ -588,13 +588,14 @@ public class ParameterWidget extends JPanel {
 
 			public void actionPerformed(ActionEvent e) {
 				fileChooser = new JFileChooser();
-				fileChooser.showOpenDialog(null);
-				String btnName = ((JButton) e.getSource()).getName();
-				String fileFieldName = "txt" + btnName.substring(9);
-				JTextField tf = (JTextField) getComponent(fileFieldName);
-				try {
+				int returnValue = fileChooser.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION){
+					String btnName = ((JButton) e.getSource()).getName();
+					String fileFieldName = "txt" + btnName.substring(9);
+					JTextField tf = (JTextField) getComponent(fileFieldName);
 					tf.setText(fileChooser.getSelectedFile().getAbsolutePath());
-				} catch (NullPointerException ex) {}  //Do nothing if FileChooser is cancelled
+				}
 			}
 			
 		});

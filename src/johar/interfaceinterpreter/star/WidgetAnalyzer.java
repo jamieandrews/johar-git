@@ -1,7 +1,7 @@
 package johar.interfaceinterpreter.star;
 
 import java.awt.Component;
-
+import javax.swing.JDialog;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
@@ -51,6 +51,28 @@ public class WidgetAnalyzer {
 	 */
 	protected static int getWidgetIndexInFrame(JFrame frame, String name){
 		Component[] widgets = ((JComponent) frame.getContentPane()).getComponents();
+
+		for (int i = 0; i < widgets.length; i++){
+			try {
+				if (widgets[i].getName().equals(name)){
+					return i;
+				}
+			} catch (Exception e) {}
+		}
+		return -1;
+	}
+
+	/**
+	 *  Searches for a widget in the specified Dialog and returns its index if found.
+	 * @param frame
+	 * frame being searched
+	 * @param name
+	 * name of the widget to find
+	 * @return
+	 * index of the widget (-1 if not found)
+	 */
+	protected static int getWidgetIndexInDialog(JDialog dialog, String name){
+		Component[] widgets = ((JComponent) dialog.getContentPane()).getComponents();
 
 		for (int i = 0; i < widgets.length; i++){
 			try {
