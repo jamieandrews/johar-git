@@ -122,6 +122,7 @@ public class Idf extends IdfElement {
 	acceptVisitor(new Visitors.MinRepsLeqMaxReps());
 	acceptVisitor(new Visitors.MinValueLeqMaxValue());
 	acceptVisitor(new Visitors.MinCharsLeqMaxChars());
+	acceptVisitor(new Visitors.CommandGroupsDisjoint());
     }
 
     /**

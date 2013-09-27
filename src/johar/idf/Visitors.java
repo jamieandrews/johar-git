@@ -64,6 +64,21 @@ public class Visitors {
 		oneLineHelpMaxLength, eh);
 	}
 
+	public void beforeChildren(IdfQuestion idfQuestion, ErrorHandler eh) {
+	    String elementDesc =
+		"Question " + idfQuestion.getParameterName();
+
+	    // Check BriefHelp.
+	    checkHelpMessage(elementDesc,
+		"BriefHelp", idfQuestion.getBriefHelp(),
+		briefHelpMaxLength, eh);
+
+	    // Check OneLineHelp.
+	    checkHelpMessage(elementDesc,
+		"OneLineHelp", idfQuestion.getOneLineHelp(),
+		oneLineHelpMaxLength, eh);
+	}
+
 	public void checkHelpMessage(String elementDesc, String attrName,
 		String helpMessage, int maxLength, ErrorHandler eh) {
 	    // System.out.println("cHM a elementDesc=\"" + elementDesc +
@@ -180,8 +195,32 @@ public class Visitors {
 	    if (!ok) {
 		eh.error("Command " + _currentCommandName +
 		    ", parameter " + idfParameter.getParameterName() +
-		    ": MinNumberOfChars should be less than or equal to MaxNumberOfChars"
+		    ": MinNumberOfChars should be less than or equal to " +
+		    "MaxNumberOfChars"
 		);
+	    }
+	}
+    }
+
+    // Checks that no command is a member of more than one CommandGroup.
+    public static class CommandGroupsDisjoint extends VisitorOfIdfElement {
+	Set<String> _commandsInGroups = new HashSet<String>();
+
+	public void beforeChildren(IdfCommandGroup idfCommandGroup,
+		ErrorHandler eh) {
+	    int n = idfCommandGroup.getNumMembers();
+	    for (int i=0; i<n; i++) {
+		// Check whether member i is already in a group
+		String memberCommandName = idfCommandGroup.getMemberNumber(i);
+		if (_commandsInGroups.contains(memberCommandName)) {
+		    // It was in some earlier group
+		    eh.error("Command " + memberCommandName +
+			" should not be a member of more than one CommandGroup"
+		    );
+		} else {
+		    // Not in any group seen so far
+		    _commandsInGroups.add(memberCommandName);
+		}
 	    }
 	}
     }
