@@ -324,9 +324,12 @@ public class CommandController implements CommandControllerBase {
 					currentStage = currentStageBuffer;
 					return;
 				}
-			}
+			}			
+			currentStage = currentStageBuffer;
 			
 			questionAndWrapUp(0, false);   //Perform the Question-and-Wrapup Procedure with parameters 0 and false.
+			
+			_gem.clearParameters();
 		} catch (Exception e) {
 			MessageDialog.showError("An error occurred while performing the requested operation. [Error Details: "
 					+ e.getMessage() + "]");

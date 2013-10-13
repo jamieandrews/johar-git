@@ -92,8 +92,6 @@ public class CommandDialog extends JDialog implements WindowListener {
 				
 				container.add(stageWidget);			
 				stageWidgetMap.put(stageNumber, stageWidget);
-
-				revalidate();
 			}
 		} catch (Exception e) {
 			MessageDialog.showError("An error occurred while performing the requested operation. [Error Details: "
@@ -341,15 +339,15 @@ public class CommandDialog extends JDialog implements WindowListener {
 			 */
 			IdfParameter parentParam = idfAnalyzer.getIdfParameter(param
 					.getParentParameter());
-			String paramParentValue = param.getParentValue();
-			String actualParentValue = "";
+			String expectedParentValue = param.getParentValue();    //Expected value of the Parent Parameter
+			String actualParentValue = "";		//Actual value of the Parent Parameter
 			
 			try {
 				for (int t = 0; t < parentParam.getMaxNumberOfReps(); t++) {
 					actualParentValue = _gem.getParameter(
 							parentParam.getParameterName(), t).toString();
 
-					if (actualParentValue.equals(paramParentValue)) {
+					if (actualParentValue.equals(expectedParentValue)) {
 						isActive = true;
 						break;
 					}
@@ -360,8 +358,7 @@ public class CommandDialog extends JDialog implements WindowListener {
 
 			// If parent parameter has no value in Gem, then get its default
 			// value (if any)
-			if (!isActive) {
-				actualParentValue = "";
+			if (actualParentValue == null || actualParentValue.equals("")) {
 				if (parentParam.getDefaultValueMethod() != null
 						&& !parentParam.getDefaultValueMethod().equals(""))
 					actualParentValue = _gem.callDefaultValueMethod(
@@ -369,7 +366,7 @@ public class CommandDialog extends JDialog implements WindowListener {
 				else
 					actualParentValue = parentParam.getDefaultValue();
 
-				if (actualParentValue.equals(paramParentValue))
+				if (actualParentValue.equals(expectedParentValue))
 					isActive = true;
 			}
 		}

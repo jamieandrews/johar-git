@@ -1,0 +1,190 @@
+Application = MealPlanner
+ApplicationEngine = MealPlanner
+IdfVersion = "1.0"
+InitializationMethod = initMealPlanner
+
+Table breakfastTable = {
+	DefaultHeading = "Breakfast"
+	DefaultColumnNames = "Food Items for Breakfast"
+	Browsable = yes
+}
+Table lunchTable = {
+	DefaultHeading = "Lunch"
+	DefaultColumnNames = "Food Items for Lunch"
+	Browsable = yes
+}
+Table dinnerTable = {
+	DefaultHeading = "Dinner"
+	DefaultColumnNames = "Food Items for Dinner"
+	Browsable = yes
+}
+
+CommandGroup planMealsGroup = {
+	Label = "Plan Meals"
+	Member = breakfast
+	Member = lunch
+	Member = dinner
+	Member = save
+	Member = quit
+}
+
+CommandGroup viewMealsGroup = {
+	Label = "View Meals"
+	Member = viewMeals
+}
+
+Command breakfast = {
+	Label = "Plan Your Breakfast"
+	MultiLineHelp = "Plan your breakfast by specifying the meal date, time, each food item in your meal, and the duration of your breakfast."
+	
+	Stage bfMealSettings = {
+		Parameter bfMealDate = {
+			Label = "Select a Date"
+			OneLineHelp = "Pick a date for your breakfast meal"
+			Type = date
+		}
+		Parameter bfMealDurationMetrics = {
+			Label = "Duration of Meal is given in"
+			OneLineHelp = "Metric for duration of breakfast meal (e.g. hours, minutes, or seconds)"
+			Type = choice
+			Choices = "hours|minutes|seconds"
+			DefaultValue = "minutes"
+		}
+	}
+	Stage bfMealStage = {
+		Parameter bfMealStartTime = {
+			Label = "Select the Start Time"
+			OneLineHelp = "Select the start time for your breakfast meal"
+			Type = timeOfDay			
+		}
+		Parameter bfMealFoodItems = {
+			Label = "Specify each food item"
+			OneLineHelp = "Specify each food item in your breakfast meal"
+			Type = text
+			MinNumberOfReps = 1
+			MaxNumberOfReps = 10
+			RepsModel = sequence
+		}		
+		Parameter bfMealDuration = {
+			Label = "Duration of Meal (minutes)"
+			OneLineHelp = "Specify the duration of your breakfast meal (in minutes)"
+			Type = int
+			ParentParameter = bfMealDurationMetrics
+			ParentValue = "minutes"
+			DefaultValue = 0
+		}
+	}	
+}
+
+Command lunch = {
+	Label = "Plan Your Lunch"
+	MultiLineHelp = "Plan your lunch by specifying the meal date, time, each food item in your meal, and the duration of your lunch."
+	
+	Stage lunchMealSettings = {
+		Parameter lunchMealDate = {
+			Label = "Select a Date"
+			OneLineHelp = "Pick a date for your lunch meal"
+			Type = date
+		}
+		Parameter lunchMealDurationMetrics = {
+			Label = "Duration of Meal is given in"
+			OneLineHelp = "Metric for duration of lunch meal (e.g. hours, minutes, or seconds)"
+			Type = choice
+			Choices = "hours|minutes|seconds"
+			DefaultValue = "minutes"
+		}
+	}
+	Stage lunchMealStage = {
+		Parameter lunchMealStartTime = {
+			Label = "Select the Start Time"
+			OneLineHelp = "Select the start time for your lunch meal"
+			Type = timeOfDay			
+		}
+		Parameter lunchMealFoodItems = {
+			Label = "Specify each food item"
+			OneLineHelp = "Specify each food item in your lunch meal"
+			Type = text
+			MinNumberOfReps = 1
+			MaxNumberOfReps = 10
+			RepsModel = sequence
+		}		
+		Parameter lunchMealDuration = {
+			Label = "Duration of Meal (minutes)"
+			OneLineHelp = "Specify the duration of your lunch meal (in minutes)"
+			Type = int
+			ParentParameter = lunchMealDurationMetrics
+			ParentValue = "minutes"
+			DefaultValue = 0
+		}
+	}
+}
+
+Command dinner = {
+	Label = "Plan Your Dinner"
+	MultiLineHelp = "Plan your dinner by specifying the meal date, time, each food item in your meal, and the duration of your dinner."
+	
+	Stage dinMealSettings = {
+		Parameter dinMealDate = {
+			Label = "Select a Date"
+			OneLineHelp = "Pick a date for your dinner meal"
+			Type = date
+		}
+		Parameter dinMealDurationMetrics = {
+			Label = "Duration of Meal is given in"
+			OneLineHelp = "Metric for duration of dinner meal (e.g. hours, minutes, or seconds)"
+			Type = choice
+			Choices = "hours|minutes|seconds"
+			DefaultValue = "minutes"
+		}
+	}
+	Stage dinMealStage = {
+		Parameter dinMealStartTime = {
+			Label = "Select the Start Time"
+			OneLineHelp = "Select the start time for your dinner meal"
+			Type = timeOfDay			
+		}
+		Parameter dinMealFoodItems = {
+			Label = "Specify each food item"
+			OneLineHelp = "Specify each food item in your dinner meal"
+			Type = text
+			MinNumberOfReps = 1
+			MaxNumberOfReps = 10
+			RepsModel = sequence
+		}		
+		Parameter dinMealDuration = {
+			Label = "Duration of Meal (minutes)"
+			OneLineHelp = "Specify the duration of your dinner meal (in minutes)"
+			Type = int
+			ParentParameter = dinMealDurationMetrics
+			ParentValue = "minutes"
+			DefaultValue = 0
+		}
+	}
+}
+
+Command save = {
+	OneLineHelp = "Save your meal plan"
+}
+
+Command viewMeals = {
+	Label = "View Meals for a specific date"
+	Parameter dateOfMeal = {
+		Label = "Select a Date"
+		OneLineHelp = "Select a date for the meals you want to view"
+		Type = date
+	}
+}
+Command quit = {
+	Label = "Exit"
+	OneLineHelp = "Exit the Meal Planner app"
+	Question confirmExit = {
+		Type = boolean
+		Label = "Have you saved your meal plan? Are you sure you want to exit?"
+		BriefHelp = "Confirm your intent to exit"
+		OneLineHelp = "Confirm your intent to exit the app."
+		AskIfMethod = confirmAppExit
+	}
+	QuitAfterIfMethod = appShouldQuit
+}
+
+
