@@ -266,13 +266,19 @@ public class TCGenerator {
     		if (status){
     		    Idf idf = Idf.idfFromFile(idfFile.replace(".idf", ".xml"));
     		    String errorMsg = "";
-    		    errorMsg = Idf.getErrorMsgs();	//This method must exist in Idf.java
+    		    errorMsg = Idf.getErrorMsgs();
 	            writerError.append("\n");
 	            writerError.append("*****BEGIN: Errors detected in IDF\n");
 	            writerError.append(errorMsg);
 		    writerError.append("*****END: Errors detected in IDF\n");	            
     		}            
     	}
+		catch(IdfFormatException e){
+			writerError.append("\n");
+			writerError.append("*****BEGIN: Errors detected in IDF\n");
+			writerError.append(e.getMessage());
+			writerError.append("*****END: Errors detected in IDF\n");
+		}
     	catch(Exception ex){
     		System.out.println(ex.getMessage());
 		System.exit(1);
